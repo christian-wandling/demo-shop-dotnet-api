@@ -1,0 +1,27 @@
+using AutoMapper;
+using DemoShop.Application.Features.Users.DTOs;
+using DemoShop.Domain.Users.Entities;
+
+namespace DemoShop.Application.Features.Users.Mappings;
+
+public class UserMappingProfile : Profile
+{
+    public UserMappingProfile()
+    {
+        CreateMap<User, UserResponse>()
+            .ForMember(dest => dest.Id, opt =>
+                opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Email, opt =>
+                opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.Firstname, opt =>
+                opt.MapFrom(src => src.Firstname))
+            .ForMember(dest => dest.Lastname, opt =>
+                opt.MapFrom(src => src.Lastname))
+            .ForMember(dest => dest.Phone, opt =>
+                opt.MapFrom(src => src.Phone))
+            .ForMember(dest => dest.Address, opt =>
+                opt.MapFrom(src => src.Address));
+
+        CreateMap<Address, AddressResponse>();
+    }
+}

@@ -1,0 +1,6 @@
+﻿services:
+    demoshop.api:
+        image: demoshop.api
+        build:
+            context: .
+            dockerfile: src/DemoShop.Api/Dockerfile

@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-DemoShop.Api-ea462fe3-c84e-49f5-b411-aff07e717c28</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <AnalysisMode>All</AnalysisMode>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ardalis.Result.AspNetCore" Version="10.1.0"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" NoWarn="NU1605"/>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.11" NoWarn="NU1605"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
+    <PackageReference Include="Microsoft.Identity.Web" Version="3.5.*"/>
+    <PackageReference Include="Microsoft.Identity.Web.DownstreamApi" Version="3.5.*"/>
+    <PackageReference Include="Asp.Versioning.Http" Version="8.1.*"/>
+    <PackageReference Include="Roslynator.Analyzers" Version="4.12.10">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.*"/>
+
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0"/>
+    <PackageReference Include="GitVersion.MsBuild" Version="6.1.0"/>
+    <PackageReference Include="Ardalis.Result" Version="10.1.0"/>
+    <PackageReference Include="Sentry.AspNetCore" Version="5.0.1"/>
+    <PackageReference Include="Sentry.EntityFramework" Version="5.0.1"/>
+    <PackageReference Include="Sentry.Extensions.Logging" Version="5.0.1"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DemoShop.Infrastructure\DemoShop.Infrastructure.csproj"/>
+    <ProjectReference Include="..\DemoShop.Application\DemoShop.Application.csproj"/>
+  </ItemGroup>
+
+</Project>
