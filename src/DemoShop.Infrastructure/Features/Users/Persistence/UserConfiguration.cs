@@ -1,18 +1,20 @@
 using Ardalis.GuardClauses;
-using DemoShop.Domain.Users.Entities;
+using DemoShop.Domain.User.Entities;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DemoShop.Infrastructure.Features.Users.Persistence;
 
-public class UserConfiguration : IEntityTypeConfiguration<User>
+public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public void Configure(EntityTypeBuilder<UserEntity> builder)
     {
         Guard.Against.Null(builder, nameof(builder));
 
         BaseEntityConfiguration.ConfigureWithSoftDelete(builder);
+
+        builder.ToTable("User");
 
         builder.Property(u => u.KeycloakUserId)
             .IsRequired();
@@ -36,7 +38,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasOne(u => u.Address)
             .WithOne(a => a.User)
-            .HasForeignKey<Address>(a => a.UserId)
+            .HasForeignKey<AddressEntity>(a => a.UserId)
             .IsRequired(false);
 
         builder.HasMany(u => u.ShoppingSessions)

@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace DemoShop.Application.Features.Users.Commands.CreateUser;
+namespace DemoShop.Application.Features.User.Commands.CreateUser;
 
 public sealed class CreateUserValidator : AbstractValidator<CreateUserCommand>
 {

@@ -1,22 +1,22 @@
-using DemoShop.Domain.Orders.Entities;
-using DemoShop.Domain.Products.Entities;
-using DemoShop.Domain.Sessions.Entities;
-using DemoShop.Domain.Users.Entities;
+using DemoShop.Domain.Order.Entities;
+using DemoShop.Domain.Product.Entities;
+using DemoShop.Domain.Session.Entities;
+using DemoShop.Domain.User.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DemoShop.Application.Features.Common.Interfaces;
 
 public interface IApplicationDbContext
 {
-    DbSet<User> Users { get; }
-    DbSet<Address> Addresses { get; }
-    DbSet<Product> Products { get; }
-    DbSet<Image> Images { get; }
-    DbSet<Category> Categories { get; }
-    DbSet<ShoppingSession> ShoppingSessions { get; }
-    DbSet<CartItem> CartItems { get; }
-    DbSet<Order> Orders { get; }
-    DbSet<OrderItem> OrderItems { get; }
+    DbSet<Domain.User.Entities.UserEntity> Users { get; }
+    DbSet<AddressEntity> Addresses { get; }
+    DbSet<ProductEntity> Products { get; }
+    DbSet<ImageEntity> Images { get; }
+    DbSet<CategoryEntity> Categories { get; }
+    DbSet<ShoppingSessionEntity> ShoppingSessions { get; }
+    DbSet<CartItemEntity> CartItems { get; }
+    DbSet<Domain.Order.Entities.OrderEntity> Orders { get; }
+    DbSet<OrderItemEntity> OrderItems { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     int SaveChanges();

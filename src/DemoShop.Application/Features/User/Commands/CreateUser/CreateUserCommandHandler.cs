@@ -1,25 +1,24 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
-using DemoShop.Application.Features.Users.Logging;
-using DemoShop.Domain.Users.Entities;
-using DemoShop.Domain.Users.Interfaces;
+using DemoShop.Application.Features.User.Logging;
+using DemoShop.Domain.User.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace DemoShop.Application.Features.Users.Commands.CreateUser;
+namespace DemoShop.Application.Features.User.Commands.CreateUser;
 
 public sealed class CreateUserCommandHandler(
     IUserRepository repository,
     ILogger<CreateUserCommandHandler> logger
 )
-    : IRequestHandler<CreateUserCommand, Result<User>?>
+    : IRequestHandler<CreateUserCommand, Result<Domain.User.Entities.UserEntity>?>
 {
-    public async Task<Result<User>?> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Domain.User.Entities.UserEntity>?> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         Guard.Against.Null(request, nameof(request));
         logger.LogUserCreateStarted(request.Email);
 
-        var userResult = User.Create(
+        var userResult = Domain.User.Entities.UserEntity.Create(
             request.KeycloakUserId,
             request.Email,
             request.Firstname,
@@ -38,10 +37,10 @@ public sealed class CreateUserCommandHandler(
         if (user is null)
         {
             logger.LogUserCreateFailed(request.Email);
-            return Result<User>.Error("Failed to create user");
+            return Result<Domain.User.Entities.UserEntity>.Error("Failed to create user");
         }
 
         logger.LogUserCreated($"{user.Id}");
-        return Result<User>.Success(user);
+        return Result<Domain.User.Entities.UserEntity>.Success(user);
     }
 }

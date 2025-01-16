@@ -1,11 +1,11 @@
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Base;
 
-namespace DemoShop.Domain.Users.Entities;
+namespace DemoShop.Domain.User.Entities;
 
-public class Address : Entity
+public class AddressEntity : Entity
 {
-    private Address()
+    private AddressEntity()
     {
         Street = string.Empty;
         Apartment = string.Empty;
@@ -14,7 +14,7 @@ public class Address : Entity
         Country = string.Empty;
     }
 
-    public Address(int userId, string street, string apartment, string city,
+    public AddressEntity(int userId, string street, string apartment, string city,
         string zip, string country, string? region)
     {
         UserId = userId;
@@ -34,5 +34,5 @@ public class Address : Entity
     public string Country { get; private init; }
     public string? Region { get; private init; }
 
-    public User? User { get; init; }
+    public UserEntity? User { get; init; }
 }

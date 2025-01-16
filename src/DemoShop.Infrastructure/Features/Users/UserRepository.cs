@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Ardalis.GuardClauses;
-using DemoShop.Domain.Users.Entities;
-using DemoShop.Domain.Users.Interfaces;
+using DemoShop.Domain.User.Entities;
+using DemoShop.Domain.User.Interfaces;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,18 +9,18 @@ namespace DemoShop.Infrastructure.Features.Users;
 
 public class UserRepository(ApplicationDbContext context) : IUserRepository
 {
-    public Task<User?> GetUserByIdAsync(int id, CancellationToken cancellationToken) =>
+    public Task<UserEntity?> GetUserByIdAsync(int id, CancellationToken cancellationToken) =>
         GetUserAsync(u => u.Id == id, cancellationToken);
 
-    public Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken) =>
+    public Task<UserEntity?> GetUserByEmailAsync(string email, CancellationToken cancellationToken) =>
         GetUserAsync(u => u.Email == email, cancellationToken);
 
-    public async Task<User?> CreateUserAsync(User user, CancellationToken cancellationToken)
+    public async Task<UserEntity?> CreateUserAsync(UserEntity userEntity, CancellationToken cancellationToken)
     {
-        Guard.Against.Null(user, nameof(user));
+        Guard.Against.Null(userEntity, nameof(userEntity));
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
-        var createdUser = await context.Users.AddAsync(user, cancellationToken)
+        var createdUser = await context.Users.AddAsync(userEntity, cancellationToken)
             .ConfigureAwait(false);
 
         await context.SaveChangesAsync(cancellationToken)
@@ -29,7 +29,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         return createdUser.Entity;
     }
 
-    private async Task<User?> GetUserAsync(Expression<Func<User, bool>> predicate,
+    private async Task<UserEntity?> GetUserAsync(Expression<Func<UserEntity, bool>> predicate,
         CancellationToken cancellationToken)
     {
         Guard.Against.Null(predicate, nameof(predicate));

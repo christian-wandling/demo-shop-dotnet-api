@@ -1,14 +1,14 @@
 using AutoMapper;
-using DemoShop.Application.Features.Users.DTOs;
-using DemoShop.Domain.Users.Entities;
+using DemoShop.Application.Features.User.DTOs;
+using DemoShop.Domain.User.Entities;
 
-namespace DemoShop.Application.Features.Users.Mappings;
+namespace DemoShop.Application.Features.User.Mappings;
 
 public class UserMappingProfile : Profile
 {
     public UserMappingProfile()
     {
-        CreateMap<User, UserResponse>()
+        CreateMap<Domain.User.Entities.UserEntity, UserResponse>()
             .ForMember(dest => dest.Id, opt =>
                 opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Email, opt =>
@@ -22,6 +22,6 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.Address, opt =>
                 opt.MapFrom(src => src.Address));
 
-        CreateMap<Address, AddressResponse>();
+        CreateMap<AddressEntity, AddressResponse>();
     }
 }

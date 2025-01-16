@@ -1,7 +1,7 @@
 using DemoShop.Domain.Common.Logging;
 using Microsoft.Extensions.Logging;
 
-namespace DemoShop.Application.Features.Users.Logging;
+namespace DemoShop.Application.Features.User.Logging;
 
 public static class UserLoggerExtensions
 {

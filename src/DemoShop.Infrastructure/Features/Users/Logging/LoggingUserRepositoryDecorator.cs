@@ -1,6 +1,6 @@
 using Ardalis.GuardClauses;
-using DemoShop.Domain.Users.Entities;
-using DemoShop.Domain.Users.Interfaces;
+using DemoShop.Domain.User.Entities;
+using DemoShop.Domain.User.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace DemoShop.Infrastructure.Features.Users.Logging;
@@ -10,7 +10,7 @@ public class LoggingUserRepositoryDecorator(
     ILogger<LoggingUserRepositoryDecorator> logger
 ) : IUserRepository
 {
-    public async Task<User?> GetUserByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<UserEntity?> GetUserByIdAsync(int id, CancellationToken cancellationToken)
     {
         try
         {
@@ -30,7 +30,7 @@ public class LoggingUserRepositoryDecorator(
         }
     }
 
-    public async Task<User?> GetUserByEmailAsync(string email, CancellationToken cancellationToken)
+    public async Task<UserEntity?> GetUserByEmailAsync(string email, CancellationToken cancellationToken)
     {
         try
         {
@@ -50,22 +50,22 @@ public class LoggingUserRepositoryDecorator(
         }
     }
 
-    public async Task<User?> CreateUserAsync(User user, CancellationToken cancellationToken)
+    public async Task<UserEntity?> CreateUserAsync(UserEntity userEntity, CancellationToken cancellationToken)
     {
         try
         {
-            Guard.Against.Null(user, nameof(user));
+            Guard.Against.Null(userEntity, nameof(userEntity));
             Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
-            logger.LogCreateUserStarted(user.Email);
-            var createdUser = await repository.CreateUserAsync(user, cancellationToken).ConfigureAwait(false);
+            logger.LogCreateUserStarted(userEntity.Email);
+            var createdUser = await repository.CreateUserAsync(userEntity, cancellationToken).ConfigureAwait(false);
             logger.LogCreateUserSuccess($"{createdUser!.Id}");
 
-            return user;
+            return userEntity;
         }
         catch (Exception ex)
         {
-            logger.LogCreateUserFailed(user?.Email ?? string.Empty, ex);
+            logger.LogCreateUserFailed(userEntity?.Email ?? string.Empty, ex);
             throw;
         }
     }

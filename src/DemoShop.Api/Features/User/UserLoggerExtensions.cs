@@ -1,6 +1,6 @@
 using DemoShop.Domain.Common.Logging;
 
-namespace DemoShop.Api.Features.Users;
+namespace DemoShop.Api.Features.User;
 
 public static class UserLoggerExtensions
 {

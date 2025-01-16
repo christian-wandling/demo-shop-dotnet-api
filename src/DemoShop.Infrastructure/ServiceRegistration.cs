@@ -1,8 +1,8 @@
 using DemoShop.Application.Features.Common.Interfaces;
-using DemoShop.Domain.Orders.Interfaces;
-using DemoShop.Domain.Products.Interfaces;
-using DemoShop.Domain.Sessions.Interfaces;
-using DemoShop.Domain.Users.Interfaces;
+using DemoShop.Domain.Order.Interfaces;
+using DemoShop.Domain.Product.Interfaces;
+using DemoShop.Domain.Session.Interfaces;
+using DemoShop.Domain.User.Interfaces;
 using DemoShop.Infrastructure.Common.Persistence;
 using DemoShop.Infrastructure.Features.Orders;
 using DemoShop.Infrastructure.Features.Products.Persistence;

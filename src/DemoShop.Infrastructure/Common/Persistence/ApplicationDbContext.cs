@@ -2,11 +2,11 @@
 using Ardalis.GuardClauses;
 using DemoShop.Application.Features.Common.Interfaces;
 using DemoShop.Domain.Common.Base;
-using DemoShop.Domain.Orders.Entities;
-using DemoShop.Domain.Orders.Enums;
-using DemoShop.Domain.Products.Entities;
-using DemoShop.Domain.Sessions.Entities;
-using DemoShop.Domain.Users.Entities;
+using DemoShop.Domain.Order.Entities;
+using DemoShop.Domain.Order.Enums;
+using DemoShop.Domain.Product.Entities;
+using DemoShop.Domain.Session.Entities;
+using DemoShop.Domain.User.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -18,18 +18,18 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     private const string UpdatedAtColumn = "UpdatedAt";
     private const string DeletedAtProperty = nameof(EntitySoftDelete.DeletedAt);
 
-    public DbSet<User> Users => Set<User>();
-    public DbSet<Address> Addresses => Set<Address>();
+    public DbSet<UserEntity> Users => Set<UserEntity>();
+    public DbSet<AddressEntity> Addresses => Set<AddressEntity>();
 
-    public DbSet<Product> Products => Set<Product>();
-    public DbSet<Image> Images => Set<Image>();
-    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<ProductEntity> Products => Set<ProductEntity>();
+    public DbSet<ImageEntity> Images => Set<ImageEntity>();
+    public DbSet<CategoryEntity> Categories => Set<CategoryEntity>();
 
-    public DbSet<ShoppingSession> ShoppingSessions => Set<ShoppingSession>();
-    public DbSet<CartItem> CartItems => Set<CartItem>();
+    public DbSet<ShoppingSessionEntity> ShoppingSessions => Set<ShoppingSessionEntity>();
+    public DbSet<CartItemEntity> CartItems => Set<CartItemEntity>();
 
-    public DbSet<Order> Orders => Set<Order>();
-    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<OrderEntity> Orders => Set<OrderEntity>();
+    public DbSet<OrderItemEntity> OrderItems => Set<OrderItemEntity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -51,7 +51,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
 
     private static void ConfigureEnums(ModelBuilder modelBuilder) =>
-        modelBuilder.Entity<Order>()
+        modelBuilder.Entity<OrderEntity>()
             .Property(e => e.Status)
             .HasConversion(
                 v => v.ToString().ToUpper(CultureInfo.InvariantCulture),

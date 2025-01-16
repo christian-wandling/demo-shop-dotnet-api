@@ -1,22 +1,24 @@
 using Ardalis.GuardClauses;
-using DemoShop.Domain.Users.Entities;
+using DemoShop.Domain.User.Entities;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DemoShop.Infrastructure.Features.Users.Persistence;
 
-public class AddressConfiguration : IEntityTypeConfiguration<Address>
+public class AddressConfiguration : IEntityTypeConfiguration<AddressEntity>
 {
-    public void Configure(EntityTypeBuilder<Address> builder)
+    public void Configure(EntityTypeBuilder<AddressEntity> builder)
     {
         Guard.Against.Null(builder, nameof(builder));
 
         BaseEntityConfiguration.Configure(builder);
 
+        builder.ToTable("Address");
+
         builder.HasOne(a => a.User)
             .WithOne(u => u.Address)
-            .HasForeignKey<Address>(a => a.UserId)
+            .HasForeignKey<AddressEntity>(a => a.UserId)
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 

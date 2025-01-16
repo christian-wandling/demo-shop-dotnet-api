@@ -1,4 +1,4 @@
-namespace DemoShop.Application.Features.Users.DTOs;
+namespace DemoShop.Application.Features.User.DTOs;
 
 public class UserResponse
 {

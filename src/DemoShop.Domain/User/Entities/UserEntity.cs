@@ -2,17 +2,16 @@
 using Ardalis.Result;
 using DemoShop.Domain.Common.Base;
 using DemoShop.Domain.Common.Interfaces;
-using DemoShop.Domain.Orders.Entities;
-using DemoShop.Domain.Sessions.Entities;
+using DemoShop.Domain.Session.Entities;
 
-namespace DemoShop.Domain.Users.Entities;
+namespace DemoShop.Domain.User.Entities;
 
-public sealed class User : EntitySoftDelete, IAggregateRoot
+public sealed class UserEntity : EntitySoftDelete, IAggregateRoot
 {
-    private readonly List<ShoppingSession> _shoppingSessions = [];
-    private readonly List<Order> _orders = [];
+    private readonly List<ShoppingSessionEntity> _shoppingSessions = [];
+    private readonly List<Order.Entities.OrderEntity> _orders = [];
 
-    private User()
+    private UserEntity()
     {
         KeycloakUserId = Guid.Empty;
         Email = string.Empty;
@@ -20,7 +19,7 @@ public sealed class User : EntitySoftDelete, IAggregateRoot
         Lastname = string.Empty;
     }
 
-    private User(Guid keycloakUserId, string email, string firstname, string lastname)
+    private UserEntity(Guid keycloakUserId, string email, string firstname, string lastname)
     {
         KeycloakUserId = Guard.Against.Default(keycloakUserId, nameof(keycloakUserId));
         Email = Guard.Against.NullOrEmpty(email, nameof(email));
@@ -33,14 +32,14 @@ public sealed class User : EntitySoftDelete, IAggregateRoot
     public string Firstname { get; private set; }
     public string Lastname { get; private set; }
     public string? Phone { get; private set; }
-    public Address? Address { get; private set; }
+    public AddressEntity? Address { get; private set; }
 
-    public IReadOnlyCollection<ShoppingSession> ShoppingSessions => _shoppingSessions.AsReadOnly();
-    public IReadOnlyCollection<Order> Orders => _orders.AsReadOnly();
+    public IReadOnlyCollection<ShoppingSessionEntity> ShoppingSessions => _shoppingSessions.AsReadOnly();
+    public IReadOnlyCollection<Order.Entities.OrderEntity> Orders => _orders.AsReadOnly();
 
-    public static Result<User> Create(Guid keycloakUserId, string email, string firstname, string lastname)
+    public static Result<UserEntity> Create(Guid keycloakUserId, string email, string firstname, string lastname)
     {
-        var user = new User(keycloakUserId, email, firstname, lastname);
+        var user = new UserEntity(keycloakUserId, email, firstname, lastname);
         return Result.Success(user);
     }
 
@@ -50,10 +49,10 @@ public sealed class User : EntitySoftDelete, IAggregateRoot
         return Result.Success(phone);
     }
 
-    public Result<Address> UpdateAddress(string street, string apartment, string city,
+    public Result<AddressEntity> UpdateAddress(string street, string apartment, string city,
         string zip, string country, string? region = null)
     {
-        Address = new Address(Id, street, apartment, city, zip, country, region);
+        Address = new AddressEntity(Id, street, apartment, city, zip, country, region);
         return Result.Success(Address);
     }
 }

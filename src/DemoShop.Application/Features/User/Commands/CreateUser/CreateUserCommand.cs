@@ -1,12 +1,11 @@
 using Ardalis.Result;
-using DemoShop.Domain.Users.Entities;
 using MediatR;
 
-namespace DemoShop.Application.Features.Users.Commands.CreateUser;
+namespace DemoShop.Application.Features.User.Commands.CreateUser;
 
 public sealed record CreateUserCommand(
     Guid KeycloakUserId,
     string Email,
     string Firstname,
     string Lastname
-) : IRequest<Result<User>?>;
+) : IRequest<Result<Domain.User.Entities.UserEntity>?>;

@@ -9,12 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Orders\Commands\"/>
-    <Folder Include="Features\Orders\Queries\"/>
-    <Folder Include="Features\Products\Commands\"/>
-    <Folder Include="Features\Products\Queries\"/>
-    <Folder Include="Features\Sessions\Commands\"/>
-    <Folder Include="Features\Sessions\Queries\"/>
+    <Folder Include="Features\Order\Commands\" />
+    <Folder Include="Features\Order\Queries\" />
+    <Folder Include="Features\Product\Commands\" />
+    <Folder Include="Features\Product\Queries\" />
+    <Folder Include="Features\Session\Commands\" />
+    <Folder Include="Features\Session\Queries\" />
   </ItemGroup>
 
   <ItemGroup>

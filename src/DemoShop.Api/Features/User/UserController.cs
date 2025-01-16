@@ -3,20 +3,20 @@ using AutoMapper;
 using DemoShop.Api.Common;
 using DemoShop.Api.Common.Logging;
 using DemoShop.Application.Features.Common.Interfaces;
-using DemoShop.Application.Features.Users.DTOs;
-using DemoShop.Application.Features.Users.Queries.GetOrCreateUser;
+using DemoShop.Application.Features.User.DTOs;
+using DemoShop.Application.Features.User.Queries.GetOrCreateUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DemoShop.Api.Features.Users;
+namespace DemoShop.Api.Features.User;
 
 [ApiVersion("1.0")]
 [Authorize(Policy = "RequireBuyProductsRole")]
-public sealed class UsersController(
+public sealed class UserController(
     IMediator mediator,
     IMapper mapper,
-    ILogger<UsersController> logger,
+    ILogger<UserController> logger,
     ICurrentUserAccessor currentUser
 ) : ApiController
 {
