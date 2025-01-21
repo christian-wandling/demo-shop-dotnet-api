@@ -6,18 +6,18 @@ public sealed class CreateUserValidator : AbstractValidator<CreateUserCommand>
 {
     public CreateUserValidator()
     {
-        RuleFor(x => x.KeycloakUserId)
+        RuleFor(x => x.UserIdentity.KeycloakId)
             .NotEmpty();
 
-        RuleFor(x => x.Email)
+        RuleFor(x => x.UserIdentity.Email)
             .NotEmpty()
             .EmailAddress();
 
-        RuleFor(x => x.Firstname)
+        RuleFor(x => x.UserIdentity.FirstName)
             .NotEmpty()
             .MaximumLength(100);
 
-        RuleFor(x => x.Lastname)
+        RuleFor(x => x.UserIdentity.LastName)
             .NotEmpty()
             .MaximumLength(100);
     }

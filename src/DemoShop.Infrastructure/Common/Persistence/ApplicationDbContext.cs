@@ -4,9 +4,6 @@ using DemoShop.Application.Features.Common.Interfaces;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.Order.Enums;
-using DemoShop.Domain.Product.Entities;
-using DemoShop.Domain.Session.Entities;
-using DemoShop.Domain.User.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -17,18 +14,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     private const string DeletedAtProperty = nameof(ISoftDeletable.DeletedAt);
 
-    public DbSet<UserEntity> Users => Set<UserEntity>();
-    public DbSet<AddressEntity> Addresses => Set<AddressEntity>();
-
-    public DbSet<ProductEntity> Products => Set<ProductEntity>();
-    public DbSet<ImageEntity> Images => Set<ImageEntity>();
-    public DbSet<CategoryEntity> Categories => Set<CategoryEntity>();
-
-    public DbSet<ShoppingSessionEntity> ShoppingSessions => Set<ShoppingSessionEntity>();
-    public DbSet<CartItemEntity> CartItems => Set<CartItemEntity>();
-
-    public DbSet<OrderEntity> Orders => Set<OrderEntity>();
-    public DbSet<OrderItemEntity> OrderItems => Set<OrderItemEntity>();
+    public IQueryable<TEntity> Query<TEntity>() where TEntity : class
+        => Set<TEntity>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

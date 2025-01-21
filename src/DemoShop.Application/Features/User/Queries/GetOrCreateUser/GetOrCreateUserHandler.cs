@@ -28,9 +28,7 @@ public sealed class GetOrCreateUserHandler(IMediator mediator, ILogger<GetOrCrea
         {
             result = await mediator
                 .Send(
-                    new CreateUserCommand(request.Identity.KeycloakId, request.Identity.Email,
-                        request.Identity.FirstName,
-                        request.Identity.LastName),
+                    new CreateUserCommand(request.Identity),
                     cancellationToken
                 ).ConfigureAwait(false);
         }

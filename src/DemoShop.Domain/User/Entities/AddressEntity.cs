@@ -1,10 +1,11 @@
 using Ardalis.GuardClauses;
-using DemoShop.Domain.Common.Base;
+using Ardalis.Result;
 using DemoShop.Domain.Common.Interfaces;
+using DemoShop.Domain.User.DTOs;
 
 namespace DemoShop.Domain.User.Entities;
 
-public class AddressEntity : IEntity, IAggregateRoot
+public sealed class AddressEntity : IEntity, IAggregateRoot
 {
     private AddressEntity()
     {
@@ -15,28 +16,50 @@ public class AddressEntity : IEntity, IAggregateRoot
         Country = string.Empty;
     }
 
-    public AddressEntity(int userId, string street, string apartment, string city,
-        string zip, string country, string? region)
+    private AddressEntity(CreateAddressDto createAddress)
     {
-        UserId = userId;
-        Street = Guard.Against.NullOrEmpty(street);
-        Apartment = Guard.Against.NullOrEmpty(apartment);
-        City = Guard.Against.NullOrEmpty(city);
-        Zip = Guard.Against.NullOrEmpty(zip);
-        Country = Guard.Against.NullOrEmpty(country);
-        Region = region;
+        UserId = Guard.Against.NegativeOrZero(createAddress.UserId);
+        Street = Guard.Against.NullOrEmpty(createAddress.Street);
+        Apartment = Guard.Against.NullOrEmpty(createAddress.Apartment);
+        City = Guard.Against.NullOrEmpty(createAddress.City);
+        Zip = Guard.Against.NullOrEmpty(createAddress.Zip);
+        Country = Guard.Against.NullOrEmpty(createAddress.Country);
+        Region = createAddress.Region;
+        CreatedAt = DateTime.UtcNow;
+        ModifiedAt = DateTime.UtcNow;
     }
 
-    public int UserId { get; private init; }
-    public string Street { get; private init; }
-    public string Apartment { get; private init; }
-    public string City { get; private init; }
-    public string Zip { get; private init; }
-    public string Country { get; private init; }
-    public string? Region { get; private init; }
-
-    public UserEntity User { get; init; } = null!;
     public int Id { get; }
-    public DateTime CreatedAt { get; }
-    public DateTime ModifiedAt { get; }
+    public string Street { get; private set; }
+    public string Apartment { get; private set; }
+    public string City { get; private set; }
+    public string Zip { get; private set; }
+    public string Country { get; private set; }
+    public string? Region { get; private set; }
+    public int UserId { get; private set; }
+    public UserEntity User { get; init; } = null!;
+    public DateTime CreatedAt { get; init; }
+    public DateTime ModifiedAt { get; set; }
+
+    public static Result<AddressEntity> Create(CreateAddressDto createAddress)
+    {
+        Guard.Against.Null(createAddress, nameof(createAddress));
+        var address = new AddressEntity(createAddress);
+        return Result.Success(address);
+    }
+
+    public Result Update(UpdateAddressDto updateAddress)
+    {
+        Guard.Against.Null(updateAddress, nameof(updateAddress));
+
+        Street = Guard.Against.NullOrEmpty(updateAddress.Street);
+        Apartment = Guard.Against.NullOrEmpty(updateAddress.Apartment);
+        City = Guard.Against.NullOrEmpty(updateAddress.City);
+        Zip = Guard.Against.NullOrEmpty(updateAddress.Zip);
+        Country = Guard.Against.NullOrEmpty(updateAddress.Country);
+        Region = updateAddress.Region;
+        ModifiedAt = DateTime.UtcNow;
+
+        return Result.Success();
+    }
 }

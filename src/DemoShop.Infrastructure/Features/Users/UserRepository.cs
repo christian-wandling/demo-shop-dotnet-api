@@ -20,7 +20,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         Guard.Against.Null(userEntity, nameof(userEntity));
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
-        var createdUser = await context.Users.AddAsync(userEntity, cancellationToken)
+        var createdUser = await context.Set<UserEntity>().AddAsync(userEntity, cancellationToken)
             .ConfigureAwait(false);
 
         await context.SaveChangesAsync(cancellationToken)
@@ -35,7 +35,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         Guard.Against.Null(predicate, nameof(predicate));
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
-        return await context.Users
+        return await context.Query<UserEntity>()
             .AsNoTracking()
             .Include(u => u.Address)
             .FirstOrDefaultAsync(predicate, cancellationToken)

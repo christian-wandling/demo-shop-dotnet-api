@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Ardalis.Result;
 using DemoShop.Application.Features.Common.Constants;
-using DemoShop.Application.Features.Common.Interfaces;
 using DemoShop.Application.Features.Common.Logging;
+using DemoShop.Domain.Common.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace DemoShop.Application.Features.Common.Models;

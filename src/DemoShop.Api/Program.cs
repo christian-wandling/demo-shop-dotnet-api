@@ -19,18 +19,18 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
+    .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
     .Enrich.FromLogContext()
-    .Enrich.WithThreadId()
-    .Enrich.WithEnvironmentName()
     .WriteTo.Console(
-        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}",
-        formatProvider: CultureInfo.InvariantCulture)
-    .WriteTo.Conditional(
-        _ => builder.Environment.IsDevelopment(),
-        wt => wt.Debug(formatProvider: CultureInfo.InvariantCulture)
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {NewLine}{Exception}",
+        formatProvider: CultureInfo.InvariantCulture
     )
+    .WriteTo.Logger(lc => lc
+        .Filter.ByIncludingOnly(evt => evt.Level == LogEventLevel.Error)
+        .WriteTo.File("logs/errors-.txt",
+            formatProvider: CultureInfo.InvariantCulture,
+            rollingInterval: RollingInterval.Day))
     .WriteTo.Sentry(o =>
     {
         o.Dsn = builder.Configuration["Sentry:Dsn"];

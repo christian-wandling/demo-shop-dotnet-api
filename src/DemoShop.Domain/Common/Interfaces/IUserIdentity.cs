@@ -1,4 +1,4 @@
-namespace DemoShop.Application.Features.Common.Interfaces;
+namespace DemoShop.Domain.Common.Interfaces;
 
 public interface IUserIdentity
 {

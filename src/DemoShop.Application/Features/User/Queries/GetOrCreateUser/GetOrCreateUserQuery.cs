@@ -1,5 +1,6 @@
 using Ardalis.Result;
 using DemoShop.Application.Features.Common.Interfaces;
+using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.User.Entities;
 using MediatR;
 
