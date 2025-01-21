@@ -1,6 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Domain.Common.Interfaces;
+using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.Session.Entities;
 
 namespace DemoShop.Domain.User.Entities;
@@ -8,7 +9,7 @@ namespace DemoShop.Domain.User.Entities;
 public sealed class UserEntity : IEntity, ISoftDeletable, IAggregateRoot
 {
     private readonly List<ShoppingSessionEntity> _shoppingSessions = [];
-    private readonly List<Order.Entities.OrderEntity> _orders = [];
+    private readonly List<OrderEntity> _orders = [];
 
     private UserEntity()
     {
@@ -21,9 +22,9 @@ public sealed class UserEntity : IEntity, ISoftDeletable, IAggregateRoot
     private UserEntity(Guid keycloakUserId, string email, string firstname, string lastname)
     {
         KeycloakUserId = Guard.Against.Default(keycloakUserId, nameof(keycloakUserId));
-        Email = Guard.Against.NullOrEmpty(email, nameof(email));
-        Firstname = Guard.Against.NullOrEmpty(firstname, nameof(firstname));
-        Lastname = Guard.Against.NullOrEmpty(lastname, nameof(lastname));
+        Email = Guard.Against.NullOrWhiteSpace(email, nameof(email));
+        Firstname = Guard.Against.NullOrWhiteSpace(firstname, nameof(firstname));
+        Lastname = Guard.Against.NullOrWhiteSpace(lastname, nameof(lastname));
     }
 
     public Guid KeycloakUserId { get; private init; }
@@ -34,10 +35,13 @@ public sealed class UserEntity : IEntity, ISoftDeletable, IAggregateRoot
     public AddressEntity? Address { get; private set; }
 
     public IReadOnlyCollection<ShoppingSessionEntity> ShoppingSessions => _shoppingSessions.AsReadOnly();
-    public IReadOnlyCollection<Order.Entities.OrderEntity> Orders => _orders.AsReadOnly();
+    public IReadOnlyCollection<OrderEntity> Orders => _orders.AsReadOnly();
 
-    public bool Deleted { get; set; }
+    public int Id { get; }
+    public DateTime CreatedAt { get; }
+    public DateTime ModifiedAt { get; }
     public DateTime? DeletedAt { get; set; }
+    public bool Deleted { get; set; }
 
     public static Result<UserEntity> Create(Guid keycloakUserId, string email, string firstname, string lastname)
     {
@@ -57,8 +61,4 @@ public sealed class UserEntity : IEntity, ISoftDeletable, IAggregateRoot
         Address = new AddressEntity(Id, street, apartment, city, zip, country, region);
         return Result.Success(Address);
     }
-
-    public int Id { get; }
-    public DateTime CreatedAt { get; }
-    public DateTime ModifiedAt { get; }
 }

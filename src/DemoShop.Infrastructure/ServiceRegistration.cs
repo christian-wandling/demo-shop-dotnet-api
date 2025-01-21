@@ -5,6 +5,7 @@ using DemoShop.Domain.Session.Interfaces;
 using DemoShop.Domain.User.Interfaces;
 using DemoShop.Infrastructure.Common.Persistence;
 using DemoShop.Infrastructure.Features.Orders;
+using DemoShop.Infrastructure.Features.Products;
 using DemoShop.Infrastructure.Features.Products.Persistence;
 using DemoShop.Infrastructure.Features.Sessions;
 using DemoShop.Infrastructure.Features.Users;
