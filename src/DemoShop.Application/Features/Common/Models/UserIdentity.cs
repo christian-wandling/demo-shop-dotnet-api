@@ -30,35 +30,25 @@ public sealed record UserIdentity : IUserIdentity
             return Result<IUserIdentity>.Unauthorized();
         }
 
-        var claims = principal.Claims.ToDictionary(c => c.Type, c => c.Value);
-        logger.LogIdentityClaimsExtracted();
-
-        return TryCreateFromClaims(claims, logger);
-    }
-
-    private static Result<IUserIdentity> TryCreateFromClaims(Dictionary<string, string> claims,
-        ILogger<UserIdentity> logger)
-    {
-        if (!ValidateClaims(claims))
+        if (!ClaimRequirements.HasRequiredClaims(principal, out var claimValues))
         {
-            logger.LogIdentityClaimsInvalid("Missing required claims");
+            logger.LogIdentityClaimsInvalid($"Missing required claims");
             return Result<IUserIdentity>.Unauthorized("Missing required claims");
         }
 
+        if (!Guid.TryParse(claimValues[KeycloakClaimTypes.KeycloakId], out var parsedKeycloakId))
+        {
+            logger.LogIdentityClaimsInvalid("Invalid KeycloakId format");
+            return Result<IUserIdentity>.Unauthorized("Invalid KeycloakId format");
+        }
+
         var identity = new UserIdentity(
-            claims[KeycloakClaimTypes.Email],
-            Guid.Parse(claims[KeycloakClaimTypes.KeycloakId]),
-            claims[KeycloakClaimTypes.GivenName],
-            claims[KeycloakClaimTypes.FamilyName]);
+            claimValues[KeycloakClaimTypes.Email],
+            parsedKeycloakId,
+            claimValues[KeycloakClaimTypes.GivenName],
+            claimValues[KeycloakClaimTypes.FamilyName]);
 
         logger.LogIdentityCreated(identity.Email);
         return Result<IUserIdentity>.Success(identity);
     }
-
-    private static bool ValidateClaims(Dictionary<string, string> claims) =>
-        claims.ContainsKey(KeycloakClaimTypes.Email) &&
-        claims.ContainsKey(KeycloakClaimTypes.KeycloakId) &&
-        claims.ContainsKey(KeycloakClaimTypes.GivenName) &&
-        claims.ContainsKey(KeycloakClaimTypes.FamilyName) &&
-        Guid.TryParse(claims[KeycloakClaimTypes.KeycloakId], out _);
 }

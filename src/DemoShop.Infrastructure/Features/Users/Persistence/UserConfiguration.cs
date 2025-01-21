@@ -17,7 +17,11 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.ToTable("User");
 
         builder.Property(u => u.KeycloakUserId)
-            .IsRequired();
+            .IsRequired()
+            .HasConversion(
+                guid => guid.ToString(),
+                str => Guid.Parse(str)
+            );
 
         builder.HasIndex(u => u.KeycloakUserId)
             .IsUnique();
@@ -39,7 +43,7 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.HasOne(u => u.Address)
             .WithOne(a => a.User)
             .HasForeignKey<AddressEntity>(a => a.UserId)
-            .IsRequired(false);
+            .IsRequired();
 
         builder.HasMany(u => u.ShoppingSessions)
             .WithOne(s => s.User)

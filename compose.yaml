@@ -12,9 +12,10 @@
             - ASPNETCORE_ENVIRONMENT=Development
             - ASPNETCORE_URLS=http://+:8080
             - SENTRY__DSN=${SENTRY_DSN}
-            - KEYCLOAK__AUTHORITY=${KEYCLOAK_URL}
-            - KEYCLOAK__CLIENTID=${KEYCLOAK_CLIENT}
-            - CONNECTIONSTRINGS__DEFAULTCONNECTION=${DATABASE_URL}
+            - KEYCLOAK__REALM=${KEYCLOAK_REALM}
+            - KEYCLOAK__RESOURCE=${KEYCLOAK_CLIENT}
+            - KEYCLOAK__AUTHSERVERURL=${KEYCLOAK_URL}
+            - CONNECTIONSTRINGS__DEFAULTCONNECTION=${DB_CONNECTION}
         networks:
             - shared
         volumes:

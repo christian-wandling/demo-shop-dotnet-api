@@ -1,8 +1,9 @@
 using System.Linq.Expressions;
+using DemoShop.Domain.Common.Interfaces;
 
 namespace DemoShop.Domain.Common.Base;
 
-public abstract class Specification<T> where T : Entity
+public abstract class Specification<T> where T : IEntity
 {
     private readonly List<Expression<Func<T, bool>>> _criteria = [];
     private readonly List<Expression<Func<T, object>>> _includes = [];

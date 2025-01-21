@@ -12,7 +12,7 @@
     <PackageReference Include="Ardalis.GuardClauses" Version="5.0.0"/>
     <PackageReference Include="Ardalis.Result" Version="10.1.0"/>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0"/>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2"/>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
     <PackageReference Include="Roslynator.Analyzers" Version="4.12.10">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>

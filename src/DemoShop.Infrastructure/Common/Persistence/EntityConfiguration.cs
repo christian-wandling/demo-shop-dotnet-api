@@ -1,5 +1,5 @@
 using Ardalis.GuardClauses;
-using DemoShop.Domain.Common.Base;
+using DemoShop.Domain.Common.Interfaces;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -7,7 +7,7 @@ namespace DemoShop.Infrastructure.Common.Persistence;
 
 public static class BaseEntityConfiguration
 {
-    public static void Configure<T>(EntityTypeBuilder<T> builder) where T : Entity
+    public static void Configure<T>(EntityTypeBuilder<T> builder) where T : class, IEntity
     {
         Guard.Against.Null(builder, nameof(builder));
 
@@ -19,7 +19,7 @@ public static class BaseEntityConfiguration
         builder.Property(e => e.ModifiedAt).IsRequired();
     }
 
-    public static void ConfigureWithSoftDelete<T>(EntityTypeBuilder<T> builder) where T : EntitySoftDelete
+    public static void ConfigureWithSoftDelete<T>(EntityTypeBuilder<T> builder) where T : class, IEntity, ISoftDeletable
     {
         Guard.Against.Null(builder, nameof(builder));
 

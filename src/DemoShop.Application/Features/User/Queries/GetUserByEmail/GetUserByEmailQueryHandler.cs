@@ -1,6 +1,7 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Application.Features.User.Logging;
+using DemoShop.Domain.User.Entities;
 using DemoShop.Domain.User.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -8,9 +9,9 @@ using Microsoft.Extensions.Logging;
 namespace DemoShop.Application.Features.User.Queries.GetUserByEmail;
 
 public sealed class GetUserByEmailQueryHandler(IUserRepository repository, ILogger<GetUserByEmailQueryHandler> logger)
-    : IRequestHandler<GetUserByEmailQuery, Result<Domain.User.Entities.UserEntity>?>
+    : IRequestHandler<GetUserByEmailQuery, Result<UserEntity>>
 {
-    public async Task<Result<Domain.User.Entities.UserEntity>?> Handle(GetUserByEmailQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserEntity>> Handle(GetUserByEmailQuery request, CancellationToken cancellationToken)
     {
         Guard.Against.Null(request, nameof(request));
 
@@ -19,10 +20,10 @@ public sealed class GetUserByEmailQueryHandler(IUserRepository repository, ILogg
         if (user is null)
         {
             logger.LogUserNotFound(request.Email);
-            return Result<Domain.User.Entities.UserEntity>.Error("Failed to create user");
+            return Result<UserEntity>.Error("Failed to create user");
         }
 
         logger.LogUserFound($"{user.Id}");
-        return Result<Domain.User.Entities.UserEntity>.Success(user);
+        return Result<UserEntity>.Success(user);
     }
 }

@@ -1,9 +1,10 @@
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Base;
+using DemoShop.Domain.Common.Interfaces;
 
 namespace DemoShop.Domain.User.Entities;
 
-public class AddressEntity : Entity
+public class AddressEntity : IEntity, IAggregateRoot
 {
     private AddressEntity()
     {
@@ -34,5 +35,8 @@ public class AddressEntity : Entity
     public string Country { get; private init; }
     public string? Region { get; private init; }
 
-    public UserEntity? User { get; init; }
+    public UserEntity User { get; init; } = null!;
+    public int Id { get; }
+    public DateTime CreatedAt { get; }
+    public DateTime ModifiedAt { get; }
 }

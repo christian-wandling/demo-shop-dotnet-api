@@ -2,8 +2,8 @@ namespace DemoShop.Application.Features.Common.Constants;
 
 public static class KeycloakClaimTypes
 {
-    public const string Email = "email";
-    public const string KeycloakId = "sub";
-    public const string GivenName = "given_name";
-    public const string FamilyName = "family_name";
+    public const string Email = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
+    public const string KeycloakId = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+    public const string GivenName = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname";
+    public const string FamilyName = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname";
 }

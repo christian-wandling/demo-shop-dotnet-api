@@ -1,4 +1,5 @@
 using Ardalis.Result;
+using DemoShop.Domain.User.Entities;
 using MediatR;
 
 namespace DemoShop.Application.Features.User.Commands.CreateUser;
@@ -8,4 +9,4 @@ public sealed record CreateUserCommand(
     string Email,
     string Firstname,
     string Lastname
-) : IRequest<Result<Domain.User.Entities.UserEntity>?>;
+) : IRequest<Result<UserEntity>>;

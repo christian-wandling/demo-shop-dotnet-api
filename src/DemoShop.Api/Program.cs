@@ -1,12 +1,14 @@
+using System.Globalization;
 using Asp.Versioning;
 using DemoShop.Infrastructure;
 using DemoShop.Application;
-using DemoShop.Application.Features.Common.Constants;
 using DemoShop.Application.Features.Common.Interfaces;
 using DemoShop.Infrastructure.Common.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using Keycloak.AuthServices.Authentication;
 using Microsoft.OpenApi.Models;
+using Serilog;
+using Serilog.Events;
+using ServiceRegistration = DemoShop.Application.ServiceRegistration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,37 +18,48 @@ builder.Configuration
     .AddUserSecrets<Program>()
     .AddEnvironmentVariables();
 
-builder.WebHost.UseSentry(options =>
-{
-    options.Dsn = builder.Configuration["Sentry:Dsn"];
-    options.Debug = builder.Environment.IsDevelopment();
-    options.TracesSampleRate = 1.0;
-});
-
-builder.Services.AddAuthentication(options =>
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .Enrich.FromLogContext()
+    .Enrich.WithThreadId()
+    .Enrich.WithEnvironmentName()
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}",
+        formatProvider: CultureInfo.InvariantCulture)
+    .WriteTo.Conditional(
+        _ => builder.Environment.IsDevelopment(),
+        wt => wt.Debug(formatProvider: CultureInfo.InvariantCulture)
+    )
+    .WriteTo.Sentry(o =>
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        o.Dsn = builder.Configuration["Sentry:Dsn"];
+        o.Debug = false;
+        o.AutoSessionTracking = true;
+        o.IsGlobalModeEnabled = false;
+        o.TracesSampleRate = builder.Environment.IsProduction() ? 0.5 : 1.0;
+        o.MinimumBreadcrumbLevel = LogEventLevel.Debug;
+        o.MinimumEventLevel = LogEventLevel.Warning;
     })
-    .AddJwtBearer(options =>
-    {
-        options.Authority = builder.Configuration["Keycloak:Authority"];
-        options.Audience = builder.Configuration["Keycloak:ClientId"];
-        options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            RoleClaimType = "roles",
-            NameClaimType = KeycloakClaimTypes.Email
-        };
-    });
+    .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
+builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("RequireBuyProductsRole", policy =>
-        policy.RequireClaim("realm_access_roles", "realm:buy_products"));
+        policy.RequireAssertion(context =>
+            context.User.HasClaim(c =>
+                c.Type == "realm_access" &&
+                c.Value.Contains("buy_products", StringComparison.OrdinalIgnoreCase)
+            )
+        )
+    );
+
+builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssembly(typeof(ServiceRegistration).Assembly); });
 
 builder.Services.AddCors(
     options =>
@@ -88,18 +101,6 @@ builder.Services.AddSwaggerGen(
     });
 
 builder.Services.AddProblemDetails();
-builder.Services.AddLogging(logging =>
-{
-    logging.ClearProviders();
-
-    if (builder.Environment.IsDevelopment())
-    {
-        logging.AddConsole();
-        logging.AddDebug();
-    }
-
-    logging.AddSentry(options => options.MinimumEventLevel = LogLevel.Error);
-});
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
@@ -111,6 +112,8 @@ builder.Services
     .AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
 
 builder.Services.AddHealthChecks();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 

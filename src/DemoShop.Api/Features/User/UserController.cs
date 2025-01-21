@@ -13,6 +13,7 @@ namespace DemoShop.Api.Features.User;
 
 [ApiVersion("1.0")]
 [Authorize(Policy = "RequireBuyProductsRole")]
+[Route("api/v{version:apiVersion}/users")]
 public sealed class UserController(
     IMediator mediator,
     IMapper mapper,
