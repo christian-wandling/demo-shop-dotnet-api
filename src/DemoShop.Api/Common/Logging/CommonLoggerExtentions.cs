@@ -9,13 +9,13 @@ public static class CommonLoggerExtensions
     private static readonly Action<ILogger, string, string, Exception?> ResultError =
         LoggerMessage.Define<string, string>(
             LogLevel.Warning,
-            LoggerEventIds.ResultError,
+            LoggerEventIds.ApiResultError,
             "{Operation} failed: {Errors}");
 
     private static readonly Action<ILogger, string, Exception?> ResultSuccess =
         LoggerMessage.Define<string>(
             LogLevel.Information,
-            LoggerEventIds.ResultError,
+            LoggerEventIds.ApiResultError,
             "{Operation} completed successfully");
 
     public static void LogResult<T>(

@@ -5,5 +5,4 @@ namespace DemoShop.Domain.User.Logging;
 
 public static class UserLoggerExtensions
 {
-
 }

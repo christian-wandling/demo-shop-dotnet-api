@@ -8,55 +8,55 @@ public static class UserLoggerExtensions
     private static readonly Action<ILogger, string, Exception?> GetUserByIdStarted =
         LoggerMessage.Define<string>(
             LogLevel.Information,
-            LoggerEventIds.GetUserByIdStarted,
+            LoggerEventIds.InfraGetUserByIdStarted,
             "Getting user with id {Id}");
 
     private static readonly Action<ILogger, string, Exception?> GetUserByIdSuccess =
         LoggerMessage.Define<string>(
             LogLevel.Information,
-            LoggerEventIds.GetUserByIdSuccess,
+            LoggerEventIds.InfraGetUserByIdSuccess,
             "Retrieved user with id {Id}");
 
     private static readonly Action<ILogger, string, Exception?> GetUserByIdFailed =
         LoggerMessage.Define<string>(
             LogLevel.Information,
-            LoggerEventIds.GetUserByIdFailed,
+            LoggerEventIds.InfraGetUserByIdFailed,
             "Error getting user with id {Id}");
 
     private static readonly Action<ILogger, string, Exception?> GetUserByEmailStarted =
         LoggerMessage.Define<string>(
             LogLevel.Information,
-            LoggerEventIds.GetUserByEmailStarted,
+            LoggerEventIds.InfraGetUserByEmailStarted,
             "Getting user with email {Email}");
 
     private static readonly Action<ILogger, string, Exception?> GetUserByEmailSuccess =
         LoggerMessage.Define<string>(
             LogLevel.Information,
-            LoggerEventIds.GetUserByEmailSuccess,
+            LoggerEventIds.InfraGetUserByEmailSuccess,
             "Retrieved user with email {Email}");
 
     private static readonly Action<ILogger, string, Exception?> GetUserByEmailFailed =
         LoggerMessage.Define<string>(
             LogLevel.Information,
-            LoggerEventIds.GetUserByEmailFailed,
+            LoggerEventIds.InfraGetUserByEmailFailed,
             "Error getting user with email {Email}");
 
     private static readonly Action<ILogger, string, Exception?> CreateUserStarted =
         LoggerMessage.Define<string>(
             LogLevel.Information,
-            LoggerEventIds.CreateUserStarted,
+            LoggerEventIds.InfraCreateUserStarted,
             "Creating user with email {Email}");
 
     private static readonly Action<ILogger, string, Exception?> CreateUserSuccess =
         LoggerMessage.Define<string>(
             LogLevel.Information,
-            LoggerEventIds.CreateUserSuccess,
+            LoggerEventIds.InfraCreateUserSuccess,
             "Created user with id {Id}");
 
     private static readonly Action<ILogger, string, Exception?> CreateUserFailed =
         LoggerMessage.Define<string>(
             LogLevel.Information,
-            LoggerEventIds.CreateUserFailed,
+            LoggerEventIds.InfraCreateUserFailed,
             "Error creating user with email {Email}");
 
     public static void LogCreateUserStarted(this ILogger logger, string email) =>

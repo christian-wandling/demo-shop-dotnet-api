@@ -8,25 +8,25 @@ public static class CommonLoggerExtensions
     private static readonly Action<ILogger, Exception?> IdentityUnauthenticated =
         LoggerMessage.Define(
             LogLevel.Warning,
-            LoggerEventIds.IdentityUnauthenticated,
+            LoggerEventIds.AppIdentityUnauthenticated,
             "User is not authenticated");
 
     private static readonly Action<ILogger, Exception?> IdentityClaimsExtracted =
         LoggerMessage.Define(
             LogLevel.Debug,
-            LoggerEventIds.IdentityClaimsExtracted,
+            LoggerEventIds.AppIdentityClaimsExtracted,
             "Claims extracted for user authentication");
 
     private static readonly Action<ILogger, string, Exception?> IdentityClaimsInvalid =
         LoggerMessage.Define<string>(
             LogLevel.Warning,
-            LoggerEventIds.IdentityClaimsInvalid,
+            LoggerEventIds.AppIdentityClaimsInvalid,
             "Invalid claims: {Error}");
 
     private static readonly Action<ILogger, string, Exception?> IdentityCreated =
         LoggerMessage.Define<string>(
             LogLevel.Information,
-            LoggerEventIds.IdentityCreated,
+            LoggerEventIds.AppIdentityCreated,
             "User identity created for email {Email}");
 
     public static void LogIdentityUnauthenticated(this ILogger logger) =>

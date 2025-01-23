@@ -47,6 +47,30 @@ public static class UserLoggerExtensions
             LoggerEventIds.AppUserNotFound,
             "User not found, creating new user for email {Email}");
 
+    private static readonly Action<ILogger, string, Exception?> UserDeleted =
+        LoggerMessage.Define<string>(
+            LogLevel.Information,
+            LoggerEventIds.AppUserDeleted,
+            "User with ID {UserId} deleted successfully ");
+
+    private static readonly Action<ILogger, string, Exception?> UserRestored =
+        LoggerMessage.Define<string>(
+            LogLevel.Information,
+            LoggerEventIds.AppUserRestored,
+            "User with ID {UserId} restored successfully ");
+
+    private static readonly Action<ILogger, string, Exception?> UserAddressUpdated =
+        LoggerMessage.Define<string>(
+            LogLevel.Information,
+            LoggerEventIds.AppUserAddressUpdated,
+            "Address for user with ID {UserId} updated successfully ");
+
+    private static readonly Action<ILogger, string, Exception?> UserPhoneUpdated =
+        LoggerMessage.Define<string>(
+            LogLevel.Information,
+            LoggerEventIds.AppUserPhoneUpdated,
+            "Phone number for user with ID {UserId} updated successfully ");
+
     public static void LogUserCreateStarted(this ILogger logger, string email) =>
         UserCreateStarted(logger, email, null);
 
@@ -67,4 +91,16 @@ public static class UserLoggerExtensions
 
     public static void LogUserNotFound(this ILogger logger, string email) =>
         UserNotFound(logger, email, null);
+
+    public static void LogUserDeleted(this ILogger logger, string userId) =>
+        UserDeleted(logger, userId, null);
+
+    public static void LogUserRestored(this ILogger logger, string userId) =>
+        UserRestored(logger, userId, null);
+
+    public static void LogUserAddressUpdated(this ILogger logger, string userId) =>
+        UserAddressUpdated(logger, userId, null);
+
+    public static void LogUserPhoneUpdated(this ILogger logger, string userId) =>
+        UserPhoneUpdated(logger, userId, null);
 }
