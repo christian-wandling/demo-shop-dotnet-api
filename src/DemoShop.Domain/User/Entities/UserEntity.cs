@@ -19,20 +19,20 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
 
     private UserEntity()
     {
-        KeycloakUserId = KeycloakUserId.Empty;
+        KeycloakUserId = ValueObjects.KeycloakUserId.Empty;
         Email = EmailAddress.Empty;
         PersonName = PersonName.Empty;
         Audit = Audit.Create();
-        SoftDeleteAudit = SoftDeleteAudit.Create();
+        SoftDelete = SoftDelete.Create();
     }
 
     private UserEntity(IUserIdentity userIdentity)
     {
-        KeycloakUserId = KeycloakUserId.Create(userIdentity.KeycloakId);
+        KeycloakUserId = ValueObjects.KeycloakUserId.Create(userIdentity.KeycloakId);
         Email = EmailAddress.Create(userIdentity.Email);
         PersonName = PersonName.Create(userIdentity.FirstName, userIdentity.LastName);
         Audit = Audit.Create();
-        SoftDeleteAudit = SoftDeleteAudit.Create();
+        SoftDelete = SoftDelete.Create();
     }
 
     public int Id { get; }
@@ -42,7 +42,7 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
     public PhoneNumber? Phone { get; private set; }
     public AddressEntity? Address { get; private set; }
     public Audit Audit { get; private set; }
-    public SoftDeleteAudit SoftDeleteAudit { get; private set; }
+    public SoftDelete SoftDelete { get; private set; }
     public IReadOnlyCollection<OrderEntity> Orders => _orders.AsReadOnly();
     public IReadOnlyCollection<ShoppingSessionEntity> ShoppingSessions => _shoppingSessions.AsReadOnly();
 
@@ -55,13 +55,24 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
         return Result.Success(user);
     }
 
-    public Result MarkAsDeleted()
+    public Result Delete()
     {
-        if (SoftDeleteAudit.IsDeleted)
+        if (SoftDelete.Deleted)
             return Result.Error("User is already deleted");
 
-        SoftDeleteAudit.MarkAsDeleted();
-        this.AddDomainEvent(new UserDeletedDomainEvent(this.Id));
+        SoftDelete.MarkAsDeleted();
+        this.AddDomainEvent(new UserDeletedDomainEvent(Id));
+
+        return Result.Success();
+    }
+
+    public Result Restore()
+    {
+        if (!SoftDelete.Deleted)
+            return Result.Error("User is not deleted");
+
+        SoftDelete.MarkAsDeleted();
+        this.AddDomainEvent(new UserRestoredDomainEvent(Id));
 
         return Result.Success();
     }

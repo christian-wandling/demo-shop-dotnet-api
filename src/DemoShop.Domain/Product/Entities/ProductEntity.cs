@@ -18,7 +18,7 @@ public class ProductEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
         Description = string.Empty;
         Price = 0;
         Audit = Audit.Create();
-        SoftDeleteAudit = SoftDeleteAudit.Create();
+        SoftDelete = SoftDelete.Create();
     }
 
     public ProductEntity(string name, string description, decimal price)
@@ -27,7 +27,7 @@ public class ProductEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
         Description = Guard.Against.NullOrWhiteSpace(description, nameof(description));
         Price = Guard.Against.NegativeOrZero(price, nameof(price));
         Audit = Audit.Create();
-        SoftDeleteAudit = SoftDeleteAudit.Create();
+        SoftDelete = SoftDelete.Create();
     }
 
     public string Name { get; set; }
@@ -40,7 +40,7 @@ public class ProductEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
 
     public int Id { get; }
     public Audit Audit { get; set; }
-    public SoftDeleteAudit SoftDeleteAudit { get; set; }
+    public SoftDelete SoftDelete { get; set; }
 
     public static Result<ProductEntity> Create(string name, string description, decimal price)
     {

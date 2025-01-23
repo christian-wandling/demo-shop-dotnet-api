@@ -10,5 +10,5 @@ public class CategoryEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoo
 
     public ICollection<ProductEntity> Products { get; } = new List<ProductEntity>();
     public required Audit Audit { get; set; }
-    public required SoftDeleteAudit SoftDeleteAudit { get; set; }
+    public required SoftDelete SoftDelete { get; set; }
 }

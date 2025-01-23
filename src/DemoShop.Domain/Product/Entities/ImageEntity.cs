@@ -13,5 +13,5 @@ public class ImageEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
 
     public ProductEntity? Product { get; init; }
     public required Audit Audit { get; set; }
-    public required SoftDeleteAudit SoftDeleteAudit { get; set; }
+    public required SoftDelete SoftDelete { get; set; }
 }

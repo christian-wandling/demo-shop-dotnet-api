@@ -4,5 +4,5 @@ namespace DemoShop.Domain.Common.Interfaces;
 
 public interface ISoftDeletable
 {
-    SoftDeleteAudit SoftDeleteAudit { get; }
+    SoftDelete SoftDelete { get; }
 }

@@ -12,9 +12,9 @@ public class ImageConfiguration : IEntityTypeConfiguration<ImageEntity>
     {
         Guard.Against.Null(builder, nameof(builder));
 
-        BaseEntityConfiguration.Configure(builder);
-        BaseEntityConfiguration.ConfigureAudit(builder);
-        BaseEntityConfiguration.ConfigureSoftDelete(builder);
+        BaseConfigurations.ConfigureEntity(builder);
+        BaseConfigurations.ConfigureAudit(builder);
+        BaseConfigurations.ConfigureSoftDelete(builder);
 
         builder.ToTable("Image");
 

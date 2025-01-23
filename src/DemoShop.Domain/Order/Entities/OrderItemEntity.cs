@@ -16,5 +16,5 @@ public class OrderItemEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRo
 
     public OrderEntity? Order { get; init; }
     public required Audit Audit { get; set; }
-    public required SoftDeleteAudit SoftDeleteAudit { get; set; }
+    public required SoftDelete SoftDelete { get; set; }
 }

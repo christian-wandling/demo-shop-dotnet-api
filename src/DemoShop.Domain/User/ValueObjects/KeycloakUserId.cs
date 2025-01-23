@@ -7,12 +7,17 @@ public sealed record KeycloakUserId : ValueObject
 {
     public Guid Value { get; private set; }
 
+    private KeycloakUserId()
+    {
+        Value = Guid.Empty;
+    }
+
     private KeycloakUserId(Guid value)
     {
         Value = Guard.Against.Default(value, nameof(value));
     }
 
-    public static KeycloakUserId Empty => new(Guid.Empty);
+    public static KeycloakUserId Empty => new();
 
     public static KeycloakUserId Create(Guid id) => new(id);
 

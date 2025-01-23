@@ -1,17 +1,15 @@
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DemoShop.Infrastructure.Common.Persistence;
 
-public static class BaseEntityConfiguration
+public static class BaseConfigurations
 {
-    public static void Configure<T>(EntityTypeBuilder<T> builder) where T : class, IEntity
+    public static void ConfigureEntity<T>(EntityTypeBuilder<T> builder) where T : class, IEntity
     {
         Guard.Against.Null(builder, nameof(builder));
-
         builder.HasKey(e => e.Id);
     }
 
@@ -19,13 +17,15 @@ public static class BaseEntityConfiguration
     {
         Guard.Against.Null(builder, nameof(builder));
 
-        builder.OwnsOne(e => e.Audit, audit =>
+        builder.OwnsOne(e => e.Audit, navigationBuilder =>
         {
-            audit.Property(a => a.CreatedAt)
+            navigationBuilder.WithOwner().HasForeignKey("id");
+
+            navigationBuilder.Property(a => a.CreatedAt)
                 .HasColumnName("createdAt")
                 .IsRequired();
 
-            audit.Property(a => a.ModifiedAt)
+            navigationBuilder.Property(a => a.ModifiedAt)
                 .HasColumnName("updatedAt")
                 .IsRequired();
         });
@@ -35,13 +35,14 @@ public static class BaseEntityConfiguration
     {
         Guard.Against.Null(builder, nameof(builder));
 
-        builder.OwnsOne(e => e.SoftDeleteAudit, audit =>
+        builder.OwnsOne(e => e.SoftDelete, navigationBuilder =>
         {
-            audit.Property(s => s.DeletedAt)
-                .HasColumnName("deletedAt")
-                .IsRequired();
+            navigationBuilder.WithOwner().HasForeignKey("id");
 
-            audit.Property(s => s.IsDeleted)
+            navigationBuilder.Property(e => e.DeletedAt)
+                .HasColumnName("deletedAt");
+
+            navigationBuilder.Property(e => e.Deleted)
                 .HasColumnName("deleted")
                 .IsRequired()
                 .HasDefaultValue(false);

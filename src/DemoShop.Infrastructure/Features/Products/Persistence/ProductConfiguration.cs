@@ -12,9 +12,9 @@ public class ProductConfiguration : IEntityTypeConfiguration<ProductEntity>
     {
         Guard.Against.Null(builder, nameof(builder));
 
-        BaseEntityConfiguration.Configure(builder);
-        BaseEntityConfiguration.ConfigureAudit(builder);
-        BaseEntityConfiguration.ConfigureSoftDelete(builder);
+        BaseConfigurations.ConfigureEntity(builder);
+        BaseConfigurations.ConfigureAudit(builder);
+        BaseConfigurations.ConfigureSoftDelete(builder);
 
         builder.ToTable("Product");
 

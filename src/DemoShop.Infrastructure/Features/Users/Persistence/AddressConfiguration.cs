@@ -12,8 +12,8 @@ public class AddressConfiguration : IEntityTypeConfiguration<AddressEntity>
     {
         Guard.Against.Null(builder, nameof(builder));
 
-        BaseEntityConfiguration.Configure(builder);
-        BaseEntityConfiguration.ConfigureAudit(builder);
+        BaseConfigurations.ConfigureEntity(builder);
+        BaseConfigurations.ConfigureAudit(builder);
 
         builder.ToTable("Address");
 

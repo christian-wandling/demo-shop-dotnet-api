@@ -15,16 +15,14 @@ namespace Ardalis.GuardClauses
         /// <exception cref="ArgumentNullException">Thrown when input is null.</exception>
         /// <exception cref="InvalidPhoneDomainException">Thrown when input is  not a valid phone format.</exception>
         /// <returns>The validated phone number</returns>
-        public static string InvalidPhone(
+        public static string? InvalidPhone(
             this IGuardClause guardClause,
             string? input,
             string? parameterName = null)
         {
-            Guard.Against.NullOrWhiteSpace(input, parameterName);
-
-            if (!MyRegex().IsMatch(input))
+            if (input is not null && !MyRegex().IsMatch(input))
             {
-                throw new InvalidPhoneDomainException($"Email '{input}' is not in a valid format");
+                throw new InvalidPhoneDomainException($"Phone number '{input}' is not in a valid format");
             }
 
             return input;

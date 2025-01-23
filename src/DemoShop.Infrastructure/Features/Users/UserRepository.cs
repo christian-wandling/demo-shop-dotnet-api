@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Ardalis.GuardClauses;
 using DemoShop.Domain.User.Entities;
 using DemoShop.Domain.User.Interfaces;
+using DemoShop.Domain.User.ValueObjects;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +14,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         GetUserAsync(u => u.Id == id, cancellationToken);
 
     public Task<UserEntity?> GetUserByEmailAsync(string email, CancellationToken cancellationToken) =>
-        GetUserAsync(u => u.Email.Value == email, cancellationToken);
+        GetUserAsync(u => u.Email.Equals(EmailAddress.Create(email)), cancellationToken);
 
     public async Task<UserEntity?> CreateUserAsync(UserEntity userEntity, CancellationToken cancellationToken)
     {

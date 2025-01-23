@@ -8,13 +8,19 @@ public sealed record PersonName : ValueObject
     public string Firstname { get; private set; }
     public string Lastname { get; private set;}
 
+    private PersonName()
+    {
+        Firstname = string.Empty;
+        Lastname = string.Empty;
+    }
+
     private PersonName(string firstname, string lastname)
     {
         Firstname = Guard.Against.NullOrWhiteSpace(firstname);
         Lastname = Guard.Against.NullOrWhiteSpace(lastname);
     }
 
-    public static PersonName Empty => new(string.Empty, string.Empty);
+    public static PersonName Empty => new();
 
     public static PersonName Create(string firstname, string lastname) => new(firstname, lastname);
 

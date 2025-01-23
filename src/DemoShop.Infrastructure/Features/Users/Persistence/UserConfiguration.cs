@@ -1,5 +1,6 @@
 using Ardalis.GuardClauses;
 using DemoShop.Domain.User.Entities;
+using DemoShop.Domain.User.ValueObjects;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,50 +13,48 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
     {
         Guard.Against.Null(builder, nameof(builder));
 
-        BaseEntityConfiguration.Configure(builder);
-        BaseEntityConfiguration.ConfigureAudit(builder);
-        BaseEntityConfiguration.ConfigureSoftDelete(builder);
+        BaseConfigurations.ConfigureEntity(builder);
+        BaseConfigurations.ConfigureAudit(builder);
+        BaseConfigurations.ConfigureSoftDelete(builder);
 
         builder.ToTable("User");
 
-        builder.OwnsOne(u => u.KeycloakUserId, keycloakUserId =>
+        builder.Property(u => u.KeycloakUserId)
+            .IsRequired()
+            .HasConversion(
+                keycloakUserId => keycloakUserId.Value.ToString(),
+                dbKeycloakUserId => KeycloakUserId.Create(Guid.Parse(dbKeycloakUserId))
+            );
+
+        builder.HasIndex(u => u.KeycloakUserId)
+            .IsUnique();
+
+        builder.Property(u => u.Email)
+            .IsRequired()
+            .HasConversion(
+                email => email.Value,
+                dbEmail => EmailAddress.Create(dbEmail)
+            );
+
+        builder.HasIndex(u => u.Email)
+            .IsUnique();
+
+        builder.Property(u => u.Phone)
+            .IsRequired(false)
+            .HasConversion(
+                phone => phone == null ? null : phone.Value,
+                dbPhone => PhoneNumber.Create(dbPhone)
+            );
+
+        builder.OwnsOne(u => u.PersonName, navigationBuilder =>
         {
-            keycloakUserId.Property(k => k.Value)
-                .IsRequired()
-                .HasConversion(
-                    guid => guid.ToString(),
-                    str => Guid.Parse(str)
-                );
+            navigationBuilder.WithOwner().HasForeignKey("id");
 
-            keycloakUserId.HasIndex(k => k.Value)
-                .IsUnique();
-        });
+            navigationBuilder.Property(n => n.Firstname)
+                .HasColumnName("firstname");
 
-        builder.OwnsOne(u => u.Email, email =>
-        {
-            email.Property(e => e.Value)
-                .HasColumnName("email")
-                .IsRequired();
-
-            email.HasIndex(e => e.Value)
-                .IsUnique();
-        });
-
-        builder.OwnsOne(u => u.PersonName, name =>
-        {
-            name.Property(n => n.Firstname)
-                .HasColumnName("firstname")
-                .IsRequired();
-            name.Property(n => n.Lastname)
-                .HasColumnName("lastname")
-                .IsRequired();
-        });
-
-        builder.OwnsOne(u => u.Phone, phone =>
-        {
-            phone.Property(p => p.Value)
-                .HasColumnName("phone")
-                .IsRequired();
+            navigationBuilder.Property(n => n.Lastname)
+                .HasColumnName("lastname");
         });
 
         builder.HasOne(u => u.Address)
