@@ -1,4 +1,4 @@
-namespace DemoShop.Domain.Common.Exceptions;
+namespace DemoShop.Domain.Common.Base;
 
 public class DomainException : Exception
 {

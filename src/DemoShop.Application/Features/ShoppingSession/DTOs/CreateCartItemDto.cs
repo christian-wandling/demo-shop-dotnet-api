@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace DemoShop.Application.Features.Session.DTOs;
+namespace DemoShop.Application.Features.ShoppingSession.DTOs;
 
 public class CreateCartItemDto
 {

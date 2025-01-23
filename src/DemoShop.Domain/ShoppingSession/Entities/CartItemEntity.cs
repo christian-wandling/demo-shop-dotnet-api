@@ -1,8 +1,7 @@
-using DemoShop.Domain.Common.Base;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.User.ValueObjects;
 
-namespace DemoShop.Domain.Session.Entities;
+namespace DemoShop.Domain.ShoppingSession.Entities;
 
 public class CartItemEntity : IEntity, IAuditable, IAggregateRoot
 {

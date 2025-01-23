@@ -1,3 +1,4 @@
+using DemoShop.Domain.Common.Base;
 using DemoShop.Domain.Common.Exceptions;
 
 namespace DemoShop.Domain.User.Exceptions;

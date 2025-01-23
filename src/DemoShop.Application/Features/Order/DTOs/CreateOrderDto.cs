@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using DemoShop.Application.Features.Session.DTOs;
+using DemoShop.Application.Features.ShoppingSession.DTOs;
 
 namespace DemoShop.Application.Features.Order.DTOs;
 

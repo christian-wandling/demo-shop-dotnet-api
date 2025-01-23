@@ -1,7 +1,7 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Domain.Common.Interfaces;
-using DemoShop.Domain.Session.Entities;
+using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.User.ValueObjects;
 
 namespace DemoShop.Domain.Product.Entities;

@@ -1,10 +1,10 @@
 using Ardalis.GuardClauses;
-using DemoShop.Domain.Session.Entities;
+using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DemoShop.Infrastructure.Features.Sessions.Persistence;
+namespace DemoShop.Infrastructure.Features.ShoppingSessions.Persistence;
 
 public class ShoppingSessionConfiguration : IEntityTypeConfiguration<ShoppingSessionEntity>
 {

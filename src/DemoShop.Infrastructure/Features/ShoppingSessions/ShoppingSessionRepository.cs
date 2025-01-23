@@ -1,20 +1,14 @@
-using System.Data.Common;
 using System.Linq.Expressions;
 using Ardalis.GuardClauses;
-using Ardalis.Result;
-using DemoShop.Domain.Common.Exceptions;
-using DemoShop.Domain.Common.Logging;
-using DemoShop.Domain.Session.Entities;
-using DemoShop.Domain.Session.Interfaces;
-using DemoShop.Domain.Session.Operations;
-using DemoShop.Infrastructure.Common;
+using DemoShop.Domain.ShoppingSession.Entities;
+using DemoShop.Domain.ShoppingSession.Interfaces;
+using DemoShop.Domain.ShoppingSession.Operations;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
-namespace DemoShop.Infrastructure.Features.Sessions;
+namespace DemoShop.Infrastructure.Features.ShoppingSessions;
 
-public class SessionRepository(ApplicationDbContext context) : IShoppingSessionRepository
+public class ShoppingSessionRepository(ApplicationDbContext context) : IShoppingSessionRepository
 {
     public Task<ShoppingSessionEntity?> GetSessionByIdAsync(int id, CancellationToken cancellationToken) =>
         GetSessionAsync(s => s.Id == id, cancellationToken);

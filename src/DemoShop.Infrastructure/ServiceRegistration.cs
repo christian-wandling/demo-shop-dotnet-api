@@ -1,13 +1,13 @@
 using DemoShop.Application.Features.Common.Interfaces;
 using DemoShop.Domain.Order.Interfaces;
 using DemoShop.Domain.Product.Interfaces;
-using DemoShop.Domain.Session.Interfaces;
+using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.Domain.User.Interfaces;
 using DemoShop.Infrastructure.Common.Persistence;
 using DemoShop.Infrastructure.Features.Orders;
 using DemoShop.Infrastructure.Features.Products;
 using DemoShop.Infrastructure.Features.Products.Persistence;
-using DemoShop.Infrastructure.Features.Sessions;
+using DemoShop.Infrastructure.Features.ShoppingSessions;
 using DemoShop.Infrastructure.Features.Users;
 using DemoShop.Infrastructure.Features.Users.Logging;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +28,7 @@ public static class ServiceRegistration
         services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<IShoppingSessionRepository, SessionRepository>();
+        services.AddScoped<IShoppingSessionRepository, ShoppingSessionRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.Decorate<IUserRepository, LoggingUserRepositoryDecorator>();
 

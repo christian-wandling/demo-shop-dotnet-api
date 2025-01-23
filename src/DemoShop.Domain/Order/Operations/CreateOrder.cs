@@ -1,4 +1,4 @@
-using DemoShop.Domain.Session.Entities;
+using DemoShop.Domain.ShoppingSession.Entities;
 
 namespace DemoShop.Domain.Order.Operations;
 

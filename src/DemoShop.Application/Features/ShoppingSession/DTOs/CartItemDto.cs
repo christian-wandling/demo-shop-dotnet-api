@@ -1,4 +1,4 @@
-namespace DemoShop.Application.Features.Session.DTOs;
+namespace DemoShop.Application.Features.ShoppingSession.DTOs;
 
 public class CartItemDto
 {

@@ -1,8 +1,8 @@
 using DemoShop.Domain.Common.Interfaces;
 
-namespace DemoShop.Domain.Session.Events;
+namespace DemoShop.Domain.ShoppingSession.Events;
 
-public class SessionAddedDomainEvent(int userId, int sessionId ) : IDomainEvent
+public class ShoppingSessionRemovedDomainEvent(int userId, int sessionId ) : IDomainEvent
 {
     public int UserId { get; } = userId;
     public int SessionId { get; } = sessionId;

@@ -4,8 +4,8 @@ using DemoShop.Domain.Common.Base;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.Order.Events;
-using DemoShop.Domain.Session.Entities;
-using DemoShop.Domain.Session.Events;
+using DemoShop.Domain.ShoppingSession.Entities;
+using DemoShop.Domain.ShoppingSession.Events;
 using DemoShop.Domain.User.DTOs;
 using DemoShop.Domain.User.Events;
 using DemoShop.Domain.User.ValueObjects;
@@ -89,7 +89,7 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
         }
 
         _shoppingSessions.Add(session);
-        this.AddDomainEvent(new SessionAddedDomainEvent(Id, session.Id));
+        this.AddDomainEvent(new ShoppingSessionAddedDomainEvent(Id, session.Id));
         return Result.Success();
     }
 

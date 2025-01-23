@@ -1,7 +1,7 @@
-using DemoShop.Domain.Session.Entities;
-using DemoShop.Domain.Session.Operations;
+using DemoShop.Domain.ShoppingSession.Entities;
+using DemoShop.Domain.ShoppingSession.Operations;
 
-namespace DemoShop.Domain.Session.Interfaces;
+namespace DemoShop.Domain.ShoppingSession.Interfaces;
 
 public interface IShoppingSessionRepository
 {

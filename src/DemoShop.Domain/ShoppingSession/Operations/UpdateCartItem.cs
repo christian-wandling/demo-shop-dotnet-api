@@ -1,4 +1,4 @@
-namespace DemoShop.Domain.Session.Operations;
+namespace DemoShop.Domain.ShoppingSession.Operations;
 
 public class UpdateCartItemQuantity
 {
