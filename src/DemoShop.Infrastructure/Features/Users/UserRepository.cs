@@ -13,7 +13,7 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         GetUserAsync(u => u.Id == id, cancellationToken);
 
     public Task<UserEntity?> GetUserByEmailAsync(string email, CancellationToken cancellationToken) =>
-        GetUserAsync(u => u.Email == email, cancellationToken);
+        GetUserAsync(u => u.Email.Value == email, cancellationToken);
 
     public async Task<UserEntity?> CreateUserAsync(UserEntity userEntity, CancellationToken cancellationToken)
     {

@@ -2,7 +2,7 @@ using DemoShop.Domain.User.ValueObjects;
 
 namespace DemoShop.Domain.Common.Interfaces;
 
-public interface ISoftDeletable
+public interface IAuditable
 {
-    SoftDeleteAudit SoftDeleteAudit { get; }
+    Audit Audit { get; }
 }

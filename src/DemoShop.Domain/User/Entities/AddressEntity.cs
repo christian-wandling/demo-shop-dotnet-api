@@ -2,10 +2,11 @@ using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.User.DTOs;
+using DemoShop.Domain.User.ValueObjects;
 
 namespace DemoShop.Domain.User.Entities;
 
-public sealed class AddressEntity : IEntity, IAggregateRoot
+public sealed class AddressEntity : IEntity, IAuditable, IAggregateRoot
 {
     private AddressEntity()
     {
@@ -14,6 +15,7 @@ public sealed class AddressEntity : IEntity, IAggregateRoot
         City = string.Empty;
         Zip = string.Empty;
         Country = string.Empty;
+        Audit = Audit.Create();
     }
 
     private AddressEntity(CreateAddressDto createAddress)
@@ -25,8 +27,7 @@ public sealed class AddressEntity : IEntity, IAggregateRoot
         Zip = Guard.Against.NullOrEmpty(createAddress.Zip);
         Country = Guard.Against.NullOrEmpty(createAddress.Country);
         Region = createAddress.Region;
-        CreatedAt = DateTime.UtcNow;
-        ModifiedAt = DateTime.UtcNow;
+        Audit = Audit.Create();
     }
 
     public int Id { get; }
@@ -38,8 +39,7 @@ public sealed class AddressEntity : IEntity, IAggregateRoot
     public string? Region { get; private set; }
     public int UserId { get; private set; }
     public UserEntity User { get; init; } = null!;
-    public DateTime CreatedAt { get; init; }
-    public DateTime ModifiedAt { get; set; }
+    public Audit Audit { get; set; }
 
     public static Result<AddressEntity> Create(CreateAddressDto createAddress)
     {
@@ -58,7 +58,8 @@ public sealed class AddressEntity : IEntity, IAggregateRoot
         Zip = Guard.Against.NullOrEmpty(updateAddress.Zip);
         Country = Guard.Against.NullOrEmpty(updateAddress.Country);
         Region = updateAddress.Region;
-        ModifiedAt = DateTime.UtcNow;
+
+        Audit.UpdateModified();
 
         return Result.Success();
     }

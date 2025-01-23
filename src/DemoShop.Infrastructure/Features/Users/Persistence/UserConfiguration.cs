@@ -12,33 +12,51 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
     {
         Guard.Against.Null(builder, nameof(builder));
 
-        BaseEntityConfiguration.ConfigureWithSoftDelete(builder);
+        BaseEntityConfiguration.Configure(builder);
+        BaseEntityConfiguration.ConfigureAudit(builder);
+        BaseEntityConfiguration.ConfigureSoftDelete(builder);
 
         builder.ToTable("User");
 
-        builder.Property(u => u.KeycloakUserId)
-            .IsRequired()
-            .HasConversion(
-                guid => guid.ToString(),
-                str => Guid.Parse(str)
-            );
+        builder.OwnsOne(u => u.KeycloakUserId, keycloakUserId =>
+        {
+            keycloakUserId.Property(k => k.Value)
+                .IsRequired()
+                .HasConversion(
+                    guid => guid.ToString(),
+                    str => Guid.Parse(str)
+                );
 
-        builder.HasIndex(u => u.KeycloakUserId)
-            .IsUnique();
+            keycloakUserId.HasIndex(k => k.Value)
+                .IsUnique();
+        });
 
-        builder.Property(u => u.Email)
-            .IsRequired();
+        builder.OwnsOne(u => u.Email, email =>
+        {
+            email.Property(e => e.Value)
+                .HasColumnName("email")
+                .IsRequired();
 
-        builder.HasIndex(u => u.Email)
-            .IsUnique();
+            email.HasIndex(e => e.Value)
+                .IsUnique();
+        });
 
-        builder.Property(u => u.Firstname)
-            .IsRequired();
+        builder.OwnsOne(u => u.PersonName, name =>
+        {
+            name.Property(n => n.Firstname)
+                .HasColumnName("firstname")
+                .IsRequired();
+            name.Property(n => n.Lastname)
+                .HasColumnName("lastname")
+                .IsRequired();
+        });
 
-        builder.Property(u => u.Lastname)
-            .IsRequired();
-
-        builder.Property(u => u.Phone);
+        builder.OwnsOne(u => u.Phone, phone =>
+        {
+            phone.Property(p => p.Value)
+                .HasColumnName("phone")
+                .IsRequired();
+        });
 
         builder.HasOne(u => u.Address)
             .WithOne(a => a.User)

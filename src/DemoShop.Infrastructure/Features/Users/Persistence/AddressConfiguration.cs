@@ -13,6 +13,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<AddressEntity>
         Guard.Against.Null(builder, nameof(builder));
 
         BaseEntityConfiguration.Configure(builder);
+        BaseEntityConfiguration.ConfigureAudit(builder);
 
         builder.ToTable("Address");
 

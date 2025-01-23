@@ -12,8 +12,6 @@ namespace DemoShop.Infrastructure.Common.Persistence;
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : DbContext(options), IApplicationDbContext
 {
-    private const string DeletedAtProperty = nameof(ISoftDeletable.DeletedAt);
-
     public IQueryable<TEntity> Query<TEntity>() where TEntity : class
         => Set<TEntity>();
 
@@ -54,42 +52,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 v => (OrderStatus)Enum.Parse(typeof(OrderStatus), v, true)
             );
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        var utcNow = DateTime.UtcNow;
-        var entries = ChangeTracker.Entries<IEntity>();
-
-        foreach (var entry in entries) UpdateEntityTimestamps(entry, utcNow);
-
-        return base.SaveChangesAsync(cancellationToken);
-    }
-
     public override int SaveChanges() => throw new InvalidOperationException("Use SaveChangesAsync instead");
-
-    private static void UpdateEntityTimestamps(EntityEntry<IEntity> entry, DateTime utcNow)
-    {
-        switch (entry)
-        {
-            case { State: EntityState.Added }:
-                SetCreatedTimestamps(entry, utcNow);
-                break;
-            case { State: EntityState.Modified }:
-                SetModifiedTimestamps(entry, utcNow);
-                break;
-        }
-    }
-
-    private static void SetCreatedTimestamps(EntityEntry<IEntity> entry, DateTime utcNow)
-    {
-        entry.Property(e => e.CreatedAt).CurrentValue = utcNow;
-        entry.Property(e => e.ModifiedAt).CurrentValue = utcNow;
-    }
-
-    private static void SetModifiedTimestamps(EntityEntry<IEntity> entry, DateTime utcNow)
-    {
-        entry.Property(e => e.ModifiedAt).CurrentValue = utcNow;
-
-        if (entry.Entity is ISoftDeletable { Deleted: true, DeletedAt: null })
-            entry.Property(DeletedAtProperty).CurrentValue = utcNow;
-    }
 }

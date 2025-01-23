@@ -1,5 +1,6 @@
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,20 +13,38 @@ public static class BaseEntityConfiguration
         Guard.Against.Null(builder, nameof(builder));
 
         builder.HasKey(e => e.Id);
-        builder.Property(e => e.CreatedAt)
-            .IsRequired()
-            .ValueGeneratedOnAdd()
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
-        builder.Property(e => e.ModifiedAt).IsRequired();
     }
 
-    public static void ConfigureWithSoftDelete<T>(EntityTypeBuilder<T> builder) where T : class, IEntity, ISoftDeletable
+    public static void ConfigureAudit<T>(EntityTypeBuilder<T> builder) where T : class, IAuditable
     {
         Guard.Against.Null(builder, nameof(builder));
 
-        Configure(builder);
-        builder.Property(e => e.Deleted);
-        builder.Property(e => e.DeletedAt)
-            .Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
+        builder.OwnsOne(e => e.Audit, audit =>
+        {
+            audit.Property(a => a.CreatedAt)
+                .HasColumnName("createdAt")
+                .IsRequired();
+
+            audit.Property(a => a.ModifiedAt)
+                .HasColumnName("updatedAt")
+                .IsRequired();
+        });
+    }
+
+    public static void ConfigureSoftDelete<T>(EntityTypeBuilder<T> builder) where T : class, ISoftDeletable
+    {
+        Guard.Against.Null(builder, nameof(builder));
+
+        builder.OwnsOne(e => e.SoftDeleteAudit, audit =>
+        {
+            audit.Property(s => s.DeletedAt)
+                .HasColumnName("deletedAt")
+                .IsRequired();
+
+            audit.Property(s => s.IsDeleted)
+                .HasColumnName("deleted")
+                .IsRequired()
+                .HasDefaultValue(false);
+        });
     }
 }

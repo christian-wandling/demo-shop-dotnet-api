@@ -1,0 +1,36 @@
+using System.Text.RegularExpressions;
+using DemoShop.Domain.User.Exceptions;
+
+// ReSharper disable once CheckNamespace
+namespace Ardalis.GuardClauses
+{
+    public static partial class PhoneGuard
+    {
+        /// <summary>
+        /// Throws an <see cref="ArgumentException"/> if the input string is not a valid phone number.
+        /// </summary>
+        /// <param name="guardClause">The guard clause.</param>
+        /// <param name="input">The phone number to validate.</param>
+        /// <param name="parameterName">Name of the parameter being checked.</param>
+        /// <exception cref="ArgumentNullException">Thrown when input is null.</exception>
+        /// <exception cref="InvalidPhoneDomainException">Thrown when input is  not a valid phone format.</exception>
+        /// <returns>The validated phone number</returns>
+        public static string InvalidPhone(
+            this IGuardClause guardClause,
+            string? input,
+            string? parameterName = null)
+        {
+            Guard.Against.NullOrWhiteSpace(input, parameterName);
+
+            if (!MyRegex().IsMatch(input))
+            {
+                throw new InvalidPhoneDomainException($"Email '{input}' is not in a valid format");
+            }
+
+            return input;
+        }
+
+        [GeneratedRegex(@"^\+?(\d[\d-. ]+)?($[\d-. ]+$)?[\d-. ]+\d$")]
+        private static partial Regex MyRegex();
+    }
+}

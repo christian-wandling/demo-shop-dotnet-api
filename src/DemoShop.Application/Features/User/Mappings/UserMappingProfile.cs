@@ -14,9 +14,9 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.Email, opt =>
                 opt.MapFrom(src => src.Email))
             .ForMember(dest => dest.Firstname, opt =>
-                opt.MapFrom(src => src.Firstname))
+                opt.MapFrom(src => src.PersonName.Firstname))
             .ForMember(dest => dest.Lastname, opt =>
-                opt.MapFrom(src => src.Lastname))
+                opt.MapFrom(src => src.PersonName.Lastname))
             .ForMember(dest => dest.Phone, opt =>
                 opt.MapFrom(src => src.Phone))
             .ForMember(dest => dest.Address, opt =>

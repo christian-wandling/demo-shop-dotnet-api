@@ -57,7 +57,7 @@ public class LoggingUserRepositoryDecorator(
             Guard.Against.Null(userEntity, nameof(userEntity));
             Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
-            logger.LogCreateUserStarted(userEntity.Email);
+            logger.LogCreateUserStarted(userEntity.Email.Value);
             var createdUser = await repository.CreateUserAsync(userEntity, cancellationToken).ConfigureAwait(false);
             logger.LogCreateUserSuccess($"{createdUser!.Id}");
 
@@ -65,7 +65,7 @@ public class LoggingUserRepositoryDecorator(
         }
         catch (Exception ex)
         {
-            logger.LogCreateUserFailed(userEntity?.Email ?? string.Empty, ex);
+            logger.LogCreateUserFailed(userEntity?.Email.Value ?? string.Empty, ex);
             throw;
         }
     }
