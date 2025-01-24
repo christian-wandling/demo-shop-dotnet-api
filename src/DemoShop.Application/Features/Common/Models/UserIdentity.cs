@@ -9,7 +9,7 @@ namespace DemoShop.Application.Features.Common.Models;
 
 public sealed record UserIdentity : IUserIdentity
 {
-    private UserIdentity(string email, Guid keycloakId, string firstName, string lastName)
+    private UserIdentity(string email, string keycloakId, string firstName, string lastName)
     {
         Email = email;
         KeycloakId = keycloakId;
@@ -18,7 +18,7 @@ public sealed record UserIdentity : IUserIdentity
     }
 
     public string Email { get; }
-    public Guid KeycloakId { get; }
+    public string KeycloakId { get; }
     public string FirstName { get; }
     public string LastName { get; }
 
@@ -36,15 +36,9 @@ public sealed record UserIdentity : IUserIdentity
             return Result<IUserIdentity>.Unauthorized("Missing required claims");
         }
 
-        if (!Guid.TryParse(claimValues[KeycloakClaimTypes.KeycloakId], out var parsedKeycloakId))
-        {
-            logger.LogAuthFailed("Invalid KeycloakId format");
-            return Result<IUserIdentity>.Unauthorized("Invalid KeycloakId format");
-        }
-
         var identity = new UserIdentity(
             claimValues[KeycloakClaimTypes.Email],
-            parsedKeycloakId,
+            claimValues[KeycloakClaimTypes.KeycloakId],
             claimValues[KeycloakClaimTypes.GivenName],
             claimValues[KeycloakClaimTypes.FamilyName]);
 

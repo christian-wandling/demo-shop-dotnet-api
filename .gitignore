@@ -1,5 +1,7 @@
-bin/
-obj/
+**/bin/
+**/obj/
+**/logs/
+
 /packages/
 riderModule.iml
 /_ReSharper.Caches/

@@ -22,7 +22,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         optionsBuilder
             .LogTo(Console.WriteLine) // Log EF SQL queries to Console.
-            .EnableSensitiveDataLogging(); // Log sensitive data like parameters.
+            .EnableSensitiveDataLogging() // Log sensitive data like parameters.
+            .UseNpgsql()
+            .UseSnakeCaseNamingConvention();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,15 +35,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         ConfigureEnums(modelBuilder);
         base.OnModelCreating(modelBuilder);
-    }
-
-    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
-    {
-        Guard.Against.Null(configurationBuilder, nameof(configurationBuilder));
-
-        base.ConfigureConventions(configurationBuilder);
-        configurationBuilder.Conventions.Add(_ => new LowerCasePropertiesConvention());
-        configurationBuilder.Conventions.Add(_ => new ModifiedAtPropertyConvention());
     }
 
     private static void ConfigureEnums(ModelBuilder modelBuilder) =>

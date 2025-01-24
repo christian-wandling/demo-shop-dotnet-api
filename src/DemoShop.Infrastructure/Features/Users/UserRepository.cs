@@ -13,21 +13,38 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
     public Task<UserEntity?> GetUserByIdAsync(int id, CancellationToken cancellationToken) =>
         GetUserAsync(u => u.Id == id, cancellationToken);
 
-    public Task<UserEntity?> GetUserByEmailAsync(string email, CancellationToken cancellationToken) =>
-        GetUserAsync(u => u.Email.Equals(EmailAddress.Create(email)), cancellationToken);
+    public Task<UserEntity?> GetUserByKeycloakIdAsync(string keycloakId, CancellationToken cancellationToken) =>
+        GetUserAsync(u => u.KeycloakUserId.Equals(KeycloakUserId.Create(keycloakId)), cancellationToken);
 
-    public async Task<UserEntity?> CreateUserAsync(UserEntity userEntity, CancellationToken cancellationToken)
+    public async Task<UserEntity?> CreateUserAsync(UserEntity user, CancellationToken cancellationToken)
     {
-        Guard.Against.Null(userEntity, nameof(userEntity));
+        Guard.Against.Null(user, nameof(user));
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
-        var createdUser = await context.Set<UserEntity>().AddAsync(userEntity, cancellationToken)
+        var createdUser = await context.Set<UserEntity>().AddAsync(user, cancellationToken)
             .ConfigureAwait(false);
 
         await context.SaveChangesAsync(cancellationToken)
             .ConfigureAwait(false);
 
         return createdUser.Entity;
+    }
+
+    public async Task UpdateUserPhoneAsync(UserEntity user, CancellationToken cancellationToken)
+    {
+        Guard.Against.Null(user, nameof(user));
+        Guard.Against.Null(user.Phone, nameof(user.Phone));
+
+        var rowsAffected = await context.Set<UserEntity>()
+            .Where(u => u.Email.Equals(user.Email))
+            .ExecuteUpdateAsync(s =>
+                s.SetProperty(u => u.Phone, user.Phone), cancellationToken)
+            .ConfigureAwait(false);
+
+        if (rowsAffected == 0)
+        {
+            throw new NotFoundException(nameof(UserEntity), user.Email.Value);
+        }
     }
 
     private async Task<UserEntity?> GetUserAsync(Expression<Func<UserEntity, bool>> predicate,

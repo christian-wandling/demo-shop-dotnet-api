@@ -1,8 +1,9 @@
 using DemoShop.Domain.Common.Base;
+using DemoShop.Domain.Order.Entities;
 
 namespace DemoShop.Domain.Order.Specifications;
 
 public sealed class OrderSpecifications : IOrderSpecifications
 {
-    public Specification<Entities.OrderEntity> GetById(int id, string userEmail) => new OrderByIdSpecification(id, userEmail);
+    public Specification<OrderEntity> GetById(int id, string userEmail) => new OrderByIdSpecification(id, userEmail);
 }

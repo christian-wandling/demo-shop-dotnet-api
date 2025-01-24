@@ -22,8 +22,8 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.Property(u => u.KeycloakUserId)
             .IsRequired()
             .HasConversion(
-                keycloakUserId => keycloakUserId.Value.ToString(),
-                dbKeycloakUserId => KeycloakUserId.Create(Guid.Parse(dbKeycloakUserId))
+                keycloakUserId => keycloakUserId.Value,
+                dbKeycloakUserId => KeycloakUserId.Create(dbKeycloakUserId)
             );
 
         builder.HasIndex(u => u.KeycloakUserId)

@@ -1,7 +1,7 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Application.Features.User.Commands.CreateUser;
-using DemoShop.Application.Features.User.Queries.GetUserByEmail;
+using DemoShop.Application.Features.User.Queries.GetUserByKeycloakId;
 using DemoShop.Domain.User.Entities;
 using MediatR;
 
@@ -17,7 +17,7 @@ public sealed class GetOrCreateUserHandler(IMediator mediator)
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
         var result = await mediator
-            .Send(new GetUserByEmailQuery(request.Identity.Email), cancellationToken)
+            .Send(new GetUserByKeycloakIdQuery(request.Identity.Email), cancellationToken)
             .ConfigureAwait(false);
 
         if (result.IsError())

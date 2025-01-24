@@ -13,8 +13,8 @@ public class ShoppingSessionRepository(ApplicationDbContext context) : IShopping
     public Task<ShoppingSessionEntity?> GetSessionByIdAsync(int id, CancellationToken cancellationToken) =>
         GetSessionAsync(s => s.Id == id, cancellationToken);
 
-    public Task<ShoppingSessionEntity?> GetSessionByEmailAsync(string email, CancellationToken cancellationToken) =>
-        GetSessionAsync(s => s.User!.Email.Value == email, cancellationToken);
+    public Task<ShoppingSessionEntity?> GetSessionByKeycloakIdAsync(string keycloakId, CancellationToken cancellationToken) =>
+        GetSessionAsync(s => s.User!.KeycloakUserId.Value == keycloakId, cancellationToken);
 
     private async Task<ShoppingSessionEntity?> GetSessionAsync(Expression<Func<ShoppingSessionEntity, bool>> predicate,
         CancellationToken cancellationToken)

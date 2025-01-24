@@ -1,6 +1,7 @@
 using System.Reflection;
 using DemoShop.Application.Features.Common.Events;
 using DemoShop.Application.Features.User.Commands.CreateUser;
+using DemoShop.Application.Features.User.Commands.UpdateUserPhone;
 using DemoShop.Domain.Common.Interfaces;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,8 +14,10 @@ public static class ServiceRegistration
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddScoped<IDomainEventDispatcher, DomainEventDispatcher>();
         services.AddScoped<IValidator<CreateUserCommand>, CreateUserValidator>();
+        services.AddScoped<IValidator<UpdateUserPhoneCommand>, UpdateUserPhoneValidator>();
 
         return services;
     }

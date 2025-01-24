@@ -1,8 +1,11 @@
+using DemoShop.Domain.User.Entities;
+
 namespace DemoShop.Domain.User.Interfaces;
 
 public interface IUserRepository
 {
-    Task<Entities.UserEntity?> GetUserByIdAsync(int id, CancellationToken cancellationToken);
-    Task<Entities.UserEntity?> GetUserByEmailAsync(string email, CancellationToken cancellationToken);
-    Task<Entities.UserEntity?> CreateUserAsync(Entities.UserEntity userEntity, CancellationToken cancellationToken);
+    Task<UserEntity?> GetUserByIdAsync(int id, CancellationToken cancellationToken);
+    Task<UserEntity?> GetUserByKeycloakIdAsync(string keycloakId, CancellationToken cancellationToken);
+    Task<UserEntity?> CreateUserAsync(UserEntity user, CancellationToken cancellationToken);
+    Task UpdateUserPhoneAsync(UserEntity user, CancellationToken cancellationToken);
 }

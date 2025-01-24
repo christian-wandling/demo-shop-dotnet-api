@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using DemoShop.Domain.Common.Constants;
 using DemoShop.Domain.User.Exceptions;
 
 // ReSharper disable once CheckNamespace
@@ -20,15 +21,12 @@ namespace Ardalis.GuardClauses
             string? input,
             string? parameterName = null)
         {
-            if (input is not null && !MyRegex().IsMatch(input))
+            if (input is not null && !ValidationConstants.PhoneNumber().IsMatch(input))
             {
                 throw new InvalidPhoneDomainException($"Phone number '{input}' is not in a valid format");
             }
 
             return input;
         }
-
-        [GeneratedRegex(@"^\+?(\d[\d-. ]+)?($[\d-. ]+$)?[\d-. ]+\d$")]
-        private static partial Regex MyRegex();
-    }
+ }
 }

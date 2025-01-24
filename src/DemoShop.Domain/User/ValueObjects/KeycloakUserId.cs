@@ -5,21 +5,21 @@ namespace DemoShop.Domain.User.ValueObjects;
 
 public sealed record KeycloakUserId : ValueObject
 {
-    public Guid Value { get; private set; }
+    public string Value { get; private set; }
 
     private KeycloakUserId()
     {
-        Value = Guid.Empty;
+        Value = string.Empty;
     }
 
-    private KeycloakUserId(Guid value)
+    private KeycloakUserId(string value)
     {
-        Value = Guard.Against.Default(value, nameof(value));
+        Value = Guard.Against.NullOrWhiteSpace(value, nameof(value));
     }
 
     public static KeycloakUserId Empty => new();
 
-    public static KeycloakUserId Create(Guid id) => new(id);
+    public static KeycloakUserId Create(string id) => new(id);
 
     protected override IEnumerable<object> GetEqualityComponents()
     {

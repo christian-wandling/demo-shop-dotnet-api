@@ -48,8 +48,8 @@ public sealed class CreateUserCommandHandler(
 
         if (user is null)
         {
-            logger.LogOperationFailed("Create User", "email", request.UserIdentity.Email, null);
-            return Result<UserEntity>.Error("Failed to create user");
+            logger.LogOperationFailed("Create User", "keycloakId", request.UserIdentity.KeycloakId, null);
+            return Result.Error("Failed to create user");
         }
 
         await eventDispatcher.DispatchEventsAsync(user, cancellationToken).ConfigureAwait(false);
