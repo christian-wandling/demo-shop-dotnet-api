@@ -6,10 +6,8 @@ using DemoShop.Domain.User.Interfaces;
 using DemoShop.Infrastructure.Common.Persistence;
 using DemoShop.Infrastructure.Features.Orders;
 using DemoShop.Infrastructure.Features.Products;
-using DemoShop.Infrastructure.Features.Products.Persistence;
 using DemoShop.Infrastructure.Features.ShoppingSessions;
 using DemoShop.Infrastructure.Features.Users;
-using DemoShop.Infrastructure.Features.Users.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,7 +28,6 @@ public static class ServiceRegistration
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IShoppingSessionRepository, ShoppingSessionRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.Decorate<IUserRepository, LoggingUserRepositoryDecorator>();
 
         return services;
     }

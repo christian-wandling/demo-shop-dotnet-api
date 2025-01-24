@@ -1,5 +1,5 @@
 using Ardalis.GuardClauses;
-using DemoShop.Application.Features.User.Logging;
+using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.User.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -14,7 +14,7 @@ public class UserDeletedHandler(ILogger<UserDeletedHandler> logger)
         Guard.Against.Null(notification, nameof(notification));
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
 
-        logger.LogUserDeleted($"{notification.Id}");
+        logger.LogOperationSuccess("Delete User", "id", $"{notification.Id}");
         return Task.CompletedTask;
     }
 }

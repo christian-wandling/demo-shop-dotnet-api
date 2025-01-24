@@ -1,8 +1,8 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Application.Features.Common.Extensions;
-using DemoShop.Application.Features.User.Logging;
 using DemoShop.Domain.Common.Interfaces;
+using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.User.Entities;
 using DemoShop.Domain.User.Interfaces;
 using FluentValidation;
@@ -24,15 +24,13 @@ public sealed class CreateUserCommandHandler(
         Guard.Against.Null(request, nameof(request));
         Guard.Against.Null(request.UserIdentity, nameof(request.UserIdentity));
 
-        logger.LogUserCreateStarted(request.UserIdentity.Email);
-
         var validationResult = await validator.ValidateAsync(request, cancellationToken)
             .ConfigureAwait(false);
 
         if (!validationResult.IsValid)
         {
             var errors = validationResult.Errors.Select(e => e.ErrorMessage);
-            logger.LogUserCreateValidationFailed(string.Join(", ", errors));
+            logger.LogValidationFailed("Create User", string.Join(", ", errors));
 
             return Result<UserEntity>.Invalid(validationResult.Errors.ToValidationErrors());
         }
@@ -41,7 +39,7 @@ public sealed class CreateUserCommandHandler(
 
         if (!userResult.IsSuccess)
         {
-            logger.LogUserCreateValidationFailed(string.Join(", ", userResult.Errors));
+            logger.LogValidationFailed("Create User", string.Join(", ", userResult.Errors));
             return userResult;
         }
 
@@ -50,7 +48,7 @@ public sealed class CreateUserCommandHandler(
 
         if (user is null)
         {
-            logger.LogUserCreateFailed(request.UserIdentity.Email);
+            logger.LogOperationFailed("Create User", "email", request.UserIdentity.Email, null);
             return Result<UserEntity>.Error("Failed to create user");
         }
 

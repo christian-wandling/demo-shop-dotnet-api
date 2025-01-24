@@ -1,15 +1,13 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Application.Features.User.Commands.CreateUser;
-using DemoShop.Application.Features.User.Logging;
 using DemoShop.Application.Features.User.Queries.GetUserByEmail;
 using DemoShop.Domain.User.Entities;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace DemoShop.Application.Features.User.Queries.GetOrCreateUser;
 
-public sealed class GetOrCreateUserHandler(IMediator mediator, ILogger<GetOrCreateUserHandler> logger)
+public sealed class GetOrCreateUserHandler(IMediator mediator)
     : IRequestHandler<GetOrCreateUserQuery, Result<UserEntity>>
 {
     public async Task<Result<UserEntity>> Handle(GetOrCreateUserQuery request, CancellationToken cancellationToken)
@@ -17,8 +15,6 @@ public sealed class GetOrCreateUserHandler(IMediator mediator, ILogger<GetOrCrea
         Guard.Against.Null(request, nameof(request));
         Guard.Against.Null(request.Identity, nameof(request.Identity));
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
-
-        logger.LogUserGetOrCreateStarted(request.Identity.Email);
 
         var result = await mediator
             .Send(new GetUserByEmailQuery(request.Identity.Email), cancellationToken)

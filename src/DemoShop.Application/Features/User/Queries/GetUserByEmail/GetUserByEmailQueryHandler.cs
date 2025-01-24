@@ -1,6 +1,6 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
-using DemoShop.Application.Features.User.Logging;
+using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.User.Entities;
 using DemoShop.Domain.User.Interfaces;
 using MediatR;
@@ -17,13 +17,10 @@ public sealed class GetUserByEmailQueryHandler(IUserRepository repository, ILogg
 
         var user = await repository.GetUserByEmailAsync(request.Email, cancellationToken).ConfigureAwait(false);
 
-        if (user is null)
-        {
-            logger.LogUserNotFound(request.Email);
-            return Result<UserEntity>.Error("Failed to create user");
-        }
+        if (user is not null)
+            return Result<UserEntity>.Success(user);
 
-        logger.LogUserFound($"{user.Id}");
-        return Result<UserEntity>.Success(user);
+        logger.LogOperationFailed("Get User By Email", "email", request.Email, null);
+        return Result<UserEntity>.Error("User not found");
     }
 }

@@ -1,5 +1,5 @@
 using Ardalis.GuardClauses;
-using DemoShop.Application.Features.User.Logging;
+using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.User.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -15,7 +15,7 @@ public class UserAddressUpdatedHandler(ILogger<UserAddressUpdatedHandler> logger
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
         Guard.Against.Null(notification.NewAddress, nameof(notification.NewAddress));
 
-        logger.LogUserAddressUpdated($"{notification.Id}");
+        logger.LogOperationSuccess("Update user address", "id",$"{notification.Id}");
         return Task.CompletedTask;
     }
 }

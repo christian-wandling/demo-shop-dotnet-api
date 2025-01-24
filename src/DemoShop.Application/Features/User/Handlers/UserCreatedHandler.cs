@@ -1,5 +1,5 @@
 using Ardalis.GuardClauses;
-using DemoShop.Application.Features.User.Logging;
+using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.User.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -14,7 +14,7 @@ public class UserCreatedHandler(ILogger<UserCreatedHandler> logger)
         Guard.Against.Null(notification, nameof(notification));
         Guard.Against.Null(notification.User, nameof(notification.User));
 
-        logger.LogUserCreated($"{notification.User.Id}");
+        logger.LogOperationSuccess("Create User", "id",$"{notification.User.Id}");
         return Task.CompletedTask;
     }
 }
