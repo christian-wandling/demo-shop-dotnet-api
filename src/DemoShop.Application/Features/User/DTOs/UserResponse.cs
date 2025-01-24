@@ -1,6 +1,6 @@
 namespace DemoShop.Application.Features.User.DTOs;
 
-public class UserResponse
+public sealed record UserResponse
 {
     public int Id { get; init; }
     public required string Email { get; init; }

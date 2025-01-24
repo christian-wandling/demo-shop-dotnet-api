@@ -19,7 +19,7 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
 
     private UserEntity()
     {
-        KeycloakUserId = ValueObjects.KeycloakUserId.Empty;
+        KeycloakUserId = KeycloakUserId.Empty;
         Email = EmailAddress.Empty;
         PersonName = PersonName.Empty;
         Audit = Audit.Create();
@@ -28,7 +28,7 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
 
     private UserEntity(IUserIdentity userIdentity)
     {
-        KeycloakUserId = ValueObjects.KeycloakUserId.Create(userIdentity.KeycloakId);
+        KeycloakUserId = KeycloakUserId.Create(userIdentity.KeycloakId);
         Email = EmailAddress.Create(userIdentity.Email);
         PersonName = PersonName.Create(userIdentity.FirstName, userIdentity.LastName);
         Audit = Audit.Create();
