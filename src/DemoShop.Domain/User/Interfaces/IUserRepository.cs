@@ -8,4 +8,5 @@ public interface IUserRepository
     Task<UserEntity?> GetUserByKeycloakIdAsync(string keycloakId, CancellationToken cancellationToken);
     Task<UserEntity?> CreateUserAsync(UserEntity user, CancellationToken cancellationToken);
     Task UpdateUserPhoneAsync(UserEntity user, CancellationToken cancellationToken);
+    Task UpdateUserAddressAsync(UserEntity user, CancellationToken cancellationToken);
 }

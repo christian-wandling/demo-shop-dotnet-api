@@ -49,8 +49,8 @@ public sealed class UpdateUserPhoneCommandHandler(
         }
         catch (NotFoundException)
         {
-            logger.LogOperationFailed("Update User phone", "keycloakId", request.UserIdentity.KeycloakId, null);
-            return Result.Error("Failed to update user");
+            logger.LogOperationFailed("Update user phone", "keycloakId", request.UserIdentity.KeycloakId, null);
+            return Result.Error("Failed to update user phone");
         }
     }
 }
