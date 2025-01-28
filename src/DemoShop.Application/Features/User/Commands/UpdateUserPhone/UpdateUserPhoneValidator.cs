@@ -7,7 +7,7 @@ public sealed class UpdateUserPhoneValidator : AbstractValidator<UpdateUserPhone
 {
     public UpdateUserPhoneValidator()
     {
-        RuleFor(x => x.UserIdentity.KeycloakId)
+        RuleFor(x => x.UserIdentity.KeycloakUserId)
             .NotEmpty();
 
         RuleFor(x => x.NewPhoneNumber)

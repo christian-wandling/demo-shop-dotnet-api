@@ -17,7 +17,7 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
         BaseConfigurations.ConfigureAudit(builder);
         BaseConfigurations.ConfigureSoftDelete(builder);
 
-        builder.ToTable("User");
+        builder.ToTable("user");
 
         builder.Property(u => u.KeycloakUserId)
             .IsRequired()

@@ -39,7 +39,7 @@ public sealed class UpdateUserAddressCommandHandler(
 
         try
         {
-            var user = await repository.GetUserByKeycloakIdAsync(request.UserIdentity.KeycloakId, cancellationToken)
+            var user = await repository.GetUserByKeycloakIdAsync(request.UserIdentity.KeycloakUserId, cancellationToken)
                 .ConfigureAwait(false);
 
             Guard.Against.Null(user, nameof(user));
@@ -80,7 +80,7 @@ public sealed class UpdateUserAddressCommandHandler(
         }
         catch (NotFoundException)
         {
-            logger.LogOperationFailed("Update user address", "keycloakId", request.UserIdentity.KeycloakId, null);
+            logger.LogOperationFailed("Update user address", "keycloakId", request.UserIdentity.KeycloakUserId, null);
             return Result.Error("Failed to update user address");
         }
     }

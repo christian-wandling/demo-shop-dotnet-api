@@ -17,7 +17,7 @@ public sealed class GetOrCreateUserHandler(IMediator mediator)
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
         var result = await mediator
-            .Send(new GetUserByKeycloakIdQuery(request.Identity.Email), cancellationToken)
+            .Send(new GetUserByKeycloakIdQuery(request.Identity.KeycloakUserId), cancellationToken)
             .ConfigureAwait(false);
 
         if (result.IsError())

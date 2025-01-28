@@ -6,7 +6,7 @@ public sealed class CreateUserValidator : AbstractValidator<CreateUserCommand>
 {
     public CreateUserValidator()
     {
-        RuleFor(x => x.UserIdentity.KeycloakId)
+        RuleFor(x => x.UserIdentity.KeycloakUserId)
             .NotEmpty();
 
         RuleFor(x => x.UserIdentity.Email)

@@ -12,13 +12,13 @@ public sealed record UserIdentity : IUserIdentity
     private UserIdentity(string email, string keycloakId, string firstName, string lastName)
     {
         Email = email;
-        KeycloakId = keycloakId;
+        KeycloakUserId = keycloakId;
         FirstName = firstName;
         LastName = lastName;
     }
 
     public string Email { get; }
-    public string KeycloakId { get; }
+    public string KeycloakUserId { get; }
     public string FirstName { get; }
     public string LastName { get; }
 
@@ -38,7 +38,7 @@ public sealed record UserIdentity : IUserIdentity
 
         var identity = new UserIdentity(
             claimValues[KeycloakClaimTypes.Email],
-            claimValues[KeycloakClaimTypes.KeycloakId],
+            claimValues[KeycloakClaimTypes.KeycloakUserId],
             claimValues[KeycloakClaimTypes.GivenName],
             claimValues[KeycloakClaimTypes.FamilyName]);
 

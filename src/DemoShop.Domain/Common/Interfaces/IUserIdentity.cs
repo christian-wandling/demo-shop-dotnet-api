@@ -3,7 +3,7 @@ namespace DemoShop.Domain.Common.Interfaces;
 public interface IUserIdentity
 {
     string Email { get; }
-    string KeycloakId { get; }
+    string KeycloakUserId { get; }
     string FirstName { get; }
     string LastName { get; }
 }

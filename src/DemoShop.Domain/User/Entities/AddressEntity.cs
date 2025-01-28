@@ -6,6 +6,7 @@ using DemoShop.Domain.User.ValueObjects;
 
 namespace DemoShop.Domain.User.Entities;
 
+// TODO check for value objects
 public sealed class AddressEntity : IEntity, IAuditable, IAggregateRoot
 {
     private AddressEntity()
@@ -39,11 +40,17 @@ public sealed class AddressEntity : IEntity, IAuditable, IAggregateRoot
     public string? Region { get; private set; }
     public int UserId { get; private set; }
     public UserEntity User { get; init; } = null!;
-    public Audit Audit { get; set; }
+    public Audit Audit { get; }
 
     public static Result<AddressEntity> Create(CreateAddressDto createAddress)
     {
         Guard.Against.Null(createAddress, nameof(createAddress));
+        Guard.Against.NullOrWhiteSpace(createAddress.Street, nameof(createAddress.Street));
+        Guard.Against.NullOrWhiteSpace(createAddress.Apartment, nameof(createAddress.Apartment));
+        Guard.Against.NullOrWhiteSpace(createAddress.City, nameof(createAddress.City));
+        Guard.Against.NullOrWhiteSpace(createAddress.Country, nameof(createAddress.Country));
+
+
         var address = new AddressEntity(createAddress);
         return Result.Success(address);
     }

@@ -2,11 +2,11 @@ using FluentValidation;
 
 namespace DemoShop.Application.Features.User.Commands.UpdateUserAddress;
 
-public sealed class UpdateUserPhoneValidator : AbstractValidator<UpdateUserAddressCommand>
+public sealed class UpdateUserAddressValidator : AbstractValidator<UpdateUserAddressCommand>
 {
-    public UpdateUserPhoneValidator()
+    public UpdateUserAddressValidator()
     {
-        RuleFor(x => x.UserIdentity.KeycloakId)
+        RuleFor(x => x.UserIdentity.KeycloakUserId)
             .NotEmpty();
 
         RuleFor(x => x.Address)

@@ -19,14 +19,12 @@ public static class BaseConfigurations
 
         builder.OwnsOne(e => e.Audit, navigationBuilder =>
         {
-            navigationBuilder.WithOwner().HasForeignKey("id");
-
             navigationBuilder.Property(a => a.CreatedAt)
-                .HasColumnName("createdAt")
+                .HasColumnName("created_at")
                 .IsRequired();
 
             navigationBuilder.Property(a => a.ModifiedAt)
-                .HasColumnName("updatedAt")
+                .HasColumnName("updated_at")
                 .IsRequired();
         });
     }
@@ -37,10 +35,8 @@ public static class BaseConfigurations
 
         builder.OwnsOne(e => e.SoftDelete, navigationBuilder =>
         {
-            navigationBuilder.WithOwner().HasForeignKey("id");
-
             navigationBuilder.Property(e => e.DeletedAt)
-                .HasColumnName("deletedAt");
+                .HasColumnName("deleted_at");
 
             navigationBuilder.Property(e => e.Deleted)
                 .HasColumnName("deleted")

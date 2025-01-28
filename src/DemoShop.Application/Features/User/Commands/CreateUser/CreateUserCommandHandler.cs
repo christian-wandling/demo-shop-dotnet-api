@@ -48,7 +48,7 @@ public sealed class CreateUserCommandHandler(
 
         if (user is null)
         {
-            logger.LogOperationFailed("Create User", "keycloakId", request.UserIdentity.KeycloakId, null);
+            logger.LogOperationFailed("Create User", "keycloakId", request.UserIdentity.KeycloakUserId, null);
             return Result.Error("Failed to create user");
         }
 

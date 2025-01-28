@@ -24,6 +24,8 @@ public static class ServiceRegistration
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+
+        // TODO check if repositories can do DI with assembly
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IShoppingSessionRepository, ShoppingSessionRepository>();

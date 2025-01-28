@@ -15,7 +15,7 @@ public class AddressConfiguration : IEntityTypeConfiguration<AddressEntity>
         BaseConfigurations.ConfigureEntity(builder);
         BaseConfigurations.ConfigureAudit(builder);
 
-        builder.ToTable("Address");
+        builder.ToTable("address");
 
         builder.HasOne(a => a.User)
             .WithOne(u => u.Address)

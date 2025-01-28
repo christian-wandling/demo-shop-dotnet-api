@@ -9,7 +9,7 @@ public static class ClaimRequirements
     private static readonly IEnumerable<string> RequiredClaims =
     [
         KeycloakClaimTypes.Email,
-        KeycloakClaimTypes.KeycloakId,
+        KeycloakClaimTypes.KeycloakUserId,
         KeycloakClaimTypes.GivenName,
         KeycloakClaimTypes.FamilyName
     ];
