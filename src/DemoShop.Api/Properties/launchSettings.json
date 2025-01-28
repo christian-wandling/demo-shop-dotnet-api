@@ -1,0 +1,33 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "Local": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:8080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "swagger",
+      "dockerNetwork": "shared",
+      "publishAllPorts": true,
+      "dotnetRunMessages": true,
+      "hotReloadEnabled": true,
+      "httpPort": 3000,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://+:8080",
+        "DOTNET_WATCH_RESTART_ON_RUDE_EDIT": "true",
+        "DOTNET_USE_POLLING_FILE_WATCHER": "true",
+        "SENTRY__DSN": "${SENTRY_DSN}",
+        "KEYCLOAK__AUTHORITY": "${KEYCLOAK_URL}",
+        "KEYCLOAK__CLIENTID": "${KEYCLOAK_CLIENT}",
+        "CONNECTIONSTRINGS__DEFAULTCONNECTION": "${DATABASE_URL}"
+      }
+    }
+  }
+}

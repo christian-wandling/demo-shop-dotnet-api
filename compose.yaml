@@ -1,0 +1,38 @@
+﻿services:
+    api:
+        build:
+            context: .
+            dockerfile: src/DemoShop.Api/Dockerfile
+            target: dev
+        command: ["dotnet", "watch", "--no-restore", "run", "--no-restore", "--project", "src/DemoShop.Api/DemoShop.Api.csproj", "--urls", "http://+:8080"]
+
+        ports:
+            - "3000:8080"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_URLS=http://+:8080
+            - SENTRY__DSN=${SENTRY_DSN}
+            - KEYCLOAK__REALM=${KEYCLOAK_REALM}
+            - KEYCLOAK__RESOURCE=${KEYCLOAK_CLIENT}
+            - KEYCLOAK__AUTHSERVERURL=${KEYCLOAK_URL}
+            - CONNECTIONSTRINGS__DEFAULTCONNECTION=${DB_CONNECTION}
+        networks:
+            - shared
+        volumes:
+            - ./:/app
+            - /app/src/DemoShop.Api/bin/
+            - /app/src/DemoShop.Api/obj/
+            - /app/src/DemoShop.Application/bin/
+            - /app/src/DemoShop.Application/obj/
+            - /app/src/DemoShop.Domain/bin/
+            - /app/src/DemoShop.Domain/obj/
+            - /app/src/DemoShop.Infrastructure/bin/
+            - /app/src/DemoShop.Infrastructure/obj/
+            - nuget-packages:/root/.nuget/packages
+
+networks:
+    shared:
+        external: true
+
+volumes:
+    nuget-packages:
