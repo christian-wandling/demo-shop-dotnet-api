@@ -16,12 +16,16 @@ public class ImageConfiguration : IEntityTypeConfiguration<ImageEntity>
         BaseConfigurations.ConfigureAudit(builder);
         BaseConfigurations.ConfigureSoftDelete(builder);
 
-        builder.ToTable("Image");
+        builder.ToTable("image");
 
         builder.Property(i => i.Name)
             .IsRequired();
 
         builder.Property(i => i.Uri)
+            .HasConversion(
+                uri => uri.ToString(),
+                str => new Uri(str)
+            )
             .IsRequired();
 
         builder.HasIndex(i => i.Uri)
