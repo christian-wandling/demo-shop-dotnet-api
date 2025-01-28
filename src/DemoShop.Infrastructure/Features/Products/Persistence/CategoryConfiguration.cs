@@ -16,7 +16,7 @@ public class CategoryConfiguration : IEntityTypeConfiguration<CategoryEntity>
         BaseConfigurations.ConfigureAudit(builder);
         BaseConfigurations.ConfigureSoftDelete(builder);
 
-        builder.ToTable("Category");
+        builder.ToTable("category");
 
         builder.Property(c => c.Name)
             .IsRequired();
