@@ -24,6 +24,18 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.Phone, opt =>
                 opt.MapFrom(src => src.Phone == null ? null : src.Phone.Value));
 
-        CreateMap<AddressEntity, AddressResponse>();
+        CreateMap<AddressEntity, AddressResponse>()
+            .ForMember(dest => dest.Street, opt =>
+                opt.MapFrom(src => src.Street))
+            .ForMember(dest => dest.Apartment, opt =>
+                opt.MapFrom(src => src.Apartment))
+            .ForMember(dest => dest.City, opt =>
+                opt.MapFrom(src => src.City))
+            .ForMember(dest => dest.Zip, opt =>
+                opt.MapFrom(src => src.Zip))
+            .ForMember(dest => dest.Region, opt =>
+                opt.MapFrom(src => src.Region))
+            .ForMember(dest => dest.Country, opt =>
+                opt.MapFrom(src => src.Country));
     }
 }

@@ -88,7 +88,7 @@ public sealed class UpdateUserAddressCommandHandler(
             await repository.UpdateUserAsync(user, cancellationToken).ConfigureAwait(false);
             await eventDispatcher.DispatchEventsAsync(user, cancellationToken).ConfigureAwait(false);
 
-            return Result.Success(mapper.Map<AddressResponse?>(user));
+            return Result.Success(mapper.Map<AddressResponse?>(user.Address));
         }
         catch (NotFoundException)
         {

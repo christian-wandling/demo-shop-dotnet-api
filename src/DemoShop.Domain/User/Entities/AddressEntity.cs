@@ -26,8 +26,8 @@ public sealed class AddressEntity : IEntity, IAuditable
         Apartment = Guard.Against.NullOrEmpty(createAddress.Apartment);
         City = Guard.Against.NullOrEmpty(createAddress.City);
         Zip = Guard.Against.NullOrEmpty(createAddress.Zip);
-        Country = Guard.Against.NullOrEmpty(createAddress.Country);
         Region = createAddress.Region;
+        Country = Guard.Against.NullOrEmpty(createAddress.Country);
         Audit = Audit.Create();
     }
 
@@ -36,8 +36,8 @@ public sealed class AddressEntity : IEntity, IAuditable
     public string Apartment { get; private set; }
     public string City { get; private set; }
     public string Zip { get; private set; }
-    public string Country { get; private set; }
     public string? Region { get; private set; }
+    public string Country { get; private set; }
     public int UserId { get; private set; }
     public UserEntity User { get; init; } = null!;
     public Audit Audit { get; }
