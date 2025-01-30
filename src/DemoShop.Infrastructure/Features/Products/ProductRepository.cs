@@ -15,7 +15,6 @@ public class ProductRepository(ApplicationDbContext context) : IProductRepositor
         Guard.Against.NegativeOrZero(id, nameof(id));
 
         return await context.Query<ProductEntity>()
-            .AsNoTracking()
             .Include(p => p.Categories)
             .Include(p => p.Images)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken)
@@ -24,7 +23,6 @@ public class ProductRepository(ApplicationDbContext context) : IProductRepositor
 
     public async Task<IEnumerable<ProductEntity>> GetAllProductsAsync(CancellationToken cancellationToken) =>
         await context.Query<ProductEntity>()
-            .AsNoTracking()
             .Include(p => p.Categories)
             .Include(p => p.Images)
             .ToListAsync(cancellationToken)

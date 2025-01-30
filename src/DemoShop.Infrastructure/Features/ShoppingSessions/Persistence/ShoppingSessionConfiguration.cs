@@ -15,7 +15,7 @@ public class ShoppingSessionConfiguration : IEntityTypeConfiguration<ShoppingSes
         BaseConfigurations.ConfigureEntity(builder);
         BaseConfigurations.ConfigureAudit(builder);
 
-        builder.ToTable("ShoppingSession");
+        builder.ToTable("shopping_session");
 
         builder.HasOne(s => s.User)
             .WithMany(u => u.ShoppingSessions)
