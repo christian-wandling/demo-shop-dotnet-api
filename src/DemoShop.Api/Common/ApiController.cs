@@ -11,5 +11,6 @@ namespace DemoShop.Api.Common;
 [Produces("application/json")]
 public abstract class ApiController : ControllerBase
 {
+    protected ActionResult ToActionResult(Result result) => result.ToActionResult(this);
     protected ActionResult<T> ToActionResult<T>(Result<T> result) => result.ToActionResult(this);
 }

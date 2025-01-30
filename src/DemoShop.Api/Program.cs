@@ -102,14 +102,12 @@ builder.Services.AddSwaggerGen(
 
 builder.Services.AddProblemDetails();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
 builder.Services.AddControllers();
-
-builder.Services
-    .AddHttpContextAccessor()
-    .AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
 
 builder.Services.AddHealthChecks();
 

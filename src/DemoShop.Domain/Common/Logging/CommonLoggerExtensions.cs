@@ -50,4 +50,16 @@ public static class CommonLoggerExtensions
 
     public static void LogAuthFailed(this ILogger logger, string error) =>
         AuthFailed(logger, error, null);
+
+    private static readonly Action<ILogger, string, Exception?> DomainEvent =
+        LoggerMessage.Define<string>(
+            LogLevel.Information,
+            LoggerEventIds.OperationSuccess,
+            "{Message}");
+
+    public static void LogDomainEvent(
+        this ILogger logger,
+        string message
+    ) =>
+        DomainEvent(logger, message, null);
 }

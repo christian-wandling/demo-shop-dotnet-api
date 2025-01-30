@@ -1,6 +1,6 @@
 using DemoShop.Domain.Common.Base;
 
-namespace DemoShop.Domain.User.ValueObjects;
+namespace DemoShop.Domain.Common.ValueObjects;
 
 public sealed record SoftDelete : ValueObject
 {

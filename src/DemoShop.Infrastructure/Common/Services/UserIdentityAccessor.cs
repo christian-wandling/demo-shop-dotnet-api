@@ -8,10 +8,10 @@ using Microsoft.Extensions.Logging;
 
 namespace DemoShop.Infrastructure.Common.Services;
 
-public sealed class CurrentUserAccessor(IHttpContextAccessor httpContextAccessor, ILogger<UserIdentity> logger)
-    : ICurrentUserAccessor
+public sealed class UserIdentityAccessor(IHttpContextAccessor httpContextAccessor, ILogger<UserIdentity> logger)
+    : IUserIdentityAccessor
 {
-    public Result<IUserIdentity> GetUserIdentity()
+    public Result<IUserIdentity> GetCurrentIdentity()
     {
         var result = UserIdentity.FromClaimsPrincipal(httpContextAccessor.HttpContext?.User, logger);
 

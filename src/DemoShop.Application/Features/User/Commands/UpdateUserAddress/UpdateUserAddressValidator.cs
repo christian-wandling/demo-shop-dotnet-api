@@ -6,33 +6,30 @@ public sealed class UpdateUserAddressValidator : AbstractValidator<UpdateUserAdd
 {
     public UpdateUserAddressValidator()
     {
-        RuleFor(x => x.UserIdentity.KeycloakUserId)
+        RuleFor(x => x.UpdateUserAddress)
             .NotEmpty();
 
-        RuleFor(x => x.Address)
-            .NotEmpty();
-
-        RuleFor(x => x.Address!.Street)
+        RuleFor(x => x.UpdateUserAddress!.Street)
             .NotEmpty()
             .MaximumLength(50);
 
-        RuleFor(x => x.Address!.Apartment)
+        RuleFor(x => x.UpdateUserAddress!.Apartment)
             .NotEmpty()
             .MaximumLength(50);
 
-        RuleFor(x => x.Address!.City)
+        RuleFor(x => x.UpdateUserAddress!.City)
             .NotEmpty()
             .MaximumLength(50);
 
-        RuleFor(x => x.Address!.Zip)
+        RuleFor(x => x.UpdateUserAddress!.Zip)
             .NotEmpty()
             .MaximumLength(20);
 
-        RuleFor(x => x.Address!.Country)
+        RuleFor(x => x.UpdateUserAddress!.Country)
             .NotEmpty()
             .MaximumLength(50);
 
-        RuleFor(x => x.Address!.Region)
+        RuleFor(x => x.UpdateUserAddress!.Region)
             .MaximumLength(50);
     }
 }

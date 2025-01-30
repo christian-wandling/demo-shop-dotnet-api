@@ -56,8 +56,4 @@
     <ProjectReference Include="..\DemoShop.Application\DemoShop.Application.csproj"/>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Common\Logging\" />
-  </ItemGroup>
-
 </Project>

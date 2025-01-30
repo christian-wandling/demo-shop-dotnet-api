@@ -30,38 +30,14 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         return createdUser.Entity;
     }
 
-    public async Task UpdateUserPhoneAsync(UserEntity user, CancellationToken cancellationToken)
+    public async Task UpdateUserAsync(UserEntity user, CancellationToken cancellationToken)
     {
         Guard.Against.Null(user, nameof(user));
-        Guard.Against.Null(user.Phone, nameof(user.Phone));
 
-        var rowsAffected = await context.Set<UserEntity>()
-            .Where(u => u.KeycloakUserId.Equals(user.KeycloakUserId))
-            .ExecuteUpdateAsync(s =>
-                s.SetProperty(u => u.Phone, user.Phone), cancellationToken)
-            .ConfigureAwait(false);
+        var updatedUser = context.Set<UserEntity>().Update(user);
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        if (rowsAffected == 0)
-        {
-            throw new NotFoundException(nameof(UserEntity), user.KeycloakUserId.Value);
-        }
-    }
-
-    public async Task UpdateUserAddressAsync(UserEntity user, CancellationToken cancellationToken)
-    {
-        Guard.Against.Null(user, nameof(user));
-        Guard.Against.Null(user.Address, nameof(user.Address));
-
-        var rowsAffected = await context.Set<UserEntity>()
-            .Where(u => u.KeycloakUserId.Equals(user.KeycloakUserId))
-            .ExecuteUpdateAsync(s =>
-                s.SetProperty(u => u.Address, user.Address), cancellationToken)
-            .ConfigureAwait(false);
-
-        if (rowsAffected == 0)
-        {
-            throw new NotFoundException(nameof(UserEntity), user.KeycloakUserId.Value);
-        }
+        Guard.Against.Null(updatedUser, nameof(updatedUser));
     }
 
     private async Task<UserEntity?> GetUserAsync(Expression<Func<UserEntity, bool>> predicate,
@@ -71,7 +47,6 @@ public class UserRepository(ApplicationDbContext context) : IUserRepository
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
         return await context.Query<UserEntity>()
-            .AsNoTracking()
             .Include(u => u.Address)
             .FirstOrDefaultAsync(predicate, cancellationToken)
             .ConfigureAwait(false);

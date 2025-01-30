@@ -7,10 +7,10 @@ public sealed class UpdateUserPhoneValidator : AbstractValidator<UpdateUserPhone
 {
     public UpdateUserPhoneValidator()
     {
-        RuleFor(x => x.UserIdentity.KeycloakUserId)
-            .NotEmpty();
+        RuleFor(x => x.UpdateUserPhone)
+            .NotNull();
 
-        RuleFor(x => x.NewPhoneNumber)
+        RuleFor(x => x.UpdateUserPhone.Phone)
             .NotEmpty()
             .Matches(ValidationConstants.PhoneNumber())
             .WithMessage("Invalid phone number");

@@ -43,5 +43,7 @@ public static class BaseConfigurations
                 .IsRequired()
                 .HasDefaultValue(false);
         });
+
+        builder.HasQueryFilter(e => !e.SoftDelete.Deleted);
     }
 }

@@ -1,7 +1,8 @@
 using Ardalis.Result;
-using DemoShop.Domain.Common.Interfaces;
+using DemoShop.Application.Features.User.DTOs;
+using DemoShop.Application.Features.User.Interfaces;
 using MediatR;
 
 namespace DemoShop.Application.Features.User.Commands.UpdateUserPhone;
 
-public sealed record UpdateUserPhoneCommand(IUserIdentity UserIdentity, string? NewPhoneNumber) : IRequest<Result<string?>>;
+public sealed record UpdateUserPhoneCommand(IUpdateUserPhoneRequest UpdateUserPhone) : IRequest<Result<UserPhoneResponse>>;

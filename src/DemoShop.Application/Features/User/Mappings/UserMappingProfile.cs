@@ -20,6 +20,10 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.Address, opt =>
                 opt.MapFrom(src => src.Address));
 
+        CreateMap<UserEntity, UserPhoneResponse>()
+            .ForMember(dest => dest.Phone, opt =>
+                opt.MapFrom(src => src.Phone == null ? null : src.Phone.Value));
+
         CreateMap<AddressEntity, AddressResponse>();
     }
 }

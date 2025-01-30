@@ -1,9 +1,7 @@
 using Ardalis.GuardClauses;
 using Asp.Versioning;
-using AutoMapper;
 using DemoShop.Api.Common;
 using DemoShop.Api.Features.User.Models;
-using DemoShop.Application.Features.Common.Interfaces;
 using DemoShop.Application.Features.User.Commands.UpdateUserAddress;
 using DemoShop.Application.Features.User.Commands.UpdateUserPhone;
 using DemoShop.Application.Features.User.DTOs;
@@ -17,76 +15,55 @@ namespace DemoShop.Api.Features.User;
 [ApiVersion("1.0")]
 [Authorize(Policy = "RequireBuyProductsRole")]
 [Route("api/v{version:apiVersion}/users/me")]
-public sealed class UserController(
-    IMediator mediator,
-    IMapper mapper,
-    ICurrentUserAccessor currentUser
-) : ApiController
+public sealed class UserController(IMediator mediator) : ApiController
 {
     [HttpGet("")]
     [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetCurrentUser(CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<UserResponse>> GetCurrentUser(CancellationToken cancellationToken)
     {
-        var userIdentity = currentUser.GetUserIdentity();
-        if (!userIdentity.IsSuccess)
-        {
-            return Unauthorized();
-        }
-
-        var query = new GetOrCreateUserQuery(userIdentity.Value);
+        var query = new GetOrCreateUserQuery();
         var result = await mediator.Send(query, cancellationToken).ConfigureAwait(false);
 
-        return Ok(mapper.Map<UserResponse>(result.Value));
+        return ToActionResult(result);
     }
 
     [HttpPut("phone")]
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(UserPhoneResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdateCurrentUserPhone(
-        [FromBody] UpdateUserPhoneRequest request,
+    public async Task<ActionResult<UserPhoneResponse>> UpdateCurrentUserPhone(
+        [FromBody] UpdateUserPhoneRequest updateUserPhone,
         CancellationToken cancellationToken
     )
     {
-        Guard.Against.Null(request, nameof(request));
+        Guard.Against.Null(updateUserPhone, nameof(updateUserPhone));
 
-        var userIdentity = currentUser.GetUserIdentity();
-        if (!userIdentity.IsSuccess)
-        {
-            return Unauthorized();
-        }
-
-        var command = new UpdateUserPhoneCommand(userIdentity.Value, request.PhoneNumber);
+        var command = new UpdateUserPhoneCommand(updateUserPhone);
         var result = await mediator.Send(command, cancellationToken).ConfigureAwait(false);
 
-        return Ok(mapper.Map<UserResponse>(result.Value));
+        return ToActionResult(result);
     }
 
     [HttpPut("address")]
-    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AddressResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdateCurrentUserAddress(
-        [FromBody] UpdateUserAddressRequest request,
+    public async Task<ActionResult<AddressResponse?>> UpdateCurrentUserAddress(
+        [FromBody] UpdateUserAddressRequest updateUserAddress,
         CancellationToken cancellationToken
     )
     {
-        Guard.Against.Null(request, nameof(request));
+        Guard.Against.Null(updateUserAddress, nameof(updateUserAddress));
 
-        var userIdentity = currentUser.GetUserIdentity();
-        if (!userIdentity.IsSuccess)
-        {
-            return Unauthorized();
-        }
-
-        var command = new UpdateUserAddressCommand(userIdentity.Value, request);
+        var command = new UpdateUserAddressCommand(updateUserAddress);
         var result = await mediator.Send(command, cancellationToken).ConfigureAwait(false);
 
-        return Ok(mapper.Map<UserResponse>(result.Value));
+        return ToActionResult(result);
     }
 }

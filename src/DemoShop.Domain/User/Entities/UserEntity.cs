@@ -1,7 +1,9 @@
 ﻿using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Domain.Common.Base;
+using DemoShop.Domain.Common.Exceptions;
 using DemoShop.Domain.Common.Interfaces;
+using DemoShop.Domain.Common.ValueObjects;
 using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.Order.Events;
 using DemoShop.Domain.ShoppingSession.Entities;
@@ -46,121 +48,55 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
     public IReadOnlyCollection<OrderEntity> Orders => _orders.AsReadOnly();
     public IReadOnlyCollection<ShoppingSessionEntity> ShoppingSessions => _shoppingSessions.AsReadOnly();
 
-    public static Result<UserEntity> Create(IUserIdentity userIdentity)
+    public static UserEntity Create(IUserIdentity userIdentity)
     {
         Guard.Against.Null(userIdentity, nameof(userIdentity));
 
         var user = new UserEntity(userIdentity);
         user.AddDomainEvent(new UserCreatedDomainEvent(user));
-        return Result.Success(user);
+        return user;
     }
 
-    public Result Delete()
+    public void UpdatePhone(string? phone)
     {
-        if (SoftDelete.Deleted)
-            return Result.Error("User is already deleted");
-
-        SoftDelete.MarkAsDeleted();
-        this.AddDomainEvent(new UserDeletedDomainEvent(Id));
-
-        return Result.Success();
-    }
-
-    public Result Restore()
-    {
-        if (!SoftDelete.Deleted)
-            return Result.Error("User is not deleted");
-
-        SoftDelete.MarkAsDeleted();
-        this.AddDomainEvent(new UserRestoredDomainEvent(Id));
-
-        return Result.Success();
-    }
-
-    public Result<string> UpdatePhone(string phone)
-    {
-        Guard.Against.NullOrWhiteSpace(phone, nameof(phone));
-
         var oldPhone = Phone;
         Phone = PhoneNumber.Create(phone);
         Audit.UpdateModified();
 
         this.AddDomainEvent(new UserPhoneUpdatedDomainEvent(Id, Phone, oldPhone));
-
-        return Result.Success();
     }
 
-    public Result AddShoppingSession(ShoppingSessionEntity session)
-    {
-        Guard.Against.Null(session, nameof(session));
-
-        if (_shoppingSessions.Any(s => s.Id == session.Id))
-        {
-            return Result.Error("Shopping session already exists");
-        }
-
-        _shoppingSessions.Add(session);
-        this.AddDomainEvent(new ShoppingSessionCreatedDomainEvent(session));
-        return Result.Success();
-    }
-
-    public Result RemoveShoppingSession(ShoppingSessionEntity session)
-    {
-        Guard.Against.Null(session, nameof(session));
-
-        if (!_shoppingSessions.Contains(session))
-            return Result.NotFound("Shopping session not found");
-
-        _shoppingSessions.Remove(session);
-        this.AddDomainEvent(new ShoppingSessionDeletedDomainEvent(session.Id));
-        return Result.Success();
-    }
-
-    public Result AddOrder(OrderEntity order)
-    {
-        Guard.Against.Null(order, nameof(order));
-
-        if (_orders.Any(o => o.Id == order.Id))
-            return Result.Error("Order already exists");
-
-        _orders.Add(order);
-        return Result.Success();
-    }
-
-    public Result RemoveOrder(OrderEntity order)
-    {
-        Guard.Against.Null(order, nameof(order));
-
-        if (!_orders.Contains(order))
-            return Result.NotFound("Order not found");
-
-        _orders.Remove(order);
-        return Result.Success();
-    }
-
-    public Result<AddressEntity> SetInitialAddress(CreateAddressDto createAddress)
+    public void SetInitialAddress(CreateAddressDto createAddress)
     {
         if (Address != null)
-            return Result.Error("An address already exists. Use UpdateAddress to modify the existing address.");
+        {
+            throw new InvalidOperationException(
+                "Address already set. Use UpdateAddress to modify the existing address."
+            );
+        }
 
-        var addressResult = AddressEntity.Create(createAddress);
-        if (addressResult.IsError())
-            return addressResult;
+        var address = AddressEntity.Create(createAddress);
 
-        Address = addressResult.Value;
+        Guard.Against.Null(address, nameof(address));
+
+        Address = address;
+        Audit.UpdateModified();
+
         this.AddDomainEvent(new UserAddressUpdatedDomainEvent(Id, Address, null));
-        return Result.Success(Address);
     }
 
-    public Result<AddressEntity> UpdateAddress(UpdateAddressDto updateAddress)
+    public void UpdateAddress(UpdateAddressDto updateAddress)
     {
         if (Address == null)
-            return Result.NotFound("No existing address to update. Use AddAddress to add an address.");
+        {
+            throw new InvalidOperationException(
+                "Address not found. Use SetInitalAddress to create an address."
+            );
+        }
 
         var oldAddress = Address;
-        var result = Address.Update(updateAddress);
+        Address.Update(updateAddress);
+        Audit.UpdateModified();
         this.AddDomainEvent(new UserAddressUpdatedDomainEvent(Id, Address, oldAddress));
-
-        return result;
     }
 }

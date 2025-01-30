@@ -1,6 +1,8 @@
+using DemoShop.Application.Features.User.Interfaces;
+
 namespace DemoShop.Api.Features.User.Models;
 
-public sealed record UpdateUserPhoneRequest
+public sealed record UpdateUserPhoneRequest : IUpdateUserPhoneRequest
 {
-    public string? PhoneNumber { get; set; }
+    public string? Phone { get; set; }
 }

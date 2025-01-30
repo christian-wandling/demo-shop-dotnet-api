@@ -1,13 +1,13 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Domain.Common.Interfaces;
+using DemoShop.Domain.Common.ValueObjects;
 using DemoShop.Domain.User.DTOs;
 using DemoShop.Domain.User.ValueObjects;
 
 namespace DemoShop.Domain.User.Entities;
 
-// TODO check for value objects
-public sealed class AddressEntity : IEntity, IAuditable, IAggregateRoot
+public sealed class AddressEntity : IEntity, IAuditable
 {
     private AddressEntity()
     {
@@ -42,7 +42,7 @@ public sealed class AddressEntity : IEntity, IAuditable, IAggregateRoot
     public UserEntity User { get; init; } = null!;
     public Audit Audit { get; }
 
-    public static Result<AddressEntity> Create(CreateAddressDto createAddress)
+    public static AddressEntity Create(CreateAddressDto createAddress)
     {
         Guard.Against.Null(createAddress, nameof(createAddress));
         Guard.Against.NullOrWhiteSpace(createAddress.Street, nameof(createAddress.Street));
@@ -50,12 +50,10 @@ public sealed class AddressEntity : IEntity, IAuditable, IAggregateRoot
         Guard.Against.NullOrWhiteSpace(createAddress.City, nameof(createAddress.City));
         Guard.Against.NullOrWhiteSpace(createAddress.Country, nameof(createAddress.Country));
 
-
-        var address = new AddressEntity(createAddress);
-        return Result.Success(address);
+        return new AddressEntity(createAddress);
     }
 
-    public Result Update(UpdateAddressDto updateAddress)
+    public void Update(UpdateAddressDto updateAddress)
     {
         Guard.Against.Null(updateAddress, nameof(updateAddress));
 
@@ -67,7 +65,5 @@ public sealed class AddressEntity : IEntity, IAuditable, IAggregateRoot
         Region = updateAddress.Region;
 
         Audit.UpdateModified();
-
-        return Result.Success();
     }
 }
