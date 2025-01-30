@@ -1,4 +1,5 @@
 using Ardalis.GuardClauses;
+using DemoShop.Domain.Common.ValueObjects;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ public class CartItemConfiguration : IEntityTypeConfiguration<CartItemEntity>
         BaseConfigurations.ConfigureEntity(builder);
         BaseConfigurations.ConfigureAudit(builder);
 
-        builder.ToTable("CartItem");
+        builder.ToTable("cart_item");
 
         builder.HasOne(c => c.ShoppingSession)
             .WithMany(s => s.CartItems)
@@ -28,6 +29,10 @@ public class CartItemConfiguration : IEntityTypeConfiguration<CartItemEntity>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(c => c.Quantity)
-            .IsRequired();
+            .IsRequired()
+            .HasConversion(
+                quantity => quantity.Value,
+                dbQuantity => Quantity.Create(dbQuantity)
+            );
     }
 }
