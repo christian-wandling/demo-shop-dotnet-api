@@ -20,7 +20,9 @@ public class ProductMappingProfile : Profile
             .ForMember(dest => dest.Categories, opt =>
                 opt.MapFrom(src => src.Categories))
             .ForMember(dest => dest.Images, opt =>
-                opt.MapFrom(src => src.Images));
+                opt.MapFrom(src => src.Images))
+            .ForMember(dest => dest.Thumbnail, opt =>
+                opt.MapFrom(src => src.Images.FirstOrDefault()));
 
         CreateMap<List<ProductEntity>, ProductListResponse>()
             .ForMember(dest => dest.Products, opt =>

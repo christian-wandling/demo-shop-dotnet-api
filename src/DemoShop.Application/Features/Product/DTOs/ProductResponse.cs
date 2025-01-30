@@ -8,4 +8,5 @@ public sealed record ProductResponse
     public required decimal Price { get; init; }
     public required IReadOnlyCollection<string> Categories { get; init; }
     public required IReadOnlyCollection<ImageResponse> Images { get; init; }
+    public required ImageResponse Thumbnail { get; init; }
 }

@@ -1,10 +1,13 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Domain.Common.Base;
+using DemoShop.Domain.Common.Exceptions;
 using DemoShop.Domain.Common.Interfaces;
+using DemoShop.Domain.Common.ValueObjects;
 using DemoShop.Domain.Product.Events;
 using DemoShop.Domain.Product.ValueObjects;
 using DemoShop.Domain.ShoppingSession.Entities;
+using DemoShop.Domain.User.Events;
 using DemoShop.Domain.User.ValueObjects;
 
 namespace DemoShop.Domain.Product.Entities;
@@ -44,6 +47,8 @@ public class ProductEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
     public IReadOnlyCollection<ImageEntity> Images => _images.AsReadOnly();
     public IReadOnlyCollection<CartItemEntity> CartItems => _cartItems.AsReadOnly();
 
+    public string? Thumbnail => _images.FirstOrDefault()?.Uri.ToString();
+
     public static Result<ProductEntity> Create(string name, string description, decimal price)
     {
         var product = new ProductEntity(name, description, price);
@@ -51,73 +56,27 @@ public class ProductEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
         return Result.Success(product);
     }
 
-    public Result Delete()
+    public void Delete()
     {
         if (SoftDelete.Deleted)
-            return Result.Error("Product is already deleted");
+        {
+            throw new AlreadyMarkedAsDeletedException($"Product {Id} has already been marked as deleted");
+        }
 
         SoftDelete.MarkAsDeleted();
+        Audit.UpdateModified();
         this.AddDomainEvent(new ProductDeletedDomainEvent(Id));
-
-        return Result.Success();
     }
 
-    public Result Restore()
+    public void Restore()
     {
-        if (!SoftDelete.Deleted)
-            return Result.Error("Product is not deleted");
+        if (SoftDelete.Deleted)
+        {
+            throw new NotMarkedAsDeletedException($"Product {Id} has not been marked as deleted");
+        }
 
-        SoftDelete.MarkAsDeleted();
+        SoftDelete.Restore();
+        Audit.UpdateModified();
         this.AddDomainEvent(new ProductRestoredDomainEvent(Id));
-
-        return Result.Success();
-    }
-
-    public Result AddCategory(CategoryEntity category)
-    {
-        Guard.Against.Null(category, nameof(category));
-
-        if (_categories.Any(c => c.Id == category.Id))
-        {
-            return Result.Error("Category already exists");
-        }
-
-        _categories.Add(category);
-        return Result.Success();
-    }
-
-    public Result RemoveCategory(CategoryEntity category)
-    {
-        Guard.Against.Null(category, nameof(category));
-
-        if (!_categories.Contains(category))
-            throw new NotFoundException(nameof(category), "Shopping category not found");
-
-        _categories.Remove(category);
-        return Result.Success();
-    }
-
-    public Result AddImage(ImageEntity image)
-    {
-        Guard.Against.Null(image, nameof(image));
-
-        if (_images.Any(c => c.Id == image.Id))
-        {
-            return Result.Error("Image already exists");
-        }
-
-        _images.Add(image);
-        return Result.Success();
-    }
-
-    public Result RemoveImage(ImageEntity image)
-    {
-        Guard.Against.Null(image, nameof(image));
-
-        if (!_images.Contains(image))
-            throw new NotFoundException(nameof(image), "Shopping image not found");
-
-        _images.Remove(image);
-        return Result.Success();
     }
 }

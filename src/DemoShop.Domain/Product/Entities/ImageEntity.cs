@@ -1,7 +1,9 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Domain.Common.Base;
+using DemoShop.Domain.Common.Exceptions;
 using DemoShop.Domain.Common.Interfaces;
+using DemoShop.Domain.Common.ValueObjects;
 using DemoShop.Domain.Product.DTOs;
 using DemoShop.Domain.Product.Events;
 using DemoShop.Domain.User.ValueObjects;
@@ -49,25 +51,27 @@ public class ImageEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
         return Result.Success(image);
     }
 
-    public Result Delete()
+    public void Delete()
     {
         if (SoftDelete.Deleted)
-            return Result.Error("Image is already deleted");
+        {
+            throw new AlreadyMarkedAsDeletedException($"Image {Id} has already been marked as deleted");
+        }
 
         SoftDelete.MarkAsDeleted();
+        Audit.UpdateModified();
         this.AddDomainEvent(new ImageDeletedDomainEvent(Id));
-
-        return Result.Success();
     }
 
-    public Result Restore()
+    public void Restore()
     {
-        if (!SoftDelete.Deleted)
-            return Result.Error("Image is not deleted");
+        if (SoftDelete.Deleted)
+        {
+            throw new NotMarkedAsDeletedException($"Image {Id} has not been marked as deleted");
+        }
 
-        SoftDelete.MarkAsDeleted();
+        SoftDelete.Restore();
+        Audit.UpdateModified();
         this.AddDomainEvent(new ImageRestoredDomainEvent(Id));
-
-        return Result.Success();
     }
 }

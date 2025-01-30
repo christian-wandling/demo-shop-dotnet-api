@@ -1,4 +1,6 @@
 using Ardalis.Result;
+using AutoMapper;
+using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.Domain.Product.Entities;
 using DemoShop.Domain.Product.Interfaces;
 using MediatR;
@@ -6,15 +8,16 @@ using MediatR;
 namespace DemoShop.Application.Features.Product.Queries.GetAllProducts;
 
 public sealed class GetAllProductsQueryHandler(
+    IMapper mapper,
     IProductRepository repository
 )
-    : IRequestHandler<GetAllProductsQuery, Result<IEnumerable<ProductEntity>>>
+    : IRequestHandler<GetAllProductsQuery, Result<ProductListResponse>>
 {
-    public async Task<Result<IEnumerable<ProductEntity>>> Handle(GetAllProductsQuery request,
+    public async Task<Result<ProductListResponse>> Handle(GetAllProductsQuery request,
         CancellationToken cancellationToken)
     {
-        var products = await repository.GetAllProductsAsync(cancellationToken).ConfigureAwait(false);
+        var result = await repository.GetAllProductsAsync(cancellationToken).ConfigureAwait(false);
 
-        return Result<IEnumerable<ProductEntity>>.Success(products);
+        return Result<ProductListResponse>.Success(mapper.Map<ProductListResponse>(result));
     }
 }

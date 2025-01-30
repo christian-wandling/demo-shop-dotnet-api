@@ -13,7 +13,7 @@ namespace DemoShop.Api.Features.Product;
 [ApiVersion("1.0")]
 [AllowAnonymous]
 [Route("api/v{version:apiVersion}/products")]
-public class ProductController(IMediator mediator, IMapper mapper) : ApiController
+public class ProductController(IMediator mediator) : ApiController
 {
     [HttpGet("")]
     [ProducesResponseType(typeof(ProductListResponse), StatusCodes.Status200OK)]
@@ -22,13 +22,13 @@ public class ProductController(IMediator mediator, IMapper mapper) : ApiControll
         var query = new GetAllProductsQuery();
         var result = await mediator.Send(query, cancellationToken).ConfigureAwait(false);
 
-        return Ok(mapper.Map<ProductListResponse>(result.Value));
+        return ToActionResult(result);
     }
 
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ProductResponse>> GetProductById(
+    public async Task<ActionResult<ProductResponse?>> GetProductById(
         int id,
         CancellationToken cancellationToken
     )
@@ -36,11 +36,6 @@ public class ProductController(IMediator mediator, IMapper mapper) : ApiControll
         var query = new GetProductByIdQuery(id);
         var result = await mediator.Send(query, cancellationToken).ConfigureAwait(false);
 
-        if (result.Value == null)
-        {
-            return NotFound();
-        }
-
-        return Ok(mapper.Map<ProductResponse>(result.Value));
+        return ToActionResult(result);
     }
 }
