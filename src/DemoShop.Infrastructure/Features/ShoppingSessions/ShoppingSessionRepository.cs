@@ -49,6 +49,20 @@ public class ShoppingSessionRepository(ApplicationDbContext context) : IShopping
 
         await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        Guard.Against.Null(updatedSession, nameof(updatedSession));
+        Guard.Against.Null(updatedSession.Entity, nameof(updatedSession.Entity));
+    }
+
+    public async Task DeleteSessionAsync(
+        ShoppingSessionEntity session,
+        CancellationToken cancellationToken)
+    {
+        Guard.Against.Null(session, nameof(session));
+
+        var removedSession = context.Set<ShoppingSessionEntity>()
+            .Remove(session);
+
+        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+
+        Guard.Against.Null(removedSession.Entity, nameof(removedSession.Entity));
     }
 }

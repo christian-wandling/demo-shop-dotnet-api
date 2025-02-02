@@ -1,7 +1,7 @@
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Base;
 
-namespace DemoShop.Domain.Product.ValueObjects;
+namespace DemoShop.Domain.Common.ValueObjects;
 
 public sealed record Price : ValueObject
 {

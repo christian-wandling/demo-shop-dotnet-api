@@ -10,5 +10,5 @@ public class CreateOrderDto
 
     [Required]
     [MinLength(1, ErrorMessage = "Cart must contain at least one item")]
-    public ICollection<CartItemDto> CartItems { get; } = new List<CartItemDto>();
+    public ICollection<CartItemResponse> CartItems { get; } = new List<CartItemResponse>();
 }
