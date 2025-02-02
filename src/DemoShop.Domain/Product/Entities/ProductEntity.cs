@@ -5,7 +5,6 @@ using DemoShop.Domain.Common.Exceptions;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.ValueObjects;
 using DemoShop.Domain.Product.Events;
-using DemoShop.Domain.Product.ValueObjects;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.User.Events;
 using DemoShop.Domain.User.ValueObjects;
@@ -59,9 +58,7 @@ public class ProductEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
     public void Delete()
     {
         if (SoftDelete.Deleted)
-        {
             throw new AlreadyMarkedAsDeletedException($"Product {Id} has already been marked as deleted");
-        }
 
         SoftDelete.MarkAsDeleted();
         Audit.UpdateModified();
@@ -70,10 +67,7 @@ public class ProductEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
 
     public void Restore()
     {
-        if (SoftDelete.Deleted)
-        {
-            throw new NotMarkedAsDeletedException($"Product {Id} has not been marked as deleted");
-        }
+        if (SoftDelete.Deleted) throw new NotMarkedAsDeletedException($"Product {Id} has not been marked as deleted");
 
         SoftDelete.Restore();
         Audit.UpdateModified();

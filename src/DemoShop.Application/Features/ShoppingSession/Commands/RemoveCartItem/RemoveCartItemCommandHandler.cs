@@ -35,6 +35,6 @@ public sealed class RemoveCartItemCommandHandler(
 
         await eventDispatcher.DispatchEventsAsync(currentSessionResult.Value, cancellationToken).ConfigureAwait(false);
 
-        return Result.Success();
+        return Result.NoContent();
     }
 }

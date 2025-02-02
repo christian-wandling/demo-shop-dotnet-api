@@ -69,11 +69,9 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
     public void SetInitialAddress(CreateAddressDto createAddress)
     {
         if (Address != null)
-        {
             throw new InvalidOperationException(
                 "Address already set. Use UpdateAddress to modify the existing address."
             );
-        }
 
         var address = AddressEntity.Create(createAddress);
 
@@ -88,11 +86,9 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
     public void UpdateAddress(UpdateAddressDto updateAddress)
     {
         if (Address == null)
-        {
             throw new InvalidOperationException(
                 "Address not found. Use SetInitalAddress to create an address."
             );
-        }
 
         var oldAddress = Address;
         Address.Update(updateAddress);

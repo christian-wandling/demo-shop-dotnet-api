@@ -4,5 +4,5 @@ namespace DemoShop.Api.Features.ShoppingSession.Models;
 
 public sealed record AddCartItemRequest : IAddCartItemRequest
 {
-    public int ProductId { get;  set; }
+    public int ProductId { get; set; }
 }

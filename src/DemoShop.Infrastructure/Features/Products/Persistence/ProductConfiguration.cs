@@ -1,6 +1,6 @@
 using Ardalis.GuardClauses;
+using DemoShop.Domain.Common.ValueObjects;
 using DemoShop.Domain.Product.Entities;
-using DemoShop.Domain.Product.ValueObjects;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

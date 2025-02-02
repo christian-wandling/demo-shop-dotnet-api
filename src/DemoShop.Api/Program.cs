@@ -2,8 +2,6 @@ using System.Globalization;
 using Asp.Versioning;
 using DemoShop.Infrastructure;
 using DemoShop.Application;
-using DemoShop.Application.Features.Common.Interfaces;
-using DemoShop.Infrastructure.Common.Services;
 using Keycloak.AuthServices.Authentication;
 using Microsoft.OpenApi.Models;
 using Serilog;

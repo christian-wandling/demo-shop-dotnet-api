@@ -7,4 +7,4 @@ using MediatR;
 
 namespace DemoShop.Application.Features.User.Queries.GetOrCreateUser;
 
-public record GetOrCreateUserQuery: IRequest<Result<UserResponse>>;
+public record GetOrCreateUserQuery : IRequest<Result<UserResponse>>;

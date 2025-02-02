@@ -15,7 +15,7 @@ public class UserPhoneUpdatedHandler(ILogger<UserPhoneUpdatedHandler> logger)
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
         Guard.Against.Null(notification.NewPhone, nameof(notification.NewPhone));
 
-        logger.LogOperationSuccess("Update user phone", "id",$"{notification.Id}");
+        logger.LogOperationSuccess("Update user phone", "id", $"{notification.Id}");
         return Task.CompletedTask;
     }
 }

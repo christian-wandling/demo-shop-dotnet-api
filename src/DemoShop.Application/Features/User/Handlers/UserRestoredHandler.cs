@@ -14,7 +14,7 @@ public class UserRestoredHandler(ILogger<UserRestoredHandler> logger)
         Guard.Against.Null(notification, nameof(notification));
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
 
-        logger.LogOperationSuccess("Restore User", "id",$"{notification.Id}");
+        logger.LogOperationSuccess("Restore User", "id", $"{notification.Id}");
         return Task.CompletedTask;
     }
 }

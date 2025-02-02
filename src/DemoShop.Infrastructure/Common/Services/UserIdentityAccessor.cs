@@ -15,10 +15,7 @@ public sealed class UserIdentityAccessor(IHttpContextAccessor httpContextAccesso
     {
         var result = UserIdentity.FromClaimsPrincipal(httpContextAccessor.HttpContext?.User, logger);
 
-        if (!result.IsSuccess)
-        {
-            logger.LogAuthFailed(string.Join(", ", result.Errors));
-        }
+        if (!result.IsSuccess) logger.LogAuthFailed(string.Join(", ", result.Errors));
 
         return result;
     }

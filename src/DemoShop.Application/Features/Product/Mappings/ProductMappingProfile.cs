@@ -24,8 +24,8 @@ public class ProductMappingProfile : Profile
             .ForMember(dest => dest.Thumbnail, opt =>
                 opt.MapFrom(src => src.Images.FirstOrDefault()));
 
-        CreateMap<List<ProductEntity>, ProductListResponse>()
-            .ForMember(dest => dest.Products, opt =>
+        CreateMap<IReadOnlyCollection<ProductEntity>, ProductListResponse>()
+            .ForMember(dest => dest.Items, opt =>
                 opt.MapFrom(src => src));
 
         CreateMap<CategoryEntity, string>();

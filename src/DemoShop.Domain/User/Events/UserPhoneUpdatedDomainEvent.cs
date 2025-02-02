@@ -3,7 +3,7 @@ using DemoShop.Domain.User.ValueObjects;
 
 namespace DemoShop.Domain.User.Events;
 
-public class UserPhoneUpdatedDomainEvent(int id, PhoneNumber? newPhone,  PhoneNumber? oldPhone ) : IDomainEvent
+public class UserPhoneUpdatedDomainEvent(int id, PhoneNumber? newPhone, PhoneNumber? oldPhone) : IDomainEvent
 {
     public int Id { get; } = id;
     public PhoneNumber? NewPhone { get; } = newPhone;

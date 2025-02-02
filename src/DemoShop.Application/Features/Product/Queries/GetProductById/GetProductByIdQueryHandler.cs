@@ -25,7 +25,7 @@ public sealed class GetProductByIdQueryHandler(
         var product = await repository.GetProductByIdAsync(request.Id, cancellationToken).ConfigureAwait(false);
 
         if (product is not null)
-            return Result<ProductResponse?>.Success(mapper.Map<ProductResponse?>(product));
+            return Result.Success(mapper.Map<ProductResponse?>(product));
 
         logger.LogOperationFailed("Get Product By Id", "Id", $"{request.Id}", null);
         return Result.NotFound();

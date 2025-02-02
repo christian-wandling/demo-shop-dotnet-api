@@ -8,4 +8,4 @@ using MediatR;
 
 namespace DemoShop.Application.Features.ShoppingSession.Queries.GetOrCreateShoppingSession;
 
-public record GetOrCreateShoppingSessionQuery() : IRequest<Result<ShoppingSessionResponse>>;
+public record GetOrCreateShoppingSessionQuery() : IRequest<Result<ShoppingSessionResponse?>>;

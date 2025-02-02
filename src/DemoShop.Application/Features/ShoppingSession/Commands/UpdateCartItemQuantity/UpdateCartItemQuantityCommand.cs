@@ -5,4 +5,5 @@ using MediatR;
 
 namespace DemoShop.Application.Features.ShoppingSession.Commands.UpdateCartItemQuantity;
 
-public sealed record UpdateCartItemQuantityCommand(int Id, IUpdateCartItemRequest UpdateCartItem) : IRequest<Result<UpdateCartItemQuantityResponse>>;
+public sealed record UpdateCartItemQuantityCommand(int Id, IUpdateCartItemRequest UpdateCartItem)
+    : IRequest<Result<UpdateCartItemQuantityResponse>>;

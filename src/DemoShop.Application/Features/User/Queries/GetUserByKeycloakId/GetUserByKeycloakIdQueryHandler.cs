@@ -16,7 +16,8 @@ public sealed class GetUserByKeycloakIdQueryHandler(
     ILogger<GetUserByKeycloakIdQueryHandler> logger)
     : IRequestHandler<GetUserByKeycloakIdQuery, Result<UserResponse>>
 {
-    public async Task<Result<UserResponse>> Handle(GetUserByKeycloakIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<UserResponse>> Handle(GetUserByKeycloakIdQuery request,
+        CancellationToken cancellationToken)
     {
         Guard.Against.Null(request, nameof(request));
 

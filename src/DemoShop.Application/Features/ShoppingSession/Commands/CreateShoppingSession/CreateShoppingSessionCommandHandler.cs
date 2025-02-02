@@ -23,9 +23,9 @@ public sealed class CreateShoppingSessionCommandHandler(
     IDomainEventDispatcher eventDispatcher,
     IValidator<CreateShoppingSessionCommand> validator
 )
-    : IRequestHandler<CreateShoppingSessionCommand, Result<ShoppingSessionResponse>>
+    : IRequestHandler<CreateShoppingSessionCommand, Result<ShoppingSessionResponse?>>
 {
-    public async Task<Result<ShoppingSessionResponse>> Handle(CreateShoppingSessionCommand request,
+    public async Task<Result<ShoppingSessionResponse?>> Handle(CreateShoppingSessionCommand request,
         CancellationToken cancellationToken)
     {
         Guard.Against.Null(request, nameof(request));
@@ -53,6 +53,6 @@ public sealed class CreateShoppingSessionCommandHandler(
         }
 
         await eventDispatcher.DispatchEventsAsync(session, cancellationToken).ConfigureAwait(false);
-        return Result.Success(mapper.Map<ShoppingSessionResponse>(session));
+        return Result.Success(mapper.Map<ShoppingSessionResponse?>(session));
     }
 }

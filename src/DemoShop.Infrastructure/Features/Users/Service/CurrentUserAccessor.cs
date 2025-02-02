@@ -15,10 +15,7 @@ public sealed class CurrentUserAccessor(
     {
         var identityResult = userIdentity.GetCurrentIdentity();
 
-        if (!identityResult.IsSuccess)
-        {
-            return Result.Forbidden("Authorization Failed");
-        }
+        if (!identityResult.IsSuccess) return Result.Forbidden("Authorization Failed");
 
         var user = await repository.GetUserByKeycloakIdAsync(identityResult.Value.KeycloakUserId, cancellationToken)
             .ConfigureAwait(false);

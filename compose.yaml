@@ -4,7 +4,7 @@
             context: .
             dockerfile: src/DemoShop.Api/Dockerfile
             target: dev
-        command: ["dotnet", "watch", "--no-restore", "run", "--no-restore", "--project", "src/DemoShop.Api/DemoShop.Api.csproj", "--urls", "http://+:8080"]
+        command: [ "dotnet", "watch", "--no-restore", "run", "--no-restore", "--project", "src/DemoShop.Api/DemoShop.Api.csproj", "--urls", "http://+:8080" ]
 
         ports:
             - "3000:8080"

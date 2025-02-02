@@ -47,7 +47,7 @@ public sealed class UpdateCartItemQuantityCommandHandler(
         var updatedCartItem = currentSessionResult.Value.UpdateCartItem(
             request.Id,
             request.UpdateCartItem.Quantity
-            );
+        );
 
         await repository.UpdateSessionAsync(currentSessionResult.Value, cancellationToken)
             .ConfigureAwait(false);

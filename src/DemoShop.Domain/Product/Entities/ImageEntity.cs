@@ -26,7 +26,7 @@ public class ImageEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
         Name = Guard.Against.NullOrWhiteSpace(name, nameof(name));
         // TODO create invalidUriGuard
         Uri = Guard.Against.InvalidInput(uri, nameof(uri),
-            u => Uri.TryCreate(u.ToString(), UriKind.Absolute, out var _),
+            u => Uri.TryCreate(u.ToString(), UriKind.Absolute, out _),
             "URI must be a valid absolute URI.");
         Audit = Audit.Create();
         SoftDelete = SoftDelete.Create();
@@ -54,9 +54,7 @@ public class ImageEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
     public void Delete()
     {
         if (SoftDelete.Deleted)
-        {
             throw new AlreadyMarkedAsDeletedException($"Image {Id} has already been marked as deleted");
-        }
 
         SoftDelete.MarkAsDeleted();
         Audit.UpdateModified();
@@ -65,10 +63,7 @@ public class ImageEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
 
     public void Restore()
     {
-        if (SoftDelete.Deleted)
-        {
-            throw new NotMarkedAsDeletedException($"Image {Id} has not been marked as deleted");
-        }
+        if (SoftDelete.Deleted) throw new NotMarkedAsDeletedException($"Image {Id} has not been marked as deleted");
 
         SoftDelete.Restore();
         Audit.UpdateModified();

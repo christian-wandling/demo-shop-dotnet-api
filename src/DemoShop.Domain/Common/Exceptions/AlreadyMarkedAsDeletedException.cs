@@ -1,6 +1,6 @@
 namespace DemoShop.Domain.Common.Exceptions;
 
-public class AlreadyMarkedAsDeletedException: Exception
+public class AlreadyMarkedAsDeletedException : Exception
 {
     public AlreadyMarkedAsDeletedException(string message) : base(message)
     {

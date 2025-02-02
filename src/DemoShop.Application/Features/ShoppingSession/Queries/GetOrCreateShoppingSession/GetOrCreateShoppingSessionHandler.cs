@@ -11,9 +11,9 @@ namespace DemoShop.Application.Features.ShoppingSession.Queries.GetOrCreateShopp
 public sealed class GetOrCreateShoppingSessionHandler(
     ICurrentUserAccessor user,
     IMediator mediator)
-    : IRequestHandler<GetOrCreateShoppingSessionQuery, Result<ShoppingSessionResponse>>
+    : IRequestHandler<GetOrCreateShoppingSessionQuery, Result<ShoppingSessionResponse?>>
 {
-    public async Task<Result<ShoppingSessionResponse>> Handle(GetOrCreateShoppingSessionQuery request,
+    public async Task<Result<ShoppingSessionResponse?>> Handle(GetOrCreateShoppingSessionQuery request,
         CancellationToken cancellationToken)
     {
         Guard.Against.Null(request, nameof(request));
@@ -21,23 +21,18 @@ public sealed class GetOrCreateShoppingSessionHandler(
 
         var userIdResult = await user.GetId(cancellationToken).ConfigureAwait(false);
 
-        if (!userIdResult.IsSuccess)
-        {
-            return Result.Forbidden("Authorization Failed");
-        }
+        if (!userIdResult.IsSuccess) return Result.Forbidden("Authorization Failed");
 
         var sessionResult = await mediator
             .Send(new GetShoppingSessionByUserIdQuery(userIdResult.Value), cancellationToken)
             .ConfigureAwait(false);
 
         if (sessionResult.IsError())
-        {
             sessionResult = await mediator
                 .Send(
                     new CreateShoppingSessionCommand(userIdResult.Value),
                     cancellationToken
                 ).ConfigureAwait(false);
-        }
 
         return sessionResult;
     }

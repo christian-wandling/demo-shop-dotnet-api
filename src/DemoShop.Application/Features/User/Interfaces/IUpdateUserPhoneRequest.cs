@@ -2,5 +2,5 @@ namespace DemoShop.Application.Features.User.Interfaces;
 
 public interface IUpdateUserPhoneRequest
 {
-    public string? Phone { get;  set; }
+    public string? Phone { get; set; }
 }

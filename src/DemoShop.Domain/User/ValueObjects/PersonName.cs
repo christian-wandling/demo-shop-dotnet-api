@@ -6,7 +6,7 @@ namespace DemoShop.Domain.User.ValueObjects;
 public sealed record PersonName : ValueObject
 {
     public string Firstname { get; private set; }
-    public string Lastname { get; private set;}
+    public string Lastname { get; private set; }
 
     private PersonName()
     {

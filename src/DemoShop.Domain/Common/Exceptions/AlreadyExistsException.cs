@@ -1,6 +1,6 @@
 namespace DemoShop.Domain.Common.Exceptions;
 
-public class AlreadyExistsException: Exception
+public class AlreadyExistsException : Exception
 {
     public AlreadyExistsException(string message) : base(message)
     {

@@ -6,4 +6,4 @@ using MediatR;
 
 namespace DemoShop.Application.Features.ShoppingSession.Commands.CreateShoppingSession;
 
-public sealed record CreateShoppingSessionCommand(int UserId) : IRequest<Result<ShoppingSessionResponse>>;
+public sealed record CreateShoppingSessionCommand(int UserId) : IRequest<Result<ShoppingSessionResponse?>>;

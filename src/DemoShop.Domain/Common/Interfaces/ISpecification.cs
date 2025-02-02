@@ -13,4 +13,3 @@ public interface ISpecification<T> where T : class
     int Skip { get; }
     bool IsPagingEnabled { get; }
 }
-

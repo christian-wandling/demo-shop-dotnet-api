@@ -14,7 +14,7 @@ public class ProductRestoredHandler(ILogger<ProductRestoredHandler> logger)
         Guard.Against.Null(notification, nameof(notification));
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
 
-        logger.LogOperationSuccess("Restore Product", "id",$"{notification.Id}");
+        logger.LogOperationSuccess("Restore Product", "id", $"{notification.Id}");
         return Task.CompletedTask;
     }
 }

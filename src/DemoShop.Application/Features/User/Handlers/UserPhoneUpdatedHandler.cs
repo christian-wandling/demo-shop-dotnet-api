@@ -15,7 +15,7 @@ public class UserAddressUpdatedHandler(ILogger<UserAddressUpdatedHandler> logger
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
         Guard.Against.Null(notification.NewAddress, nameof(notification.NewAddress));
 
-        logger.LogOperationSuccess("Update user address", "id",$"{notification.Id}");
+        logger.LogOperationSuccess("Update user address", "id", $"{notification.Id}");
         return Task.CompletedTask;
     }
 }

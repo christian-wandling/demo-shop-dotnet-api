@@ -23,7 +23,8 @@ public sealed class UpdateUserPhoneCommandHandler(
 )
     : IRequestHandler<UpdateUserPhoneCommand, Result<UserPhoneResponse>>
 {
-    public async Task<Result<UserPhoneResponse>> Handle(UpdateUserPhoneCommand request, CancellationToken cancellationToken)
+    public async Task<Result<UserPhoneResponse>> Handle(UpdateUserPhoneCommand request,
+        CancellationToken cancellationToken)
     {
         Guard.Against.Null(request, nameof(request));
         Guard.Against.Null(request.UpdateUserPhone, nameof(request.UpdateUserPhone));
@@ -31,10 +32,7 @@ public sealed class UpdateUserPhoneCommandHandler(
 
         var identityResult = identity.GetCurrentIdentity();
 
-        if (!identityResult.IsSuccess)
-        {
-            return Result.Forbidden("Invalid identity");
-        }
+        if (!identityResult.IsSuccess) return Result.Forbidden("Invalid identity");
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken)
             .ConfigureAwait(false);

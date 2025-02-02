@@ -5,4 +5,5 @@ using MediatR;
 
 namespace DemoShop.Application.Features.User.Commands.UpdateUserPhone;
 
-public sealed record UpdateUserPhoneCommand(IUpdateUserPhoneRequest UpdateUserPhone) : IRequest<Result<UserPhoneResponse>>;
+public sealed record UpdateUserPhoneCommand(IUpdateUserPhoneRequest UpdateUserPhone)
+    : IRequest<Result<UserPhoneResponse>>;

@@ -34,10 +34,7 @@ public sealed class UpdateUserAddressCommandHandler(
 
         var identityResult = identity.GetCurrentIdentity();
 
-        if (!identityResult.IsSuccess)
-        {
-            return Result.Forbidden("Invalid identity");
-        }
+        if (!identityResult.IsSuccess) return Result.Forbidden("Invalid identity");
 
         var validationResult = await validator.ValidateAsync(request, cancellationToken)
             .ConfigureAwait(false);
@@ -65,7 +62,7 @@ public sealed class UpdateUserAddressCommandHandler(
                     City = request.UpdateUserAddress.City,
                     Country = request.UpdateUserAddress.Country,
                     Zip = request.UpdateUserAddress.Zip,
-                    Region = request.UpdateUserAddress.Region,
+                    Region = request.UpdateUserAddress.Region
                 };
 
                 user.SetInitialAddress(address);
@@ -79,7 +76,7 @@ public sealed class UpdateUserAddressCommandHandler(
                     City = request.UpdateUserAddress.City,
                     Country = request.UpdateUserAddress.Country,
                     Zip = request.UpdateUserAddress.Zip,
-                    Region = request.UpdateUserAddress.Region,
+                    Region = request.UpdateUserAddress.Region
                 };
 
                 user.UpdateAddress(address);

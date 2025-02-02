@@ -22,23 +22,18 @@ public sealed class GetOrCreateUserHandler(
 
         var identityResult = identity.GetCurrentIdentity();
 
-        if (!identityResult.IsSuccess)
-        {
-            return Result.Forbidden("Invalid identity");
-        }
+        if (!identityResult.IsSuccess) return Result.Forbidden("Invalid identity");
 
         var result = await mediator
             .Send(new GetUserByKeycloakIdQuery(identityResult.Value.KeycloakUserId), cancellationToken)
             .ConfigureAwait(false);
 
         if (result.IsError())
-        {
             result = await mediator
                 .Send(
                     new CreateUserCommand(identityResult.Value),
                     cancellationToken
                 ).ConfigureAwait(false);
-        }
 
         return result;
     }

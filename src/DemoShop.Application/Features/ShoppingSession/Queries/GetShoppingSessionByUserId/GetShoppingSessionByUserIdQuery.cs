@@ -6,4 +6,4 @@ using MediatR;
 
 namespace DemoShop.Application.Features.ShoppingSession.Queries.GetShoppingSessionByUserId;
 
-public sealed record GetShoppingSessionByUserIdQuery(int UserId) : IRequest<Result<ShoppingSessionResponse>>;
+public sealed record GetShoppingSessionByUserIdQuery(int UserId) : IRequest<Result<ShoppingSessionResponse?>>;

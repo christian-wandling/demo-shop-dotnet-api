@@ -44,9 +44,7 @@ public class CategoryEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoo
     public void Delete()
     {
         if (SoftDelete.Deleted)
-        {
             throw new AlreadyMarkedAsDeletedException($"Category {Id} has already been marked as deleted");
-        }
 
         SoftDelete.MarkAsDeleted();
         Audit.UpdateModified();
@@ -55,10 +53,7 @@ public class CategoryEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoo
 
     public void Restore()
     {
-        if (SoftDelete.Deleted)
-        {
-            throw new NotMarkedAsDeletedException($"Category {Id} has not been marked as deleted");
-        }
+        if (SoftDelete.Deleted) throw new NotMarkedAsDeletedException($"Category {Id} has not been marked as deleted");
 
         SoftDelete.Restore();
         Audit.UpdateModified();

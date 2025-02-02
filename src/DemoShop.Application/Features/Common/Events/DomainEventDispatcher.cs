@@ -11,9 +11,7 @@ public class DomainEventDispatcher(IMediator mediator) : IDomainEventDispatcher
         var events = entity.GetDomainEvents();
 
         foreach (var domainEvent in events)
-        {
             await mediator.Publish(domainEvent, cancellationToken).ConfigureAwait(false);
-        }
 
         entity.ClearDomainEvents();
     }

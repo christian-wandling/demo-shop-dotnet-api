@@ -17,10 +17,7 @@ public sealed class CurrentShoppingSessionAccessor(
     {
         var userResult = await currentUser.GetId(cancellationToken).ConfigureAwait(false);
 
-        if (!userResult.IsSuccess)
-        {
-            return Result.Forbidden("Authorization Failed");
-        }
+        if (!userResult.IsSuccess) return Result.Forbidden("Authorization Failed");
 
         var session = await repository.GetSessionByUserIdAsync(userResult.Value, cancellationToken)
             .ConfigureAwait(false);
