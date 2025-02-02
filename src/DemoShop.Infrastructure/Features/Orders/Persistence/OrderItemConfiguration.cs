@@ -1,4 +1,5 @@
 using Ardalis.GuardClauses;
+using DemoShop.Domain.Common.ValueObjects;
 using DemoShop.Domain.Order.Entities;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -16,26 +17,42 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItemEntity>
         BaseConfigurations.ConfigureAudit(builder);
         BaseConfigurations.ConfigureSoftDelete(builder);
 
-        builder.ToTable("OrderItem");
+        builder.ToTable("order_item");
 
         builder.HasOne(o => o.Order)
             .WithMany(o => o.OrderItems)
             .HasForeignKey(o => o.OrderId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(o => o.ProductId)
+        builder.Property(o => o.OrderId)
             .IsRequired();
 
-        builder.Property(o => o.ProductName)
-            .IsRequired();
+        builder.OwnsOne(o => o.Product, navigationBuilder =>
+        {
+            navigationBuilder.WithOwner().HasForeignKey("id");
 
-        builder.Property(o => o.ProductThumbnail)
-            .IsRequired();
+            navigationBuilder.Property(o => o.ProductName)
+                .HasColumnName("product_name");
+
+            navigationBuilder.Property(o => o.ProductThumbnail)
+                .HasColumnName("product_thumbnail");
+        });
 
         builder.Property(o => o.Quantity)
-            .IsRequired();
+            .IsRequired()
+            .HasConversion(
+                quantity => quantity.Value,
+                dbQuantity => Quantity.Create(dbQuantity)
+            );
 
         builder.Property(o => o.Price)
-            .IsRequired();
+            .IsRequired()
+            .HasConversion(
+                price => price.Value,
+                dbPrice => Price.Create(dbPrice)
+            );
+
+        builder.HasIndex(o => new { o.OrderId, o.ProductId })
+            .IsUnique();
     }
 }

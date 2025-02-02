@@ -34,5 +34,8 @@ public class CartItemConfiguration : IEntityTypeConfiguration<CartItemEntity>
                 quantity => quantity.Value,
                 dbQuantity => Quantity.Create(dbQuantity)
             );
+
+        builder.HasIndex(c => new { c.ShoppingSessionId, c.ProductId })
+            .IsUnique();
     }
 }

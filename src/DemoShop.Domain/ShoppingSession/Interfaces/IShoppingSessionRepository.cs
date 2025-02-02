@@ -6,5 +6,6 @@ public interface IShoppingSessionRepository
 {
     Task<ShoppingSessionEntity?> GetSessionByUserIdAsync(int userId, CancellationToken cancellationToken);
     Task<ShoppingSessionEntity?> CreateSessionAsync(ShoppingSessionEntity session, CancellationToken cancellationToken);
+    Task DeleteSessionAsync(ShoppingSessionEntity session, CancellationToken cancellationToken);
     Task UpdateSessionAsync(ShoppingSessionEntity session, CancellationToken cancellationToken);
 }

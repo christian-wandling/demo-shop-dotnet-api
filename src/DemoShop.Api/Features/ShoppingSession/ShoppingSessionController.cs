@@ -21,7 +21,7 @@ public sealed class ShoppingSessionController(IMediator mediator) : ApiControlle
     [ProducesResponseType(typeof(ShoppingSessionResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<ShoppingSessionResponse>> GetCurrentShoppingSession(
+    public async Task<ActionResult<ShoppingSessionResponse?>> GetCurrentShoppingSession(
         CancellationToken cancellationToken)
     {
         var query = new GetOrCreateShoppingSessionQuery();

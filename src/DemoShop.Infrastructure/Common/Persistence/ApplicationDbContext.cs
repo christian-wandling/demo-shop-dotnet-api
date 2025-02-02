@@ -1,11 +1,7 @@
-﻿using System.Globalization;
-using Ardalis.GuardClauses;
+﻿using Ardalis.GuardClauses;
 using DemoShop.Application.Features.Common.Interfaces;
-using DemoShop.Domain.Common.Interfaces;
-using DemoShop.Domain.Order.Entities;
-using DemoShop.Domain.Order.Enums;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Options;
 
 namespace DemoShop.Infrastructure.Common.Persistence;
 
@@ -21,9 +17,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         base.OnConfiguring(optionsBuilder);
 
         optionsBuilder
-            .LogTo(Console.WriteLine) // Log EF SQL queries to Console.
-            .EnableSensitiveDataLogging() // Log sensitive data like parameters.
-            .UseNpgsql()
+            .LogTo(Console.WriteLine)
+            .EnableSensitiveDataLogging()
             .UseSnakeCaseNamingConvention();
     }
 
@@ -33,17 +28,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        ConfigureEnums(modelBuilder);
         base.OnModelCreating(modelBuilder);
     }
-
-    private static void ConfigureEnums(ModelBuilder modelBuilder) =>
-        modelBuilder.Entity<OrderEntity>()
-            .Property(e => e.Status)
-            .HasConversion(
-                v => v.ToString().ToUpper(CultureInfo.InvariantCulture),
-                v => (OrderStatus)Enum.Parse(typeof(OrderStatus), v, true)
-            );
 
     public override int SaveChanges() => throw new InvalidOperationException("Use SaveChangesAsync instead");
 }

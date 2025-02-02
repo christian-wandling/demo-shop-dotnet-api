@@ -1,5 +1,6 @@
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Order.Entities;
+using DemoShop.Domain.Order.Enums;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -16,7 +17,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<OrderEntity>
         BaseConfigurations.ConfigureAudit(builder);
         BaseConfigurations.ConfigureSoftDelete(builder);
 
-        builder.ToTable("Order");
+        builder.ToTable("order");
 
         builder.HasOne(o => o.User)
             .WithMany(u => u.Orders)

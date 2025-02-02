@@ -4,6 +4,8 @@ using DemoShop.Domain.Common.Base;
 using DemoShop.Domain.Common.Exceptions;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.ValueObjects;
+using DemoShop.Domain.Order.Entities;
+using DemoShop.Domain.Order.ValueObjects;
 using DemoShop.Domain.ShoppingSession.Events;
 using DemoShop.Domain.User.Entities;
 
@@ -44,9 +46,7 @@ public class ShoppingSessionEntity : IEntity, IAuditable, IAggregateRoot
         Guard.Against.Null(createdCartItem, nameof(createdCartItem));
 
         if (_cartItems.Any(c => c.ProductId == createdCartItem.ProductId))
-        {
             throw new AlreadyExistsException("CartItem already added");
-        }
 
         _cartItems.Add(createdCartItem);
         Audit.UpdateModified();
@@ -78,5 +78,23 @@ public class ShoppingSessionEntity : IEntity, IAuditable, IAggregateRoot
         _cartItems.Remove(cartItemToRemove);
 
         this.AddDomainEvent(new CartItemRemoved(this, cartItemToRemove));
+    }
+
+    public Result<OrderEntity> ConvertToOrder()
+    {
+        Guard.Against.NegativeOrZero(_cartItems.Count, nameof(_cartItems));
+
+        var orderItems = _cartItems.Select(cartItem => OrderItemEntity.Create(
+                cartItem.ProductId,
+                OrderProduct.Create(
+                    cartItem.Product!.Name,
+                    cartItem.Product?.Thumbnail ?? string.Empty
+                ),
+                cartItem.Quantity,
+                cartItem.Product!.Price
+            )
+        ).ToList();
+
+        return OrderEntity.Create(UserId, orderItems);
     }
 }

@@ -1,6 +1,7 @@
 using DemoShop.Application.Features.Common.Interfaces;
 using DemoShop.Application.Features.ShoppingSession.Interfaces;
 using DemoShop.Application.Features.User.Interfaces;
+using DemoShop.Domain.Order.Enums;
 using DemoShop.Domain.Order.Interfaces;
 using DemoShop.Domain.Product.Interfaces;
 using DemoShop.Domain.ShoppingSession.Interfaces;
@@ -16,6 +17,7 @@ using DemoShop.Infrastructure.Features.Users.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace DemoShop.Infrastructure;
 
@@ -25,20 +27,28 @@ public static class ServiceRegistration
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+        dataSourceBuilder.MapEnum<OrderStatus>("order_status");
+        var dataSource = dataSourceBuilder.Build();
 
-        services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
+        services.AddSingleton(dataSource);
+        services.AddSingleton<IDisposable>(dataSource);
+
+        services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(dataSource));
+        services.AddScoped<IApplicationDbContext>(sp =>
+            sp.GetRequiredService<ApplicationDbContext>());
 
         services.AddScoped<IUserIdentityAccessor, UserIdentityAccessor>();
         services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
         services.AddScoped<ICurrentShoppingSessionAccessor, CurrentShoppingSessionAccessor>();
 
-        // TODO check if repositories can do DI with assembly
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IShoppingSessionRepository, ShoppingSessionRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
