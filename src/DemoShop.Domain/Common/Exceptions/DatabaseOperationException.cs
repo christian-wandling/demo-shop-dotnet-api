@@ -1,6 +1,12 @@
+#region
+
+using DemoShop.Domain.Common.Base;
+
+#endregion
+
 namespace DemoShop.Domain.Common.Exceptions;
 
-public class DatabaseOperationException : Exception
+public class DatabaseOperationException : DomainException
 {
     public DatabaseOperationException(string message) : base(message)
     {

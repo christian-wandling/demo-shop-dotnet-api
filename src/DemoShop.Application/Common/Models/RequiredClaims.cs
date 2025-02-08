@@ -1,8 +1,12 @@
+#region
+
 using System.Security.Claims;
 using Ardalis.GuardClauses;
-using DemoShop.Application.Features.Common.Constants;
+using DemoShop.Application.Common.Constants;
 
-namespace DemoShop.Application.Features.Common.Models;
+#endregion
+
+namespace DemoShop.Application.Common.Models;
 
 public static class ClaimRequirements
 {

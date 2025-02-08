@@ -1,12 +1,14 @@
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Base;
+
+#endregion
 
 namespace DemoShop.Domain.Common.ValueObjects;
 
 public sealed record Price : ValueObject
 {
-    public decimal Value { get; private set; }
-
     private Price()
     {
         Value = 0;
@@ -16,6 +18,8 @@ public sealed record Price : ValueObject
     {
         Value = Guard.Against.InvalidPrice(value, nameof(value));
     }
+
+    public decimal Value { get; }
 
     public static Price Empty => new();
 
@@ -27,8 +31,6 @@ public sealed record Price : ValueObject
 
         return new Price(rounded);
     }
-
-    public int ToInt() => (int)Math.Round(Value, 2, MidpointRounding.AwayFromZero);
 
     protected override IEnumerable<object> GetEqualityComponents()
     {

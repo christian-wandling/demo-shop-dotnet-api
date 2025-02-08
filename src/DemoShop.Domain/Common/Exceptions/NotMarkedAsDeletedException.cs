@@ -1,6 +1,12 @@
+#region
+
+using DemoShop.Domain.Common.Base;
+
+#endregion
+
 namespace DemoShop.Domain.Common.Exceptions;
 
-public class NotMarkedAsDeletedException : Exception
+public class NotMarkedAsDeletedException : DomainException
 {
     public NotMarkedAsDeletedException(string message) : base(message)
     {

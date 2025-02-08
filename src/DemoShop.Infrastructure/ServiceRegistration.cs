@@ -1,4 +1,6 @@
-using DemoShop.Application.Features.Common.Interfaces;
+#region
+
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.ShoppingSession.Interfaces;
 using DemoShop.Application.Features.User.Interfaces;
 using DemoShop.Domain.Order.Enums;
@@ -13,11 +15,13 @@ using DemoShop.Infrastructure.Features.Products;
 using DemoShop.Infrastructure.Features.ShoppingSessions;
 using DemoShop.Infrastructure.Features.ShoppingSessions.Services;
 using DemoShop.Infrastructure.Features.Users;
-using DemoShop.Infrastructure.Features.Users.Service;
+using DemoShop.Infrastructure.Features.Users.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+
+#endregion
 
 namespace DemoShop.Infrastructure;
 

@@ -1,7 +1,10 @@
-﻿using Ardalis.GuardClauses;
-using DemoShop.Application.Features.Common.Interfaces;
+﻿#region
+
+using Ardalis.GuardClauses;
+using DemoShop.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+
+#endregion
 
 namespace DemoShop.Infrastructure.Common.Persistence;
 
@@ -10,6 +13,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     public IQueryable<TEntity> Query<TEntity>() where TEntity : class
         => Set<TEntity>();
+
+    public override int SaveChanges() => throw new InvalidOperationException("Use SaveChangesAsync instead");
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -30,6 +35,4 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
         base.OnModelCreating(modelBuilder);
     }
-
-    public override int SaveChanges() => throw new InvalidOperationException("Use SaveChangesAsync instead");
 }

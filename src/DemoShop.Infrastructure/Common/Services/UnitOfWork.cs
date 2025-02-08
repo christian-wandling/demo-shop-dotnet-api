@@ -1,63 +1,86 @@
-using DemoShop.Application.Features.Common.Interfaces;
-using DemoShop.Infrastructure.Common.Persistence;
+#region
+
+using DemoShop.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
+
+#endregion
 
 namespace DemoShop.Infrastructure.Common.Services;
 
-public sealed class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
+public sealed class UnitOfWork(IApplicationDbContext context) : IUnitOfWork
 {
     private bool _disposed;
     private IDbContextTransaction? _transaction;
+
+    public bool HasActiveTransaction => _transaction != null;
 
     public async Task BeginTransactionAsync(CancellationToken cancellationToken)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
-        if (_transaction != null)
-        {
-            throw new InvalidOperationException("The transaction is already active.");
-        }
+        if (HasActiveTransaction) throw new InvalidOperationException("The transaction is already active.");
 
-        _transaction =
-            await context.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        _transaction = await context.Database.BeginTransactionAsync(cancellationToken);
     }
 
     public async Task CommitTransactionAsync(CancellationToken cancellationToken)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
-        if (_transaction == null)
-        {
-            throw new InvalidOperationException("No active transaction to commit.");
-        }
+        if (!HasActiveTransaction) throw new InvalidOperationException("No active transaction to commit.");
 
-        await _transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await _transaction!.CommitAsync(cancellationToken);
+        }
+        finally
+        {
+            await DisposeTransactionAsync();
+        }
     }
 
     public async Task RollbackTransactionAsync(CancellationToken cancellationToken)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
-        if (_transaction == null)
+        if (!HasActiveTransaction) return;
+
+        try
         {
-            throw new InvalidOperationException("No active transaction to commit.");
+            await _transaction!.RollbackAsync(cancellationToken);
         }
-
-        await _transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (_disposed || !disposing) return;
-
-        _transaction?.Dispose();
-        context.Dispose();
-        _disposed = true;
+        finally
+        {
+            await DisposeTransactionAsync();
+        }
     }
 
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    private async Task DisposeTransactionAsync()
+    {
+        if (HasActiveTransaction)
+        {
+            await _transaction!.DisposeAsync();
+            _transaction = null;
+        }
+    }
+
+    private void Dispose(bool disposing)
+    {
+        if (_disposed || !disposing) return;
+
+        if (HasActiveTransaction)
+        {
+            _transaction?.Dispose();
+            _transaction = null;
+        }
+
+        context.Dispose();
+        _disposed = true;
     }
 }

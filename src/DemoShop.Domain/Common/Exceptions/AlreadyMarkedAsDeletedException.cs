@@ -1,6 +1,13 @@
+#region
+
+using DemoShop.Domain.Common.Base;
+
+#endregion
+
 namespace DemoShop.Domain.Common.Exceptions;
 
-public class AlreadyMarkedAsDeletedException : Exception
+public class AlreadyMarkedAsDeletedException : DomainException
+
 {
     public AlreadyMarkedAsDeletedException(string message) : base(message)
     {

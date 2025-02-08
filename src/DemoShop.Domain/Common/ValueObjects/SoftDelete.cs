@@ -1,16 +1,20 @@
+#region
+
 using DemoShop.Domain.Common.Base;
+
+#endregion
 
 namespace DemoShop.Domain.Common.ValueObjects;
 
 public sealed record SoftDelete : ValueObject
 {
-    public DateTime? DeletedAt { get; private set; }
-    public bool Deleted { get; private set; }
-
     private SoftDelete(DateTime? deletedAt = null)
     {
         DeletedAt = deletedAt;
     }
+
+    public DateTime? DeletedAt { get; private set; }
+    public bool Deleted { get; private set; }
 
     public static SoftDelete Create() => new();
 

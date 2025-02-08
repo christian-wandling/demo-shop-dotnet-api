@@ -1,4 +1,4 @@
-namespace DemoShop.Application.Features.Common.Constants;
+namespace DemoShop.Application.Common.Constants;
 
 public static class KeycloakClaimTypes
 {

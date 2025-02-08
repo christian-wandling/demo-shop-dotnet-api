@@ -1,17 +1,21 @@
+#region
+
 using DemoShop.Domain.Common.Base;
+
+#endregion
 
 namespace DemoShop.Domain.Common.ValueObjects;
 
 public sealed record Audit : ValueObject
 {
-    public DateTime CreatedAt { get; }
-    public DateTime ModifiedAt { get; private set; }
-
     private Audit(DateTime createdAt, DateTime modifiedAt)
     {
         CreatedAt = createdAt;
         ModifiedAt = modifiedAt;
     }
+
+    public DateTime CreatedAt { get; }
+    public DateTime ModifiedAt { get; private set; }
 
     public static Audit Create()
     {

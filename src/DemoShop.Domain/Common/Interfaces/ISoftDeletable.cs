@@ -1,5 +1,8 @@
+#region
+
 using DemoShop.Domain.Common.ValueObjects;
-using DemoShop.Domain.User.ValueObjects;
+
+#endregion
 
 namespace DemoShop.Domain.Common.Interfaces;
 

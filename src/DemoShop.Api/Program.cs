@@ -1,12 +1,18 @@
+#region
+
 using System.Globalization;
+using Ardalis.Result.AspNetCore;
 using Asp.Versioning;
-using DemoShop.Infrastructure;
+using DemoShop.Api.Common.Middleware;
 using DemoShop.Application;
+using DemoShop.Infrastructure;
 using Keycloak.AuthServices.Authentication;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Events;
 using ServiceRegistration = DemoShop.Application.ServiceRegistration;
+
+#endregion
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,12 +44,16 @@ Log.Logger = new LoggerConfiguration()
         o.TracesSampleRate = builder.Environment.IsProduction() ? 0.5 : 1.0;
         o.MinimumBreadcrumbLevel = LogEventLevel.Debug;
         o.MinimumEventLevel = LogEventLevel.Warning;
+        o.CaptureFailedRequests = true;
     })
     .CreateLogger();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
+
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddKeycloakWebApiAuthentication(builder.Configuration);
 
@@ -57,7 +67,7 @@ builder.Services.AddAuthorizationBuilder()
         )
     );
 
-builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssembly(typeof(ServiceRegistration).Assembly); });
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ServiceRegistration).Assembly));
 
 builder.Services.AddCors(
     options =>
@@ -72,6 +82,12 @@ builder.Services.AddCors(
                     .AllowAnyHeader();
             });
     });
+
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllers(mvcOptions => mvcOptions.AddDefaultResultConvention());
 builder.Services.AddApiVersioning(
         options =>
         {
@@ -87,8 +103,6 @@ builder.Services.AddApiVersioning(
             options.GroupNameFormat = "'v'VVV";
             options.SubstituteApiVersionInUrl = true;
         });
-
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
     c =>
     {
@@ -96,16 +110,10 @@ builder.Services.AddSwaggerGen(
         c.AddSecurityDefinition(
             "Bearer",
             new OpenApiSecurityScheme { Type = SecuritySchemeType.Http, Scheme = "bearer" });
+        c.EnableAnnotations();
     });
 
-builder.Services.AddProblemDetails();
-
 builder.Services.AddHttpContextAccessor();
-
-builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddApplication();
-
-builder.Services.AddControllers();
 
 builder.Services.AddHealthChecks();
 
@@ -123,6 +131,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.MapControllers();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 app.UseCors();

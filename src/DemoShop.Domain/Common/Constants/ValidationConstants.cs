@@ -1,9 +1,12 @@
+#region
+
 using System.Text.RegularExpressions;
+
+#endregion
 
 namespace DemoShop.Domain.Common.Constants;
 
-public static partial class ValidationConstants
+public static class ValidationConstants
 {
-    [GeneratedRegex(@"^\+?[1-9]\d{1,14}$", RegexOptions.Compiled)]
-    public static partial Regex PhoneNumber();
+    public static readonly Regex PhoneNumber = new(@"^(\+\d{1,3}[-\s]?)?\d{1,14}$", RegexOptions.Compiled);
 }

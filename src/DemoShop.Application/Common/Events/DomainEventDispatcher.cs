@@ -1,8 +1,12 @@
+#region
+
 using DemoShop.Domain.Common.Base;
 using DemoShop.Domain.Common.Interfaces;
 using MediatR;
 
-namespace DemoShop.Application.Features.Common.Events;
+#endregion
+
+namespace DemoShop.Application.Common.Events;
 
 public class DomainEventDispatcher(IMediator mediator) : IDomainEventDispatcher
 {
@@ -11,7 +15,7 @@ public class DomainEventDispatcher(IMediator mediator) : IDomainEventDispatcher
         var events = entity.GetDomainEvents();
 
         foreach (var domainEvent in events)
-            await mediator.Publish(domainEvent, cancellationToken).ConfigureAwait(false);
+            await mediator.Publish(domainEvent, cancellationToken);
 
         entity.ClearDomainEvents();
     }

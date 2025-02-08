@@ -1,6 +1,12 @@
+#region
+
+using DemoShop.Domain.Common.Base;
+
+#endregion
+
 namespace DemoShop.Domain.Common.Exceptions;
 
-public class AlreadyExistsException : Exception
+public class AlreadyExistsException : DomainException
 {
     public AlreadyExistsException(string message) : base(message)
     {

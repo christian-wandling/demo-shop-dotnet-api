@@ -1,5 +1,9 @@
+#region
+
 using System.Runtime.CompilerServices;
 using DemoShop.Domain.Common.Interfaces;
+
+#endregion
 
 namespace DemoShop.Domain.Common.Base;
 

@@ -1,7 +1,11 @@
+#region
+
 using Ardalis.Result;
 using FluentValidation.Results;
 
-namespace DemoShop.Application.Features.Common.Extensions;
+#endregion
+
+namespace DemoShop.Application.Common.Extensions;
 
 public static class ValidationExtensions
 {

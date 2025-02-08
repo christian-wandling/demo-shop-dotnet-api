@@ -1,7 +1,11 @@
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+#endregion
 
 namespace DemoShop.Infrastructure.Common.Persistence;
 
