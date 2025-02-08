@@ -1,5 +1,9 @@
+#region
+
 using Ardalis.Result;
 using DemoShop.Domain.ShoppingSession.Entities;
+
+#endregion
 
 namespace DemoShop.Application.Features.ShoppingSession.Interfaces;
 

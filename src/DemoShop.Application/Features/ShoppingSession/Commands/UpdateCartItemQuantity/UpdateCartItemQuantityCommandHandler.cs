@@ -1,15 +1,21 @@
+#region
+
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using AutoMapper;
-using DemoShop.Application.Features.Common.Extensions;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.ShoppingSession.DTOs;
 using DemoShop.Application.Features.ShoppingSession.Interfaces;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
+using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
+#endregion
 
 namespace DemoShop.Application.Features.ShoppingSession.Commands.UpdateCartItemQuantity;
 
@@ -19,7 +25,8 @@ public sealed class UpdateCartItemQuantityCommandHandler(
     IShoppingSessionRepository repository,
     ILogger<UpdateCartItemQuantityCommandHandler> logger,
     IDomainEventDispatcher eventDispatcher,
-    IValidator<UpdateCartItemQuantityCommand> validator
+    IValidator<UpdateCartItemQuantityCommand> validator,
+    IValidationService validationService
 )
     : IRequestHandler<UpdateCartItemQuantityCommand, Result<UpdateCartItemQuantityResponse>>
 {
@@ -27,33 +34,50 @@ public sealed class UpdateCartItemQuantityCommandHandler(
         CancellationToken cancellationToken)
     {
         Guard.Against.Null(request, nameof(request));
-        Guard.Against.Null(request.UpdateCartItem, nameof(request));
+        Guard.Against.NegativeOrZero(request.Id, nameof(request.Id));
+        Guard.Against.Null(request.UpdateCartItem, nameof(request.UpdateCartItem));
 
-        var validationResult = await validator.ValidateAsync(request, cancellationToken)
-            .ConfigureAwait(false);
+        var validationResult = await validationService.ValidateAsync(request, validator, cancellationToken);
 
-        if (!validationResult.IsValid)
+        if (!validationResult.IsSuccess)
+            return validationResult.Map();
+
+        var sessionResult = await currentSession.GetCurrent(cancellationToken);
+
+        if (!sessionResult.IsSuccess)
+            return sessionResult.Map();
+
+        try
         {
-            var errors = validationResult.Errors.Select(e => e.ErrorMessage);
-            logger.LogValidationFailed("Add Cart item to Shopping session", string.Join(", ", errors));
+            var unsavedResult = sessionResult.Value.UpdateCartItem(request.Id, request.UpdateCartItem.Quantity);
 
-            return Result.Invalid(validationResult.Errors.ToValidationErrors());
+            if (!unsavedResult.IsSuccess)
+                return unsavedResult.Map();
+
+            var savedResult = await SaveChanges(sessionResult.Value, cancellationToken);
+
+            return savedResult.IsSuccess
+                ? Result.Success(mapper.Map<UpdateCartItemQuantityResponse>(savedResult.Value))
+                : savedResult.Map();
         }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogDomainException(ex.Message);
+            return Result.Error(ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            logger.LogOperationFailed("Update cart item quantity", "Id", $"{request.Id}", ex);
+            return Result.Error(ex.Message);
+        }
+    }
 
-        var currentSessionResult = await currentSession.GetCurrent(cancellationToken).ConfigureAwait(false);
+    private async Task<Result<ShoppingSessionEntity>> SaveChanges(ShoppingSessionEntity unsavedSession,
+        CancellationToken cancellationToken)
+    {
+        var savedSession = await repository.UpdateSessionAsync(unsavedSession, cancellationToken);
 
-        Guard.Against.Null(currentSessionResult, nameof(currentSessionResult));
-
-        var updatedCartItem = currentSessionResult.Value.UpdateCartItem(
-            request.Id,
-            request.UpdateCartItem.Quantity
-        );
-
-        await repository.UpdateSessionAsync(currentSessionResult.Value, cancellationToken)
-            .ConfigureAwait(false);
-
-        await eventDispatcher.DispatchEventsAsync(currentSessionResult.Value, cancellationToken).ConfigureAwait(false);
-
-        return Result.Success(mapper.Map<UpdateCartItemQuantityResponse>(updatedCartItem));
+        await eventDispatcher.DispatchEventsAsync(unsavedSession, cancellationToken);
+        return Result.Success(savedSession);
     }
 }

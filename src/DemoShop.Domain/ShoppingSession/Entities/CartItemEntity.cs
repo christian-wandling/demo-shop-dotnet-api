@@ -1,17 +1,18 @@
+#region
+
 using Ardalis.GuardClauses;
 using Ardalis.Result;
-using DemoShop.Domain.Common.Base;
-using DemoShop.Domain.Common.Exceptions;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.ValueObjects;
+using DemoShop.Domain.Order.Entities;
+using DemoShop.Domain.Order.ValueObjects;
 using DemoShop.Domain.Product.Entities;
-using DemoShop.Domain.Product.Events;
-using DemoShop.Domain.User.Events;
-using DemoShop.Domain.User.ValueObjects;
+
+#endregion
 
 namespace DemoShop.Domain.ShoppingSession.Entities;
 
-public class CartItemEntity : IEntity, IAuditable
+public sealed class CartItemEntity : IEntity, IAuditable
 {
     private CartItemEntity()
     {
@@ -27,20 +28,35 @@ public class CartItemEntity : IEntity, IAuditable
         Audit = Audit.Create();
     }
 
-    public int Id { get; }
     public int ShoppingSessionId { get; private init; }
-    public int ProductId { get; private init; }
-    public Quantity Quantity { get; private set; }
-    public ProductEntity? Product { get; init; }
     public ShoppingSessionEntity? ShoppingSession { get; init; }
+    public int ProductId { get; init; }
+    public ProductEntity? Product { get; init; }
+    public Quantity Quantity { get; private set; }
+
+    public decimal TotalPrice => Product?.Price.Value * Quantity.Value ?? 0;
     public Audit Audit { get; }
 
-    public static CartItemEntity Create(int shoppingSessionId, int productId)
-    {
-        Guard.Against.NegativeOrZero(shoppingSessionId, nameof(shoppingSessionId));
-        Guard.Against.NegativeOrZero(productId, nameof(productId));
+    public int Id { get; }
 
-        return new CartItemEntity(shoppingSessionId, productId);
+    public static Result<CartItemEntity> Create(int shoppingSessionId, int productId)
+    {
+        var cartItem = new CartItemEntity(shoppingSessionId, productId);
+
+        return Result.Success(cartItem);
+    }
+
+    public Result<OrderItemEntity> ConvertToOrderItem()
+    {
+        if (Product is null)
+            return Result.CriticalError("No product");
+
+        return OrderItemEntity.Create(
+            ProductId,
+            OrderProduct.Create(Product.Name, Product.Thumbnail ?? string.Empty),
+            Quantity,
+            Product!.Price
+        );
     }
 
     public void UpdateQuantity(int quantity) => Quantity = Quantity.Create(quantity);

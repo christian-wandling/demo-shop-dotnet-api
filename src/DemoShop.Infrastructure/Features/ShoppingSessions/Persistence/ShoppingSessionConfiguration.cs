@@ -1,8 +1,12 @@
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+#endregion
 
 namespace DemoShop.Infrastructure.Features.ShoppingSessions.Persistence;
 

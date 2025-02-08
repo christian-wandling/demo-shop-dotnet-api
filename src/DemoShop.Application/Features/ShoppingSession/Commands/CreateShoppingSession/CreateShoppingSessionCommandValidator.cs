@@ -1,4 +1,8 @@
+#region
+
 using FluentValidation;
+
+#endregion
 
 namespace DemoShop.Application.Features.ShoppingSession.Commands.CreateShoppingSession;
 

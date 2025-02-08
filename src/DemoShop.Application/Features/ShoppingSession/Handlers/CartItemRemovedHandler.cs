@@ -1,8 +1,12 @@
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.ShoppingSession.Events;
 using MediatR;
 using Microsoft.Extensions.Logging;
+
+#endregion
 
 namespace DemoShop.Application.Features.ShoppingSession.Handlers;
 

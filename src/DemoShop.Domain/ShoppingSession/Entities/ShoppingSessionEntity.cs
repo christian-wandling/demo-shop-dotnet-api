@@ -1,17 +1,19 @@
+#region
+
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Domain.Common.Base;
-using DemoShop.Domain.Common.Exceptions;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.ValueObjects;
 using DemoShop.Domain.Order.Entities;
-using DemoShop.Domain.Order.ValueObjects;
 using DemoShop.Domain.ShoppingSession.Events;
 using DemoShop.Domain.User.Entities;
 
+#endregion
+
 namespace DemoShop.Domain.ShoppingSession.Entities;
 
-public class ShoppingSessionEntity : IEntity, IAuditable, IAggregateRoot
+public sealed class ShoppingSessionEntity : IEntity, IAuditable, IAggregateRoot
 {
     private readonly List<CartItemEntity> _cartItems = [];
 
@@ -26,40 +28,43 @@ public class ShoppingSessionEntity : IEntity, IAuditable, IAggregateRoot
         Audit = Audit.Create();
     }
 
-    public int Id { get; }
-    public int UserId { get; private init; }
+    public int UserId { get; }
     public UserEntity? User { get; init; }
     public IReadOnlyCollection<CartItemEntity> CartItems => _cartItems.AsReadOnly();
     public Audit Audit { get; }
 
-    public static ShoppingSessionEntity Create(int userId)
+    public int Id { get; }
+
+    public static Result<ShoppingSessionEntity> Create(int userId)
     {
         var session = new ShoppingSessionEntity(userId);
         session.AddDomainEvent(new ShoppingSessionCreated(session));
-        return session;
+
+        return Result.Success(session);
     }
 
     public Result<CartItemEntity> AddCartItem(int productId)
     {
-        var createdCartItem = CartItemEntity.Create(Id, productId);
+        var cartItemResult = CartItemEntity.Create(Id, productId);
 
-        Guard.Against.Null(createdCartItem, nameof(createdCartItem));
+        if (!cartItemResult.IsSuccess)
+            return cartItemResult;
 
-        if (_cartItems.Any(c => c.ProductId == createdCartItem.ProductId))
-            throw new AlreadyExistsException("CartItem already added");
+        if (_cartItems.Any(c => c.ProductId == cartItemResult.Value.ProductId))
+            return Result.Conflict("Product already in cart");
 
-        _cartItems.Add(createdCartItem);
+        _cartItems.Add(cartItemResult.Value);
         Audit.UpdateModified();
-        this.AddDomainEvent(new CartItemAdded(createdCartItem));
+        this.AddDomainEvent(new CartItemAdded(cartItemResult.Value));
 
-        return Result.Success(createdCartItem);
+        return cartItemResult;
     }
 
     public Result<CartItemEntity> UpdateCartItem(int cartItemId, int quantity)
     {
         var cartItemToUpdate = _cartItems.FirstOrDefault(x => x.Id == cartItemId);
 
-        Guard.Against.Null(cartItemToUpdate, nameof(cartItemToUpdate));
+        if (cartItemToUpdate is null) return Result.NotFound("CartItem not found");
 
         var oldQuantity = cartItemToUpdate.Quantity;
         cartItemToUpdate.UpdateQuantity(quantity);
@@ -69,31 +74,24 @@ public class ShoppingSessionEntity : IEntity, IAuditable, IAggregateRoot
         return Result.Success(cartItemToUpdate);
     }
 
-    public void RemoveCartItem(int cartItemId)
+    public Result RemoveCartItem(int cartItemId)
     {
         var cartItemToRemove = _cartItems.FirstOrDefault(x => x.Id == cartItemId);
 
-        Guard.Against.Null(cartItemToRemove, nameof(cartItemToRemove));
+        if (cartItemToRemove is null) return Result.NotFound("CartItem not found");
 
         _cartItems.Remove(cartItemToRemove);
 
         this.AddDomainEvent(new CartItemRemoved(this, cartItemToRemove));
+
+        return Result.Success();
     }
 
     public Result<OrderEntity> ConvertToOrder()
     {
-        Guard.Against.NegativeOrZero(_cartItems.Count, nameof(_cartItems));
+        if (_cartItems.Count is 0) return Result.Error("No items in shopping session");
 
-        var orderItems = _cartItems.Select(cartItem => OrderItemEntity.Create(
-                cartItem.ProductId,
-                OrderProduct.Create(
-                    cartItem.Product!.Name,
-                    cartItem.Product?.Thumbnail ?? string.Empty
-                ),
-                cartItem.Quantity,
-                cartItem.Product!.Price
-            )
-        ).ToList();
+        var orderItems = _cartItems.ConvertAll(cartItem => cartItem.ConvertToOrderItem().Value);
 
         return OrderEntity.Create(UserId, orderItems);
     }

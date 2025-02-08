@@ -1,9 +1,12 @@
-using Ardalis.GuardClauses;
+#region
+
 using Ardalis.Result;
 using DemoShop.Application.Features.ShoppingSession.Interfaces;
 using DemoShop.Application.Features.User.Interfaces;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
+
+#endregion
 
 namespace DemoShop.Infrastructure.Features.ShoppingSessions.Services;
 
@@ -15,15 +18,15 @@ public sealed class CurrentShoppingSessionAccessor(
 {
     public async Task<Result<ShoppingSessionEntity>> GetCurrent(CancellationToken cancellationToken)
     {
-        var userResult = await currentUser.GetId(cancellationToken).ConfigureAwait(false);
+        var userResult = await currentUser.GetId(cancellationToken);
 
-        if (!userResult.IsSuccess) return Result.Forbidden("Authorization Failed");
+        if (!userResult.IsSuccess)
+            return userResult.Map();
 
-        var session = await repository.GetSessionByUserIdAsync(userResult.Value, cancellationToken)
-            .ConfigureAwait(false);
+        var session = await repository.GetSessionByUserIdAsync(userResult.Value, cancellationToken);
 
-        Guard.Against.Null(session);
-
-        return Result.Success(session);
+        return session is null
+            ? Result.NotFound("Session not found")
+            : Result.Success(session);
     }
 }

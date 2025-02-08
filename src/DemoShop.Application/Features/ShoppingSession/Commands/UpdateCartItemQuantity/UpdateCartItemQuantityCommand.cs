@@ -1,7 +1,11 @@
+#region
+
 using Ardalis.Result;
 using DemoShop.Application.Features.ShoppingSession.DTOs;
 using DemoShop.Application.Features.ShoppingSession.Interfaces;
 using MediatR;
+
+#endregion
 
 namespace DemoShop.Application.Features.ShoppingSession.Commands.UpdateCartItemQuantity;
 

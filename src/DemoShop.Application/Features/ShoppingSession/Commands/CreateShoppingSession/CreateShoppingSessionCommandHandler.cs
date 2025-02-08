@@ -1,18 +1,20 @@
+#region
+
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using AutoMapper;
-using DemoShop.Application.Features.Common.Extensions;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.ShoppingSession.DTOs;
-using DemoShop.Application.Features.User.Commands.CreateUser;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
-using DemoShop.Domain.User.Entities;
-using DemoShop.Domain.User.Interfaces;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
+#endregion
 
 namespace DemoShop.Application.Features.ShoppingSession.Commands.CreateShoppingSession;
 
@@ -21,38 +23,56 @@ public sealed class CreateShoppingSessionCommandHandler(
     IShoppingSessionRepository repository,
     ILogger<CreateShoppingSessionCommandHandler> logger,
     IDomainEventDispatcher eventDispatcher,
-    IValidator<CreateShoppingSessionCommand> validator
+    IValidator<CreateShoppingSessionCommand> validator,
+    IValidationService validationService
 )
-    : IRequestHandler<CreateShoppingSessionCommand, Result<ShoppingSessionResponse?>>
+    : IRequestHandler<CreateShoppingSessionCommand, Result<ShoppingSessionResponse>>
 {
-    public async Task<Result<ShoppingSessionResponse?>> Handle(CreateShoppingSessionCommand request,
+    public async Task<Result<ShoppingSessionResponse>> Handle(CreateShoppingSessionCommand request,
         CancellationToken cancellationToken)
     {
         Guard.Against.Null(request, nameof(request));
         Guard.Against.NegativeOrZero(request.UserId, nameof(request.UserId));
 
-        var validationResult = await validator.ValidateAsync(request, cancellationToken)
-            .ConfigureAwait(false);
+        var validationResult = await validationService.ValidateAsync(request, validator, cancellationToken);
 
-        if (!validationResult.IsValid)
+        if (!validationResult.IsSuccess)
+            return validationResult.Map();
+
+        try
         {
-            var errors = validationResult.Errors.Select(e => e.ErrorMessage);
-            logger.LogValidationFailed("Create ShoppingSession", string.Join(", ", errors));
+            var unsavedResult = ShoppingSessionEntity.Create(request.UserId);
 
-            return Result.Invalid(validationResult.Errors.ToValidationErrors());
+            if (!unsavedResult.IsSuccess)
+                return Result.Error("Failed to create shopping session");
+
+            var savedResult = await SaveChanges(unsavedResult, cancellationToken);
+
+            return savedResult.IsSuccess
+                ? Result.Success(mapper.Map<ShoppingSessionResponse>(savedResult.Value))
+                : savedResult.Map();
         }
-
-        var createdSession = ShoppingSessionEntity.Create(request.UserId);
-        var session = await repository.CreateSessionAsync(createdSession, cancellationToken)
-            .ConfigureAwait(false);
-
-        if (session is null)
+        catch (InvalidOperationException ex)
         {
-            logger.LogOperationFailed("Create ShoppingSession", "UserId", $"{request.UserId}", null);
-            return Result.Error("Failed to create ShoppingSession");
+            logger.LogDomainException(ex.Message);
+            return Result.Error(ex.Message);
         }
+        catch (DbUpdateException ex)
+        {
+            logger.LogOperationFailed("Create shopping session", "UserId", $"{request.UserId}", ex);
+            return Result.Error(ex.Message);
+        }
+    }
 
-        await eventDispatcher.DispatchEventsAsync(session, cancellationToken).ConfigureAwait(false);
-        return Result.Success(mapper.Map<ShoppingSessionResponse?>(session));
+    private async Task<Result<ShoppingSessionEntity>> SaveChanges(ShoppingSessionEntity unsavedSession,
+        CancellationToken cancellationToken)
+    {
+        var savedSession = await repository.CreateSessionAsync(unsavedSession, cancellationToken);
+
+        if (savedSession is null)
+            return Result.Error("Failed to create shopping session");
+
+        await eventDispatcher.DispatchEventsAsync(unsavedSession, cancellationToken);
+        return Result.Success(savedSession);
     }
 }

@@ -1,9 +1,12 @@
-using System.Linq.Expressions;
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
+
+#endregion
 
 namespace DemoShop.Infrastructure.Features.ShoppingSessions;
 
@@ -18,8 +21,7 @@ public class ShoppingSessionRepository(ApplicationDbContext context) : IShopping
             .Include(s => s.CartItems)
             .ThenInclude(c => c.Product)
             .ThenInclude(p => p!.Images)
-            .FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken)
-            .ConfigureAwait(false);
+            .FirstOrDefaultAsync(s => s.UserId == userId, cancellationToken);
     }
 
     public async Task<ShoppingSessionEntity?> CreateSessionAsync(ShoppingSessionEntity session,
@@ -29,40 +31,35 @@ public class ShoppingSessionRepository(ApplicationDbContext context) : IShopping
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
         var createdSession = await context.Set<ShoppingSessionEntity>()
-            .AddAsync(session, cancellationToken)
-            .ConfigureAwait(false);
+            .AddAsync(session, cancellationToken);
 
-        await context.SaveChangesAsync(cancellationToken)
-            .ConfigureAwait(false);
+        await context.SaveChangesAsync(cancellationToken);
 
         return createdSession.Entity;
     }
 
-    public async Task UpdateSessionAsync(
+    public async Task<ShoppingSessionEntity> UpdateSessionAsync(
         ShoppingSessionEntity session,
         CancellationToken cancellationToken)
     {
         Guard.Against.Null(session, nameof(session));
 
-        var updatedSession = context.Set<ShoppingSessionEntity>()
-            .Update(session);
+        var entry = context.Set<ShoppingSessionEntity>().Update(session);
+        await context.SaveChangesAsync(cancellationToken);
 
-        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-
-        Guard.Against.Null(updatedSession.Entity, nameof(updatedSession.Entity));
+        await entry.ReloadAsync(cancellationToken);
+        return entry.Entity;
     }
 
-    public async Task DeleteSessionAsync(
+    public async Task<bool> DeleteSessionAsync(
         ShoppingSessionEntity session,
         CancellationToken cancellationToken)
     {
         Guard.Against.Null(session, nameof(session));
 
-        var removedSession = context.Set<ShoppingSessionEntity>()
-            .Remove(session);
+        context.Set<ShoppingSessionEntity>().Remove(session);
+        var affected = await context.SaveChangesAsync(cancellationToken);
 
-        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-
-        Guard.Against.Null(removedSession.Entity, nameof(removedSession.Entity));
+        return affected > 0;
     }
 }

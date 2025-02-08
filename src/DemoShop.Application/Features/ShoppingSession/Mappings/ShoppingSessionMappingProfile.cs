@@ -1,6 +1,10 @@
+#region
+
 using AutoMapper;
 using DemoShop.Application.Features.ShoppingSession.DTOs;
 using DemoShop.Domain.ShoppingSession.Entities;
+
+#endregion
 
 namespace DemoShop.Application.Features.ShoppingSession.Mappings;
 
@@ -30,7 +34,7 @@ public class ShoppingSessionMappingProfile : Profile
             .ForMember(dest => dest.UnitPrice, opt =>
                 opt.MapFrom(src => src.Product!.Price.Value))
             .ForMember(dest => dest.TotalPrice, opt =>
-                opt.MapFrom(src => src.Product!.Price.Multiply(src.Quantity.Value).Value));
+                opt.MapFrom(src => src.TotalPrice));
 
         CreateMap<CartItemEntity, UpdateCartItemQuantityResponse>()
             .ForMember(dest => dest.Quantity, opt =>

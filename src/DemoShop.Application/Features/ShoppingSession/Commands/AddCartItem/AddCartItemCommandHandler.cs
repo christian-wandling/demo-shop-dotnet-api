@@ -1,15 +1,21 @@
+#region
+
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using AutoMapper;
-using DemoShop.Application.Features.Common.Extensions;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.ShoppingSession.DTOs;
 using DemoShop.Application.Features.ShoppingSession.Interfaces;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
+using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using FluentValidation;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
+#endregion
 
 namespace DemoShop.Application.Features.ShoppingSession.Commands.AddCartItem;
 
@@ -19,7 +25,8 @@ public sealed class AddCartItemCommandHandler(
     IShoppingSessionRepository repository,
     ILogger<AddCartItemCommandHandler> logger,
     IDomainEventDispatcher eventDispatcher,
-    IValidator<AddCartItemCommand> validator
+    IValidator<AddCartItemCommand> validator,
+    IValidationService validationService
 )
     : IRequestHandler<AddCartItemCommand, Result<CartItemResponse>>
 {
@@ -29,37 +36,55 @@ public sealed class AddCartItemCommandHandler(
         Guard.Against.Null(request, nameof(request));
         Guard.Against.Null(request.AddCartItem, nameof(request));
 
-        var validationResult = await validator.ValidateAsync(request, cancellationToken)
-            .ConfigureAwait(false);
+        var validationResult = await validationService.ValidateAsync(request, validator, cancellationToken);
 
-        if (!validationResult.IsValid)
+        if (!validationResult.IsSuccess)
+            return validationResult.Map();
+
+        var sessionResult = await currentSession.GetCurrent(cancellationToken);
+
+        if (!sessionResult.IsSuccess)
+            return sessionResult.Map();
+
+        try
         {
-            var errors = validationResult.Errors.Select(e => e.ErrorMessage);
-            logger.LogValidationFailed("Add Cart item to Shopping session", string.Join(", ", errors));
+            var unsavedResult = sessionResult.Value.AddCartItem(request.AddCartItem.ProductId);
 
-            return Result.Invalid(validationResult.Errors.ToValidationErrors());
+            if (!unsavedResult.IsSuccess)
+                return unsavedResult.Map();
+
+            var savedResult = await SaveChanges(sessionResult, cancellationToken);
+
+            if (!savedResult.IsSuccess)
+                return savedResult.Map();
+
+            var savedCartItem = savedResult.Value.CartItems.FirstOrDefault(c =>
+                c.ProductId == request.AddCartItem.ProductId
+            );
+
+            return savedCartItem is null
+                ? Result.Error("Could not add cart item")
+                : Result.Success(mapper.Map<CartItemResponse>(savedCartItem)
+                );
         }
+        catch (InvalidOperationException ex)
+        {
+            logger.LogDomainException(ex.Message);
+            return Result.Error(ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            logger.LogOperationFailed("Add cart item", "ProductId", $"{request.AddCartItem.ProductId}", ex);
+            return Result.Error(ex.Message);
+        }
+    }
 
-        var currentSessionResult = await currentSession.GetCurrent(cancellationToken).ConfigureAwait(false);
+    private async Task<Result<ShoppingSessionEntity>> SaveChanges(ShoppingSessionEntity unsavedSession,
+        CancellationToken cancellationToken)
+    {
+        var savedSession = await repository.UpdateSessionAsync(unsavedSession, cancellationToken);
 
-        Guard.Against.Null(currentSessionResult, nameof(currentSessionResult));
-
-        currentSessionResult.Value.AddCartItem(request.AddCartItem.ProductId);
-
-        await repository.UpdateSessionAsync(currentSessionResult.Value, cancellationToken)
-            .ConfigureAwait(false);
-
-        currentSessionResult = await currentSession.GetCurrent(cancellationToken)
-            .ConfigureAwait(false);
-
-        var addedCartItem = currentSessionResult.Value.CartItems.FirstOrDefault(c =>
-            c.ProductId == request.AddCartItem.ProductId
-        );
-
-        await eventDispatcher.DispatchEventsAsync(currentSessionResult.Value, cancellationToken).ConfigureAwait(false);
-
-        return Result.Success(
-            mapper.Map<CartItemResponse>(addedCartItem)
-        );
+        await eventDispatcher.DispatchEventsAsync(unsavedSession, cancellationToken);
+        return Result.Success(savedSession);
     }
 }
