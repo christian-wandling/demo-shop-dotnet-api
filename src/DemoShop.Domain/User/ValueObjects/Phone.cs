@@ -1,23 +1,29 @@
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Base;
 
+#endregion
+
 namespace DemoShop.Domain.User.ValueObjects;
 
-public sealed record PhoneNumber : ValueObject
+public sealed record Phone : ValueObject
 {
-    public string? Value { get; private set; }
-
-    private PhoneNumber()
+    private Phone()
     {
         Value = null;
     }
 
-    private PhoneNumber(string? value)
+    private Phone(string? value)
     {
         Value = Guard.Against.InvalidPhone(value, nameof(value));
     }
 
-    public static PhoneNumber Create(string? phoneNumber) => new(phoneNumber);
+    public string? Value { get; }
+
+    public static Phone Empty => new();
+
+    public static Phone Create(string? value) => new(value);
 
     protected override IEnumerable<object> GetEqualityComponents()
     {

@@ -1,25 +1,29 @@
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Base;
 
+#endregion
+
 namespace DemoShop.Domain.User.ValueObjects;
 
-public sealed record EmailAddress : ValueObject
+public sealed record Email : ValueObject
 {
-    public string Value { get; private set; }
-
-    private EmailAddress()
+    private Email()
     {
         Value = string.Empty;
     }
 
-    private EmailAddress(string value)
+    private Email(string value)
     {
         Value = Guard.Against.InvalidEmail(value, nameof(value));
     }
 
-    public static EmailAddress Empty => new();
+    public string Value { get; }
 
-    public static EmailAddress Create(string email) => new(email);
+    public static Email Empty => new();
+
+    public static Email Create(string email) => new(email);
 
     protected override IEnumerable<object> GetEqualityComponents()
     {

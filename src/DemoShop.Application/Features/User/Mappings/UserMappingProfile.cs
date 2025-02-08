@@ -1,6 +1,10 @@
+#region
+
 using AutoMapper;
 using DemoShop.Application.Features.User.DTOs;
 using DemoShop.Domain.User.Entities;
+
+#endregion
 
 namespace DemoShop.Application.Features.User.Mappings;
 
@@ -16,13 +20,13 @@ public class UserMappingProfile : Profile
             .ForMember(dest => dest.Lastname, opt =>
                 opt.MapFrom(src => src.PersonName.Lastname))
             .ForMember(dest => dest.Phone, opt =>
-                opt.MapFrom(src => src.Phone == null ? null : src.Phone.Value))
+                opt.MapFrom(src => src.Phone.Value))
             .ForMember(dest => dest.Address, opt =>
                 opt.MapFrom(src => src.Address));
 
         CreateMap<UserEntity, UserPhoneResponse>()
             .ForMember(dest => dest.Phone, opt =>
-                opt.MapFrom(src => src.Phone == null ? null : src.Phone.Value));
+                opt.MapFrom(src => src.Phone.Value));
 
         CreateMap<AddressEntity, AddressResponse>()
             .ForMember(dest => dest.Street, opt =>

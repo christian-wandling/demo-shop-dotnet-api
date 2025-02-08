@@ -1,10 +1,14 @@
+#region
+
 using FluentValidation;
+
+#endregion
 
 namespace DemoShop.Application.Features.User.Commands.CreateUser;
 
-public sealed class CreateUserValidator : AbstractValidator<CreateUserCommand>
+public sealed class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
 {
-    public CreateUserValidator()
+    public CreateUserCommandValidator()
     {
         RuleFor(x => x.UserIdentity.KeycloakUserId)
             .NotEmpty();

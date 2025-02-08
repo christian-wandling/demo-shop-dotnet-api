@@ -1,5 +1,10 @@
+#region
+
+using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using DemoShop.Domain.User.Exceptions;
+
+#endregion
 
 // ReSharper disable once CheckNamespace
 namespace Ardalis.GuardClauses;
@@ -7,7 +12,7 @@ namespace Ardalis.GuardClauses;
 public static class InvalidEmailGuard
 {
     /// <summary>
-    /// Throws an <see cref="ArgumentException"/> if the input string is not a valid email address.
+    ///     Throws an <see cref="ArgumentException" /> if the input string is not a valid email address.
     /// </summary>
     /// <param name="guardClause">The guard clause.</param>
     /// <param name="input">The email address to validate.</param>
@@ -19,13 +24,14 @@ public static class InvalidEmailGuard
         this IGuardClause guardClause,
         string input,
         [CallerArgumentExpression(nameof(input))]
-        string? parameterName = null)
+        string? parameterName = null
+    )
     {
         Guard.Against.NullOrWhiteSpace(input, parameterName);
 
         try
         {
-            var mailAddress = new System.Net.Mail.MailAddress(input);
+            var mailAddress = new MailAddress(input);
             if (input != mailAddress.Address)
                 throw new InvalidEmailDomainException($"Email '{input}' is not in a valid format");
         }

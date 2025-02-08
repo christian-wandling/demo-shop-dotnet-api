@@ -1,4 +1,8 @@
+#region
+
 using Ardalis.Result;
+
+#endregion
 
 namespace DemoShop.Application.Features.User.Interfaces;
 

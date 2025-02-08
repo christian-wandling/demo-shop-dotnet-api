@@ -1,8 +1,13 @@
+#region
+
+using DemoShop.Api.Common.Base;
 using DemoShop.Application.Features.User.Interfaces;
+
+#endregion
 
 namespace DemoShop.Api.Features.User.Models;
 
-public sealed record UpdateUserAddressRequest : IUpdateUserAddressRequest
+public sealed record UpdateUserAddressRequest : Request, IUpdateUserAddressRequest
 {
     public required string Street { get; set; }
     public required string Apartment { get; set; }

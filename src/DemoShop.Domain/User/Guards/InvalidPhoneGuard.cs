@@ -1,14 +1,17 @@
-using System.Text.RegularExpressions;
+#region
+
 using DemoShop.Domain.Common.Constants;
 using DemoShop.Domain.User.Exceptions;
+
+#endregion
 
 // ReSharper disable once CheckNamespace
 namespace Ardalis.GuardClauses;
 
-public static partial class PhoneGuard
+public static class PhoneGuard
 {
     /// <summary>
-    /// Throws an <see cref="ArgumentException"/> if the input string is not a valid phone number.
+    ///     Throws an <see cref="ArgumentException" /> if the input string is not a valid phone number.
     /// </summary>
     /// <param name="guardClause">The guard clause.</param>
     /// <param name="input">The phone number to validate.</param>
@@ -21,7 +24,7 @@ public static partial class PhoneGuard
         string? input,
         string? parameterName = null)
     {
-        if (input is not null && !ValidationConstants.PhoneNumber().IsMatch(input))
+        if (input is not null && !ValidationConstants.PhoneNumber.IsMatch(input))
             throw new InvalidPhoneDomainException($"Phone number '{input}' is not in a valid format");
 
         return input;

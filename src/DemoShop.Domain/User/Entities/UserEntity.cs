@@ -1,28 +1,30 @@
-﻿using Ardalis.GuardClauses;
+﻿#region
+
+using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Domain.Common.Base;
-using DemoShop.Domain.Common.Exceptions;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.ValueObjects;
 using DemoShop.Domain.Order.Entities;
-using DemoShop.Domain.Order.Events;
 using DemoShop.Domain.ShoppingSession.Entities;
-using DemoShop.Domain.ShoppingSession.Events;
 using DemoShop.Domain.User.DTOs;
 using DemoShop.Domain.User.Events;
 using DemoShop.Domain.User.ValueObjects;
+
+#endregion
 
 namespace DemoShop.Domain.User.Entities;
 
 public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
 {
-    private readonly List<ShoppingSessionEntity> _shoppingSessions = [];
     private readonly List<OrderEntity> _orders = [];
+    private readonly List<ShoppingSessionEntity> _shoppingSessions = [];
 
     private UserEntity()
     {
         KeycloakUserId = KeycloakUserId.Empty;
-        Email = EmailAddress.Empty;
+        Email = Email.Empty;
+        Phone = Phone.Empty;
         PersonName = PersonName.Empty;
         Audit = Audit.Create();
         SoftDelete = SoftDelete.Create();
@@ -31,59 +33,64 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
     private UserEntity(IUserIdentity userIdentity)
     {
         KeycloakUserId = KeycloakUserId.Create(userIdentity.KeycloakUserId);
-        Email = EmailAddress.Create(userIdentity.Email);
+        Email = Email.Create(userIdentity.Email);
+        Phone = Phone.Create(null);
         PersonName = PersonName.Create(userIdentity.FirstName, userIdentity.LastName);
         Audit = Audit.Create();
         SoftDelete = SoftDelete.Create();
     }
 
-    public int Id { get; }
     public KeycloakUserId KeycloakUserId { get; private init; }
-    public EmailAddress Email { get; private init; }
+    public Email Email { get; private init; }
     public PersonName PersonName { get; private set; }
-    public PhoneNumber? Phone { get; private set; }
+    public Phone Phone { get; private set; }
     public AddressEntity? Address { get; private set; }
-    public Audit Audit { get; }
-    public SoftDelete SoftDelete { get; }
     public IReadOnlyCollection<OrderEntity> Orders => _orders.AsReadOnly();
     public IReadOnlyCollection<ShoppingSessionEntity> ShoppingSessions => _shoppingSessions.AsReadOnly();
+    public Audit Audit { get; }
 
-    public static UserEntity Create(IUserIdentity userIdentity)
+    public int Id { get; }
+    public SoftDelete SoftDelete { get; }
+
+    public static Result<UserEntity> Create(IUserIdentity userIdentity)
     {
         Guard.Against.Null(userIdentity, nameof(userIdentity));
 
         var user = new UserEntity(userIdentity);
         user.AddDomainEvent(new UserCreatedDomainEvent(user));
-        return user;
+
+        return Result.Success(user);
     }
 
-    public void UpdatePhone(string? phone)
+    public Result UpdatePhone(string? phone)
     {
         var oldPhone = Phone;
-        Phone = PhoneNumber.Create(phone);
+        Phone = Phone.Create(phone);
         Audit.UpdateModified();
-
         this.AddDomainEvent(new UserPhoneUpdatedDomainEvent(Id, Phone, oldPhone));
+
+        return Result.Success();
     }
 
-    public void SetInitialAddress(CreateAddressDto createAddress)
+    public Result SetInitialAddress(CreateAddressDto createAddress)
     {
         if (Address != null)
             throw new InvalidOperationException(
-                "Address already set. Use UpdateAddress to modify the existing address."
-            );
+                "Address already set. Use UpdateAddress to modify the existing address.");
 
-        var address = AddressEntity.Create(createAddress);
+        var result = AddressEntity.Create(createAddress);
 
-        Guard.Against.Null(address, nameof(address));
+        if (!result.IsSuccess) return result.Map();
 
-        Address = address;
+        Address = result.Value;
         Audit.UpdateModified();
 
         this.AddDomainEvent(new UserAddressUpdatedDomainEvent(Id, Address, null));
+
+        return Result.Success();
     }
 
-    public void UpdateAddress(UpdateAddressDto updateAddress)
+    public Result UpdateAddress(UpdateAddressDto updateAddress)
     {
         if (Address == null)
             throw new InvalidOperationException(
@@ -91,8 +98,13 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
             );
 
         var oldAddress = Address;
-        Address.Update(updateAddress);
+        var result = Address.Update(updateAddress);
+
+        if (!result.IsSuccess) return result.Map();
+
         Audit.UpdateModified();
         this.AddDomainEvent(new UserAddressUpdatedDomainEvent(Id, Address, oldAddress));
+
+        return Result.Success();
     }
 }

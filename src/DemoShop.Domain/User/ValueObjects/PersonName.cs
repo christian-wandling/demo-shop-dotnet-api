@@ -1,13 +1,14 @@
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Base;
+
+#endregion
 
 namespace DemoShop.Domain.User.ValueObjects;
 
 public sealed record PersonName : ValueObject
 {
-    public string Firstname { get; private set; }
-    public string Lastname { get; private set; }
-
     private PersonName()
     {
         Firstname = string.Empty;
@@ -19,6 +20,9 @@ public sealed record PersonName : ValueObject
         Firstname = Guard.Against.NullOrWhiteSpace(firstname);
         Lastname = Guard.Against.NullOrWhiteSpace(lastname);
     }
+
+    public string Firstname { get; }
+    public string Lastname { get; }
 
     public static PersonName Empty => new();
 

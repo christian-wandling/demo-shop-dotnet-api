@@ -1,12 +1,14 @@
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Base;
+
+#endregion
 
 namespace DemoShop.Domain.User.ValueObjects;
 
 public sealed record KeycloakUserId : ValueObject
 {
-    public string Value { get; private set; }
-
     private KeycloakUserId()
     {
         Value = string.Empty;
@@ -16,6 +18,8 @@ public sealed record KeycloakUserId : ValueObject
     {
         Value = Guard.Against.NullOrWhiteSpace(value, nameof(value));
     }
+
+    public string Value { get; }
 
     public static KeycloakUserId Empty => new();
 

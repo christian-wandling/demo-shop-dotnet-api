@@ -1,9 +1,13 @@
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.User.Entities;
 using DemoShop.Domain.User.ValueObjects;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+#endregion
 
 namespace DemoShop.Infrastructure.Features.Users.Persistence;
 
@@ -33,7 +37,7 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
             .IsRequired()
             .HasConversion(
                 email => email.Value,
-                dbEmail => EmailAddress.Create(dbEmail)
+                dbEmail => Email.Create(dbEmail)
             );
 
         builder.HasIndex(u => u.Email)
@@ -43,7 +47,7 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
             .IsRequired(false)
             .HasConversion(
                 phone => phone == null ? null : phone.Value,
-                dbPhone => PhoneNumber.Create(dbPhone)
+                dbPhone => Phone.Create(dbPhone)
             );
 
         builder.OwnsOne(u => u.PersonName, navigationBuilder =>
