@@ -107,6 +107,8 @@ appsettings.Staging.json
 [Cc]overage/
 *.coverage
 *.coveragexml
+coveragereport/
+**/TestResults/
 
 # SQL Server files
 *.mdf
@@ -127,5 +129,4 @@ yarn-error.log*
 *.*~
 .DS_Store
 Thumbs.db
-
 rest/
