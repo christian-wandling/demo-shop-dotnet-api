@@ -1,6 +1,10 @@
+#region
+
 using AutoMapper;
 using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.Domain.Product.Entities;
+
+#endregion
 
 namespace DemoShop.Application.Features.Product.Mappings;
 
@@ -28,7 +32,8 @@ public class ProductMappingProfile : Profile
             .ForMember(dest => dest.Items, opt =>
                 opt.MapFrom(src => src));
 
-        CreateMap<CategoryEntity, string>();
+        CreateMap<CategoryEntity, string>()
+            .ConvertUsing(src => src.Name);
         CreateMap<ImageEntity, ImageResponse>();
     }
 }
