@@ -1,4 +1,8 @@
+#region
+
 using DemoShop.Domain.Common.Interfaces;
+
+#endregion
 
 namespace DemoShop.Domain.Order.Events;
 

@@ -1,8 +1,11 @@
+#region
+
 using Ardalis.Result;
 using DemoShop.Application.Features.Order.DTOs;
-using DemoShop.Domain.Order.Entities;
 using MediatR;
+
+#endregion
 
 namespace DemoShop.Application.Features.Order.Commands.CreateOrder;
 
-public sealed record CreateOrderCommand() : IRequest<Result<OrderResponse?>>;
+public sealed record CreateOrderCommand : IRequest<Result<OrderResponse>>;

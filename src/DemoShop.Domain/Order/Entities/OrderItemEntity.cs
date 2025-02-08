@@ -1,18 +1,17 @@
+#region
+
 using Ardalis.GuardClauses;
 using Ardalis.Result;
-using DemoShop.Domain.Common.Base;
-using DemoShop.Domain.Common.Exceptions;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.ValueObjects;
-using DemoShop.Domain.Order.Events;
 using DemoShop.Domain.Order.ValueObjects;
+
+#endregion
 
 namespace DemoShop.Domain.Order.Entities;
 
 public sealed class OrderItemEntity : IEntity, IAuditable, ISoftDeletable
 {
-    public int OrderId { get; private set; }
-
     private OrderItemEntity()
     {
         Product = OrderProduct.Empty;
@@ -37,45 +36,28 @@ public sealed class OrderItemEntity : IEntity, IAuditable, ISoftDeletable
         SoftDelete = SoftDelete.Create();
     }
 
-    public int Id { get; }
+    public int OrderId { get; private set; }
     public OrderEntity Order { get; private set; } = null!;
     public int ProductId { get; private set; }
     public OrderProduct Product { get; private init; }
-    public Quantity Quantity { get; private init; }
-    public Price Price { get; private init; }
+    public Quantity Quantity { get; }
+    public Price Price { get; }
+
+    public Price TotalPrice => Price.Multiply(Quantity.Value);
     public Audit Audit { get; }
+
+    public int Id { get; }
     public SoftDelete SoftDelete { get; }
 
-    public static OrderItemEntity Create(
+    public static Result<OrderItemEntity> Create(
         int productId,
         OrderProduct product,
         Quantity quantity,
         Price price
-    ) =>
-        new(productId, product, quantity, price);
-
-    public Result Delete()
+    )
     {
-        if (SoftDelete.Deleted)
-            throw new AlreadyMarkedAsDeletedException($"OrderItem {Id} has already been marked as deleted");
+        var orderItem = new OrderItemEntity(productId, product, quantity, price);
 
-        SoftDelete.MarkAsDeleted();
-        Audit.UpdateModified();
-        this.AddDomainEvent(new OrderItemDeletedDomainEvent(Id));
-
-        return Result.Success();
+        return Result.Success(orderItem);
     }
-
-    public Result Restore()
-    {
-        if (SoftDelete.Deleted) throw new NotMarkedAsDeletedException($"OrderItem {Id} has not been marked as deleted");
-
-        SoftDelete.MarkAsDeleted();
-        Audit.UpdateModified();
-        this.AddDomainEvent(new OrderItemRestoredDomainEvent(Id));
-
-        return Result.Success();
-    }
-
-    public int TotalPrice => Price.Multiply(Quantity.Value).ToInt();
 }

@@ -1,10 +1,10 @@
+#region
+
 using AutoMapper;
 using DemoShop.Application.Features.Order.DTOs;
-using DemoShop.Application.Features.Product.DTOs;
-using DemoShop.Application.Features.ShoppingSession.DTOs;
 using DemoShop.Domain.Order.Entities;
-using DemoShop.Domain.Product.Entities;
-using DemoShop.Domain.ShoppingSession.Entities;
+
+#endregion
 
 namespace DemoShop.Application.Features.Order.Mappings;
 
@@ -20,7 +20,7 @@ public class OrderMappingProfile : Profile
             .ForMember(dest => dest.Items, opt =>
                 opt.MapFrom(src => src.OrderItems))
             .ForMember(dest => dest.Amount, opt =>
-                opt.MapFrom(src => src.Amount))
+                opt.MapFrom(src => src.Amount.Value))
             .ForMember(dest => dest.Status, opt =>
                 opt.MapFrom(src => src.Status))
             .ForMember(dest => dest.Created, opt =>
@@ -38,13 +38,10 @@ public class OrderMappingProfile : Profile
             .ForMember(dest => dest.UnitPrice, opt =>
                 opt.MapFrom(src => src.Price.Value))
             .ForMember(dest => dest.TotalPrice, opt =>
-                opt.MapFrom(src => src.TotalPrice));
+                opt.MapFrom(src => src.TotalPrice.Value));
 
         CreateMap<IReadOnlyCollection<OrderEntity>, OrderListResponse>()
             .ForMember(dest => dest.Items, opt =>
                 opt.MapFrom(src => src));
-
-        CreateMap<CategoryEntity, string>();
-        CreateMap<ImageEntity, ImageResponse>();
     }
 }

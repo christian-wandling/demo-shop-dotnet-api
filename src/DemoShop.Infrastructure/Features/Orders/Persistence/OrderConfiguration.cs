@@ -1,9 +1,12 @@
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Order.Entities;
-using DemoShop.Domain.Order.Enums;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+#endregion
 
 namespace DemoShop.Infrastructure.Features.Orders.Persistence;
 

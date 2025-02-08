@@ -1,8 +1,12 @@
+#region
+
 using Ardalis.GuardClauses;
 using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.Order.Interfaces;
 using DemoShop.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
+
+#endregion
 
 namespace DemoShop.Infrastructure.Features.Orders;
 
@@ -15,8 +19,7 @@ public class OrderRepository(ApplicationDbContext context) : IOrderRepository
 
         return await context.Query<OrderEntity>()
             .Include(o => o.OrderItems)
-            .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId, cancellationToken)
-            .ConfigureAwait(false);
+            .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId, cancellationToken);
     }
 
     public async Task<IEnumerable<OrderEntity>> GetOrdersByUserIdAsync(int userId, CancellationToken cancellationToken)
@@ -25,10 +28,8 @@ public class OrderRepository(ApplicationDbContext context) : IOrderRepository
 
         return await context.Query<OrderEntity>()
             .Include(o => o.OrderItems)
-            .Include(o => o.User)
             .Where(o => o.UserId == userId)
-            .ToListAsync(cancellationToken)
-            .ConfigureAwait(false);
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<OrderEntity?> CreateOrderAsync(OrderEntity orderEntity, CancellationToken cancellationToken)
@@ -36,7 +37,7 @@ public class OrderRepository(ApplicationDbContext context) : IOrderRepository
         Guard.Against.Null(orderEntity, nameof(orderEntity));
 
         var created = context.Set<OrderEntity>().Add(orderEntity);
-        await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await context.SaveChangesAsync(cancellationToken);
 
         return created.Entity;
     }

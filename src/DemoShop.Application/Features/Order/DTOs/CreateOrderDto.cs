@@ -1,5 +1,9 @@
+#region
+
 using System.ComponentModel.DataAnnotations;
 using DemoShop.Application.Features.ShoppingSession.DTOs;
+
+#endregion
 
 namespace DemoShop.Application.Features.Order.DTOs;
 

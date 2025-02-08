@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DemoShop.TestUtils\DemoShop.TestUtils.csproj"/>
+    <ProjectReference Include="..\..\src\DemoShop.Domain\DemoShop.Domain.csproj"/>
+  </ItemGroup>
+</Project>

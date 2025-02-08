@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.*"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DemoShop.TestUtils\DemoShop.TestUtils.csproj"/>
+    <ProjectReference Include="..\..\src\DemoShop.Domain\DemoShop.Domain.csproj"/>
+    <ProjectReference Include="..\..\src\DemoShop.Application\DemoShop.Application.csproj"/>
+    <ProjectReference Include="..\..\src\DemoShop.Infrastructure\DemoShop.Infrastructure.csproj"/>
+  </ItemGroup>
+
+</Project>

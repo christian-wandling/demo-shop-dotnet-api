@@ -1,4 +1,8 @@
+#region
+
 using DemoShop.Domain.Order.Entities;
+
+#endregion
 
 namespace DemoShop.Domain.Order.Interfaces;
 
