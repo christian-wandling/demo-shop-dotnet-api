@@ -10,8 +10,4 @@
     <ProjectReference Include="..\..\src\DemoShop.Application\DemoShop.Application.csproj"/>
     <ProjectReference Include="..\..\src\DemoShop.Infrastructure\DemoShop.Infrastructure.csproj"/>
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Common\" />
-  </ItemGroup>
 </Project>
