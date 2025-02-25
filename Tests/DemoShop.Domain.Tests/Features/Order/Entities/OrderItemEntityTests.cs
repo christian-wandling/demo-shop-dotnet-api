@@ -37,7 +37,7 @@ public class OrderItemEntityTests : Test
         public void Create_WithNegativeProductId_ThrowsArgumentException()
         {
             // Arrange
-            var productId = -1;
+            const int productId = -1;
             var product = Create<OrderProduct>();
             var quantity = Create<Quantity>();
             var price = Create<Price>();

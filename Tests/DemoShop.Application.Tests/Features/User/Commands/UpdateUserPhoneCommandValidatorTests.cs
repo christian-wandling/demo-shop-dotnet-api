@@ -1,7 +1,11 @@
+#region
+
 using DemoShop.Api.Features.User.Models;
 using DemoShop.Application.Features.User.Commands.UpdateUserPhone;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation.TestHelper;
+
+#endregion
 
 namespace DemoShop.Application.Tests.Features.User.Commands;
 
@@ -84,7 +88,7 @@ public class UpdateUserPhoneCommandValidatorTests : Test
     public void Validate_WhenPhoneFormatIsValid_ShouldNotHaveValidationError(string phone)
     {
         var command = new UpdateUserPhoneCommand(
-            new UpdateUserPhoneRequest() { Phone = phone }
+            new UpdateUserPhoneRequest { Phone = phone }
         );
 
         // Act

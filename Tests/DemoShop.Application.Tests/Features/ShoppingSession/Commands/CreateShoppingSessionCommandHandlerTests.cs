@@ -1,3 +1,5 @@
+#region
+
 using Ardalis.Result;
 using AutoMapper;
 using DemoShop.Application.Common.Interfaces;
@@ -12,16 +14,18 @@ using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
 using DbUpdateException = Microsoft.EntityFrameworkCore.DbUpdateException;
 
+#endregion
+
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
 public class CreateShoppingSessionCommandHandlerTests : Test
 {
-    private readonly CreateShoppingSessionCommandHandler _sut;
+    private readonly IDomainEventDispatcher _eventDispatcher;
     private readonly IMapper _mapper;
     private readonly IShoppingSessionRepository _repository;
-    private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly IValidator<CreateShoppingSessionCommand> _validator;
+    private readonly CreateShoppingSessionCommandHandler _sut;
     private readonly IValidationService _validationService;
+    private readonly IValidator<CreateShoppingSessionCommand> _validator;
 
     public CreateShoppingSessionCommandHandlerTests()
     {
@@ -111,7 +115,8 @@ public class CreateShoppingSessionCommandHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(response);
-        await _eventDispatcher.Received(1).DispatchEventsAsync(Arg.Any<ShoppingSessionEntity>(), CancellationToken.None);
+        await _eventDispatcher.Received(1)
+            .DispatchEventsAsync(Arg.Any<ShoppingSessionEntity>(), CancellationToken.None);
     }
 
     [Fact]
@@ -176,4 +181,3 @@ public class CreateShoppingSessionCommandHandlerTests : Test
         result.Status.Should().Be(ResultStatus.Error);
     }
 }
-

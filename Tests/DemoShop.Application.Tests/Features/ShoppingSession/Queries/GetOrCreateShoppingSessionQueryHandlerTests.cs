@@ -101,7 +101,7 @@ public class GetOrCreateShoppingSessionQueryHandlerTests : Test
     {
         // Arrange
         var userId = Create<int>();
-        var errorMessage = "Invalid operation occurred";
+        const string errorMessage = "Invalid operation occurred";
 
         _userAccessor.GetId(_cancellationToken)
             .Returns(Result.Success(userId));

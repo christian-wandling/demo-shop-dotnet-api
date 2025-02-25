@@ -17,8 +17,8 @@ namespace DemoShop.Api.Tests.Features.User;
 [Trait("Feature", "User")]
 public class GetCurrentUserEndpointTests : Test
 {
-    private readonly GetCurrentUserEndpoint _sut;
     private readonly IMediator _mediator;
+    private readonly GetCurrentUserEndpoint _sut;
 
     public GetCurrentUserEndpointTests()
     {

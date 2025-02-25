@@ -1,3 +1,5 @@
+#region
+
 using Ardalis.Result;
 using AutoMapper;
 using DemoShop.Application.Common.Interfaces;
@@ -13,17 +15,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
 
+#endregion
+
 namespace DemoShop.Application.Tests.Features.User.Commands;
 
 public class CreateUserCommandHandlerTests : Test
 {
+    private readonly IDomainEventDispatcher _eventDispatcher;
+    private readonly CreateUserCommandHandler _handler;
+    private readonly ILogger<CreateUserCommandHandler> _logger;
     private readonly IMapper _mapper;
     private readonly IUserRepository _repository;
-    private readonly ILogger<CreateUserCommandHandler> _logger;
-    private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly IValidator<CreateUserCommand> _validator;
     private readonly IValidationService _validationService;
-    private readonly CreateUserCommandHandler _handler;
+    private readonly IValidator<CreateUserCommand> _validator;
 
     public CreateUserCommandHandlerTests()
     {
@@ -146,4 +150,3 @@ public class CreateUserCommandHandlerTests : Test
         await act.Should().ThrowAsync<ArgumentNullException>();
     }
 }
-

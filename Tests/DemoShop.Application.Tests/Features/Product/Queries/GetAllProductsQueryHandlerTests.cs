@@ -61,7 +61,7 @@ public class GetAllProductsQueryHandlerTests : Test
     public async Task Handle_WhenInvalidOperationExceptionOccurs_ReturnsErrorResult()
     {
         // Arrange
-        var errorMessage = "Invalid operation error";
+        const string errorMessage = "Invalid operation error";
         var query = Create<GetAllProductsQuery>();
 
         _repository.GetAllProductsAsync(Arg.Any<CancellationToken>())

@@ -17,7 +17,6 @@ public class InvalidPhoneDomainException : DomainException
     {
     }
 
-
     public InvalidPhoneDomainException(string message, Exception innerException)
         : base(message, innerException)
     {

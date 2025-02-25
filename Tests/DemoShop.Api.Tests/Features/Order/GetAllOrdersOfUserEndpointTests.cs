@@ -2,8 +2,8 @@
 
 using Ardalis.Result;
 using DemoShop.Api.Features.Order.Endpoints;
-using DemoShop.Application.Features.Order.Queries.GetAllOrdersOfUser;
 using DemoShop.Application.Features.Order.DTOs;
+using DemoShop.Application.Features.Order.Queries.GetAllOrdersOfUser;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using NSubstitute.ExceptionExtensions;
@@ -17,8 +17,8 @@ namespace DemoShop.Api.Tests.Features.Order;
 [Trait("Feature", "Order")]
 public class GetAllOrdersOfUserEndpointTests : Test
 {
-    private readonly GetAllOrdersOfUserEndpoint _sut;
     private readonly IMediator _mediator;
+    private readonly GetAllOrdersOfUserEndpoint _sut;
 
     public GetAllOrdersOfUserEndpointTests()
     {

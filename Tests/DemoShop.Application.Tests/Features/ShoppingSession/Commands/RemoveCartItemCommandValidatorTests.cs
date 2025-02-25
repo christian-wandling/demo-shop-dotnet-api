@@ -1,6 +1,10 @@
+#region
+
 using DemoShop.Application.Features.ShoppingSession.Commands.RemoveCartItem;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation.TestHelper;
+
+#endregion
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 

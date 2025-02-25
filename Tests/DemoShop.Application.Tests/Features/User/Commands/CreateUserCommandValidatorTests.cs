@@ -1,6 +1,10 @@
+#region
+
 using DemoShop.Application.Features.User.Commands.CreateUser;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Features.User.Models;
+
+#endregion
 
 namespace DemoShop.Application.Tests.Features.User.Commands;
 
@@ -134,4 +138,3 @@ public class CreateUserCommandValidatorTests : Test
             x.ErrorCode == "MaximumLengthValidator");
     }
 }
-

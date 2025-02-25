@@ -1,7 +1,11 @@
+#region
+
 using DemoShop.Api.Features.ShoppingSession.Models;
 using DemoShop.Application.Features.ShoppingSession.Commands.UpdateCartItemQuantity;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation.TestHelper;
+
+#endregion
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
@@ -15,10 +19,7 @@ public class UpdateCartItemQuantityCommandValidatorTests : Test
         // Arrange
         var command = new UpdateCartItemQuantityCommand(
             Create<int>(),
-            new UpdateCartItemQuantityRequest()
-            {
-                Quantity = Create<int>(),
-            }
+            new UpdateCartItemQuantityRequest { Quantity = Create<int>() }
         );
         // Act
         var result = _validator.TestValidate(command);
@@ -35,10 +36,7 @@ public class UpdateCartItemQuantityCommandValidatorTests : Test
         // Arrange
         var command = new UpdateCartItemQuantityCommand(
             invalidUserId,
-            new UpdateCartItemQuantityRequest()
-            {
-                Quantity = Create<int>(),
-            }
+            new UpdateCartItemQuantityRequest { Quantity = Create<int>() }
         );
 
         // Act
@@ -57,10 +55,7 @@ public class UpdateCartItemQuantityCommandValidatorTests : Test
         // Arrange
         var command = new UpdateCartItemQuantityCommand(
             Create<int>(),
-            new UpdateCartItemQuantityRequest()
-            {
-                Quantity = invalidQuantity
-            }
+            new UpdateCartItemQuantityRequest { Quantity = invalidQuantity }
         );
 
         // Act

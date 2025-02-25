@@ -1,3 +1,5 @@
+#region
+
 using Ardalis.Result;
 using DemoShop.Application.Features.ShoppingSession.Commands.DeleteShoppingSession;
 using DemoShop.Domain.Common.Interfaces;
@@ -9,14 +11,16 @@ using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
 using DbUpdateException = Microsoft.EntityFrameworkCore.DbUpdateException;
 
+#endregion
+
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
 public class DeleteShoppingSessionCommandHandlerTests : Test
 {
-    private readonly DeleteShoppingSessionCommandHandler _sut;
-    private readonly IShoppingSessionRepository _repository;
     private readonly IDomainEventDispatcher _eventDispatcher;
     private readonly ILogger<DeleteShoppingSessionCommandHandler> _logger;
+    private readonly IShoppingSessionRepository _repository;
+    private readonly DeleteShoppingSessionCommandHandler _sut;
 
     public DeleteShoppingSessionCommandHandlerTests()
     {
@@ -110,7 +114,6 @@ public class DeleteShoppingSessionCommandHandlerTests : Test
     [Fact]
     public async Task Handle_WithNullRequest_ShouldThrowArgumentNullException()
     {
-
         // Act
         var act = () => _sut.Handle(null!, CancellationToken.None);
 
@@ -133,4 +136,3 @@ public class DeleteShoppingSessionCommandHandlerTests : Test
             .WithParameterName("Session");
     }
 }
-

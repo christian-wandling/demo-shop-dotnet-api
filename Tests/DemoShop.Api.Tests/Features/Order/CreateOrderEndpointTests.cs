@@ -17,8 +17,8 @@ namespace DemoShop.Api.Tests.Features.Order;
 [Trait("Feature", "Order")]
 public class CreateOrderEndpointTests : Test
 {
-    private readonly CreateOrderEndpoint _sut;
     private readonly IMediator _mediator;
+    private readonly CreateOrderEndpoint _sut;
 
     public CreateOrderEndpointTests()
     {

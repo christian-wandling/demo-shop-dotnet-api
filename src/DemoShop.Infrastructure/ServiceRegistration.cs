@@ -27,7 +27,7 @@ namespace DemoShop.Infrastructure;
 
 public static class ServiceRegistration
 {
-    public static IServiceCollection AddInfrastructure(
+    public static void AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -53,7 +53,5 @@ public static class ServiceRegistration
         services.AddScoped<IUserRepository, UserRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-        return services;
     }
 }

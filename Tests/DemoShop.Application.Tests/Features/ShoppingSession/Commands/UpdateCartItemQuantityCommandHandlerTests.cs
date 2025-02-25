@@ -1,3 +1,5 @@
+#region
+
 using System.Reflection;
 using Ardalis.Result;
 using AutoMapper;
@@ -16,18 +18,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
 
+#endregion
+
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
 public class UpdateCartItemQuantityCommandHandlerTests : Test
 {
-    private readonly UpdateCartItemQuantityCommandHandler _sut;
-    private readonly IMapper _mapper;
-    private readonly ICurrentShoppingSessionAccessor _sessionAccessor;
-    private readonly IShoppingSessionRepository _repository;
-    private readonly ILogger<UpdateCartItemQuantityCommandHandler> _logger;
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly IValidator<UpdateCartItemQuantityCommand> _validator;
+    private readonly ILogger<UpdateCartItemQuantityCommandHandler> _logger;
+    private readonly IMapper _mapper;
+    private readonly IShoppingSessionRepository _repository;
+    private readonly ICurrentShoppingSessionAccessor _sessionAccessor;
+    private readonly UpdateCartItemQuantityCommandHandler _sut;
     private readonly IValidationService _validationService;
+    private readonly IValidator<UpdateCartItemQuantityCommand> _validator;
 
     public UpdateCartItemQuantityCommandHandlerTests()
     {
@@ -95,7 +99,7 @@ public class UpdateCartItemQuantityCommandHandlerTests : Test
     {
         // Arrange
         var command = Create<UpdateCartItemQuantityCommand>();
-        var validationError = "Validation failed";
+        const string validationError = "Validation failed";
 
         _validationService.ValidateAsync(command, _validator, CancellationToken.None)
             .Returns(Task.FromResult(Result.Error(validationError)));
@@ -114,7 +118,7 @@ public class UpdateCartItemQuantityCommandHandlerTests : Test
     {
         // Arrange
         var command = Create<UpdateCartItemQuantityCommand>();
-        var sessionError = "Session not found";
+        const string sessionError = "Session not found";
 
         _validationService.ValidateAsync(command, _validator, CancellationToken.None)
             .Returns(Task.FromResult(Result.Success()));

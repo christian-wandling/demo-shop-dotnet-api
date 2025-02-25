@@ -3,9 +3,7 @@
 using AutoMapper;
 using DemoShop.Application.Features.Order.DTOs;
 using DemoShop.Application.Features.Order.Mappings;
-using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.Domain.Order.Entities;
-using DemoShop.Domain.Product.Entities;
 using DemoShop.TestUtils.Common.Base;
 
 #endregion

@@ -1,3 +1,5 @@
+#region
+
 using System.Reflection;
 using Ardalis.Result;
 using AutoMapper;
@@ -14,18 +16,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
 
+#endregion
+
 namespace DemoShop.Application.Tests.Features.User.Commands;
 
 public class UpdateUserAddressCommandHandlerTests : Test
 {
-    private readonly IMapper _mapper;
-    private readonly IUserIdentityAccessor _identity;
-    private readonly IUserRepository _repository;
-    private readonly ILogger<UpdateUserAddressCommandHandler> _logger;
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly IValidator<UpdateUserAddressCommand> _validator;
-    private readonly IValidationService _validationService;
     private readonly UpdateUserAddressCommandHandler _handler;
+    private readonly IUserIdentityAccessor _identity;
+    private readonly ILogger<UpdateUserAddressCommandHandler> _logger;
+    private readonly IMapper _mapper;
+    private readonly IUserRepository _repository;
+    private readonly IValidationService _validationService;
+    private readonly IValidator<UpdateUserAddressCommand> _validator;
 
     public UpdateUserAddressCommandHandlerTests()
     {
@@ -233,4 +237,3 @@ public class UpdateUserAddressCommandHandlerTests : Test
         await act.Should().ThrowAsync<ArgumentNullException>();
     }
 }
-

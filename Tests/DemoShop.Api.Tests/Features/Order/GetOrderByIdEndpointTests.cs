@@ -18,8 +18,8 @@ namespace DemoShop.Api.Tests.Features.Order;
 [Trait("Feature", "Order")]
 public class GetOrderByIdEndpointTests : Test
 {
-    private readonly GetOrderByIdEndpoint _sut;
     private readonly IMediator _mediator;
+    private readonly GetOrderByIdEndpoint _sut;
 
     public GetOrderByIdEndpointTests()
     {

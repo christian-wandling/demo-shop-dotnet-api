@@ -1,7 +1,11 @@
+#region
+
 using System.Security.Claims;
 using DemoShop.Application.Common.Constants;
 using DemoShop.Application.Common.Models;
 using DemoShop.TestUtils.Common.Base;
+
+#endregion
 
 namespace DemoShop.Application.Tests.Common.Models;
 
@@ -86,7 +90,6 @@ public class ClaimRequirementsTests : Test
         // Act & Assert
         var act = () => ClaimRequirements.HasRequiredClaims(principal, out _);
         act.Should().Throw<ArgumentNullException>()
-           .WithParameterName("principal");
+            .WithParameterName("principal");
     }
 }
-

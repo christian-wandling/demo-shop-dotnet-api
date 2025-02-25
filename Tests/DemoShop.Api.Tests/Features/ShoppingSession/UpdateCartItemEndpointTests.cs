@@ -18,8 +18,8 @@ namespace DemoShop.Api.Tests.Features.ShoppingSession;
 [Trait("Feature", "ShoppingSession")]
 public class UpdateCartItemQuantityEndpointTests : Test
 {
-    private readonly UpdateCartItemQuantityEndpoint _sut;
     private readonly IMediator _mediator;
+    private readonly UpdateCartItemQuantityEndpoint _sut;
 
     public UpdateCartItemQuantityEndpointTests()
     {

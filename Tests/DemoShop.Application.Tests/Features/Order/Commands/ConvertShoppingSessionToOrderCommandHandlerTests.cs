@@ -1,3 +1,5 @@
+#region
+
 using System.Reflection;
 using Ardalis.Result;
 using DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
@@ -12,14 +14,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
 
+#endregion
+
 namespace DemoShop.Application.Tests.Features.Order.Commands;
 
 public class ConvertShoppingSessionToOrderCommandHandlerTests : Test
 {
-    private readonly ConvertShoppingSessionToOrderCommandHandler _sut;
-    private readonly IOrderRepository _repository;
     private readonly IDomainEventDispatcher _eventDispatcher;
     private readonly ILogger<ConvertShoppingSessionToOrderCommandHandler> _logger;
+    private readonly IOrderRepository _repository;
+    private readonly ConvertShoppingSessionToOrderCommandHandler _sut;
 
     public ConvertShoppingSessionToOrderCommandHandlerTests()
     {
@@ -81,7 +85,8 @@ public class ConvertShoppingSessionToOrderCommandHandlerTests : Test
         result.Status.Should().Be(ResultStatus.Error);
 
         await _repository.DidNotReceive().CreateOrderAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
-        await _eventDispatcher.DidNotReceive().DispatchEventsAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
+        await _eventDispatcher.DidNotReceive()
+            .DispatchEventsAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -117,7 +122,8 @@ public class ConvertShoppingSessionToOrderCommandHandlerTests : Test
         result.Status.Should().Be(ResultStatus.Error);
 
         await _repository.Received(1).CreateOrderAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
-        await _eventDispatcher.DidNotReceive().DispatchEventsAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
+        await _eventDispatcher.DidNotReceive()
+            .DispatchEventsAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -200,7 +206,8 @@ public class ConvertShoppingSessionToOrderCommandHandlerTests : Test
 
     [Theory]
     [InlineData(null)]
-    public async Task Handle_WhenRequestIsNull_ShouldThrowArgumentNullException(ConvertShoppingSessionToOrderCommand request)
+    public async Task Handle_WhenRequestIsNull_ShouldThrowArgumentNullException(
+        ConvertShoppingSessionToOrderCommand request)
     {
         // Act
         var act = () => _sut.Handle(request, CancellationToken.None);
@@ -210,4 +217,3 @@ public class ConvertShoppingSessionToOrderCommandHandlerTests : Test
             .WithParameterName(nameof(request));
     }
 }
-

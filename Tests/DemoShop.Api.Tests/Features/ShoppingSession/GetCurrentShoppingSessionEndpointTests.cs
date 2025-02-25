@@ -17,8 +17,8 @@ namespace DemoShop.Api.Tests.Features.ShoppingSession;
 [Trait("Feature", "ShoppingSession")]
 public class GetCurrentShoppingSessionEndpointTests : Test
 {
-    private readonly GetCurrentShoppingSessionEndpoint _sut;
     private readonly IMediator _mediator;
+    private readonly GetCurrentShoppingSessionEndpoint _sut;
 
     public GetCurrentShoppingSessionEndpointTests()
     {

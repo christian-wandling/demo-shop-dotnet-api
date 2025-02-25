@@ -26,7 +26,7 @@ public class UpdateUserAsyncTests : RepositoryTest
         // Arrange
         var user = Create<UserEntity>();
         await AddTestDataAsync(user);
-        var newValue = "+98765432";
+        const string newValue = "+98765432";
         user.UpdatePhone(newValue);
 
         // Act
@@ -90,7 +90,7 @@ public class UpdateUserAsyncTests : RepositoryTest
         // Arrange
         var unsavedUser = Create<UserEntity>();
         var savedUser = await AddTestDataAsync(unsavedUser);
-        var newPhone = "+98765432";
+        const string newPhone = "+98765432";
         var address = Create<CreateAddressDto>() with { UserId = savedUser.Id };
         savedUser.UpdatePhone(newPhone);
         savedUser.SetInitialAddress(address);

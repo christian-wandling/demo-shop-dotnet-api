@@ -1,3 +1,5 @@
+#region
+
 using Ardalis.Result;
 using AutoMapper;
 using DemoShop.Application.Common.Interfaces;
@@ -12,17 +14,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
 
+#endregion
+
 namespace DemoShop.Application.Tests.Features.User.Commands;
 
 public class UpdateUserPhoneCommandHandlerTests : Test
 {
-    private readonly UpdateUserPhoneCommandHandler _sut;
-    private readonly IMapper _mapper;
-    private readonly IUserIdentityAccessor _identity;
-    private readonly IUserRepository _repository;
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly IValidator<UpdateUserPhoneCommand> _validator;
+    private readonly IUserIdentityAccessor _identity;
+    private readonly IMapper _mapper;
+    private readonly IUserRepository _repository;
+    private readonly UpdateUserPhoneCommandHandler _sut;
     private readonly IValidationService _validationService;
+    private readonly IValidator<UpdateUserPhoneCommand> _validator;
 
     public UpdateUserPhoneCommandHandlerTests()
     {
@@ -183,4 +187,3 @@ public class UpdateUserPhoneCommandHandlerTests : Test
         result.Status.Should().Be(ResultStatus.Error);
     }
 }
-

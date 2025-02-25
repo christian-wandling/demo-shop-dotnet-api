@@ -1,6 +1,10 @@
+#region
+
 using DemoShop.Api.Features.ShoppingSession.Models;
 using DemoShop.Application.Features.ShoppingSession.Commands.AddCartItem;
 using DemoShop.TestUtils.Common.Base;
+
+#endregion
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
@@ -16,10 +20,7 @@ public class AddCartItemCommandValidatorTests : Test
     {
         // Arrange
         var command = new AddCartItemCommand(
-            new AddCartItemRequest
-            {
-                ProductId = productId,
-            }
+            new AddCartItemRequest { ProductId = productId }
         );
 
         // Act
@@ -38,10 +39,7 @@ public class AddCartItemCommandValidatorTests : Test
     {
         // Arrange
         var command = new AddCartItemCommand(
-            new AddCartItemRequest
-            {
-                ProductId = productId,
-            }
+            new AddCartItemRequest { ProductId = productId }
         );
 
         // Act

@@ -1,3 +1,5 @@
+#region
+
 using Ardalis.Result;
 using AutoMapper;
 using DemoShop.Application.Common.Interfaces;
@@ -16,16 +18,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
 
+#endregion
+
 namespace DemoShop.Application.Tests.Features.Order.Commands;
 
 public class CreateOrderCommandHandlerTests : Test
 {
-    private readonly CreateOrderCommandHandler _sut;
     private readonly ICurrentShoppingSessionAccessor _currentSession;
+    private readonly IDomainEventDispatcher _eventDispatcher;
+    private readonly ILogger<CreateOrderCommandHandler> _logger;
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
-    private readonly ILogger<CreateOrderCommandHandler> _logger;
-    private readonly IDomainEventDispatcher _eventDispatcher;
+    private readonly CreateOrderCommandHandler _sut;
     private readonly IUnitOfWork _unitOfWork;
 
     public CreateOrderCommandHandlerTests()
@@ -57,7 +61,8 @@ public class CreateOrderCommandHandlerTests : Test
         var orderResponse = Create<OrderResponse>();
 
         _currentSession.GetCurrent(CancellationToken.None).Returns(Result.Success(session));
-        _mediator.Send(Arg.Any<ConvertShoppingSessionToOrderCommand>(), CancellationToken.None).Returns(Result.Success(order));
+        _mediator.Send(Arg.Any<ConvertShoppingSessionToOrderCommand>(), CancellationToken.None)
+            .Returns(Result.Success(order));
         _mediator.Send(Arg.Any<DeleteShoppingSessionCommand>(), CancellationToken.None).Returns(Result.Success());
         _unitOfWork.HasActiveTransaction.Returns(false);
         _mapper.Map<OrderResponse>(order).Returns(orderResponse);
@@ -193,4 +198,3 @@ public class CreateOrderCommandHandlerTests : Test
         _logger.Received(1).LogDomainException(errorMessage);
     }
 }
-

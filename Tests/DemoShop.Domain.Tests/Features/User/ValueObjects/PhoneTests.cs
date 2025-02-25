@@ -16,7 +16,7 @@ public class PhoneTests : Test
     public void Create_WithValidPhone_ReturnsSuccessResult()
     {
         // Arrange
-        var phoneNumber = "+1234567890";
+        const string phoneNumber = "+1234567890";
 
         // Act
         var result = Phone.Create(phoneNumber);

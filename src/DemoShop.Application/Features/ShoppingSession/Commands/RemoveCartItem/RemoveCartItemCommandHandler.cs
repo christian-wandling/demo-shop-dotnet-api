@@ -3,7 +3,6 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Application.Common.Interfaces;
-using DemoShop.Application.Features.ShoppingSession.Commands.CreateShoppingSession;
 using DemoShop.Application.Features.ShoppingSession.Interfaces;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;

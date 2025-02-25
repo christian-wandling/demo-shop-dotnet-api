@@ -57,8 +57,14 @@ public sealed class UnitOfWork(IApplicationDbContext context) : IUnitOfWork
 
     public void Dispose()
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
+        if (HasActiveTransaction)
+        {
+            _transaction?.Dispose();
+            _transaction = null;
+        }
+
+        context.Dispose();
+        _disposed = true;
     }
 
     private async Task DisposeTransactionAsync()
@@ -68,19 +74,5 @@ public sealed class UnitOfWork(IApplicationDbContext context) : IUnitOfWork
             await _transaction!.DisposeAsync();
             _transaction = null;
         }
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (_disposed || !disposing) return;
-
-        if (HasActiveTransaction)
-        {
-            _transaction?.Dispose();
-            _transaction = null;
-        }
-
-        context.Dispose();
-        _disposed = true;
     }
 }

@@ -1,3 +1,5 @@
+#region
+
 using System.Reflection;
 using Ardalis.Result;
 using AutoMapper;
@@ -16,17 +18,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
 
+#endregion
+
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
 public class AddCartItemCommandHandlerTests : Test
 {
-    private readonly AddCartItemCommandHandler _sut;
-    private readonly IMapper _mapper;
-    private readonly ICurrentShoppingSessionAccessor _sessionAccessor;
-    private readonly IShoppingSessionRepository _repository;
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly IValidator<AddCartItemCommand> _validator;
+    private readonly IMapper _mapper;
+    private readonly IShoppingSessionRepository _repository;
+    private readonly ICurrentShoppingSessionAccessor _sessionAccessor;
+    private readonly AddCartItemCommandHandler _sut;
     private readonly IValidationService _validationService;
+    private readonly IValidator<AddCartItemCommand> _validator;
 
     public AddCartItemCommandHandlerTests()
     {
@@ -114,7 +118,7 @@ public class AddCartItemCommandHandlerTests : Test
         backingField?.SetValue(session, 1);
 
         var command = new AddCartItemCommand(
-            new AddCartItemRequest() { ProductId = product.Id, }
+            new AddCartItemRequest { ProductId = product.Id }
         );
         var cartItem = Create<CartItemEntity>();
         typeof(CartItemEntity)

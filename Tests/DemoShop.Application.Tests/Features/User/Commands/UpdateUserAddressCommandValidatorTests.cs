@@ -1,6 +1,10 @@
+#region
+
 using DemoShop.Application.Features.User.Commands.UpdateUserAddress;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation.TestHelper;
+
+#endregion
 
 namespace DemoShop.Application.Tests.Features.User.Commands;
 
@@ -185,4 +189,3 @@ public class UpdateUserAddressCommandValidatorTests : Test
         result.ShouldHaveValidationErrorFor(x => x.UpdateUserAddress.Region);
     }
 }
-

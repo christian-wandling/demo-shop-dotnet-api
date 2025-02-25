@@ -38,7 +38,7 @@ public class OrderEntityTests : Test
         public void Create_WithNegativeUserId_ShouldThrowException()
         {
             // Arrange
-            var userId = -1;
+            const int userId = -1;
             var items = Create<List<OrderItemEntity>>();
 
             // Act

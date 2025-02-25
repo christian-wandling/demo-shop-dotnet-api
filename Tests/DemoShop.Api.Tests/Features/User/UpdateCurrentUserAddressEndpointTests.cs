@@ -5,22 +5,21 @@ using DemoShop.Api.Features.User.Endpoints;
 using DemoShop.Api.Features.User.Models;
 using DemoShop.Application.Features.User.Commands.UpdateUserAddress;
 using DemoShop.Application.Features.User.DTOs;
-using DemoShop.Application.Features.User.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
 
-namespace DemoShop.Api.Tests.Features.User.TestCases;
+namespace DemoShop.Api.Tests.Features.User;
 
 [Trait("Category", "Unit")]
 [Trait("Layer", "Api")]
 [Trait("Feature", "User")]
 public class UpdateCurrentUserAddressEndpointTests : Test
 {
-    private readonly UpdateCurrentUserAddressEndpoint _sut;
     private readonly IMediator _mediator;
+    private readonly UpdateCurrentUserAddressEndpoint _sut;
 
     public UpdateCurrentUserAddressEndpointTests()
     {

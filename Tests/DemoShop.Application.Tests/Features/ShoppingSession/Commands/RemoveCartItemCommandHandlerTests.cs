@@ -1,3 +1,5 @@
+#region
+
 using System.Reflection;
 using Ardalis.Result;
 using DemoShop.Application.Common.Interfaces;
@@ -12,16 +14,18 @@ using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
 using DbUpdateException = Microsoft.EntityFrameworkCore.DbUpdateException;
 
+#endregion
+
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
 public class RemoveCartItemCommandHandlerTests : Test
 {
-    private readonly RemoveCartItemCommandHandler _sut;
-    private readonly ICurrentShoppingSessionAccessor _sessionAccessor;
-    private readonly IShoppingSessionRepository _repository;
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly IValidator<RemoveCartItemCommand> _validator;
+    private readonly IShoppingSessionRepository _repository;
+    private readonly ICurrentShoppingSessionAccessor _sessionAccessor;
+    private readonly RemoveCartItemCommandHandler _sut;
     private readonly IValidationService _validationService;
+    private readonly IValidator<RemoveCartItemCommand> _validator;
 
     public RemoveCartItemCommandHandlerTests()
     {

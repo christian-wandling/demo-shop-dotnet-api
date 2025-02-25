@@ -67,14 +67,14 @@ public class UserEntityTests : Test
         {
             // Arrange
             var user = UserEntity.Create(Create<TestUserIdentity>()).Value;
-            var newPhone = "+1234567890";
+            const string newPhone = "+1234567890";
 
             // Act
             var result = user.UpdatePhone(newPhone);
 
             // Assert
             result.IsSuccess.Should().BeTrue();
-            user.Phone!.Value.Should().Be(newPhone);
+            user.Phone.Value.Should().Be(newPhone);
             user.GetDomainEvents().Should().ContainSingle(e => e is UserPhoneUpdatedDomainEvent);
         }
 

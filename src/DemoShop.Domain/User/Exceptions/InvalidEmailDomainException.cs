@@ -17,7 +17,6 @@ public class InvalidEmailDomainException : DomainException
     {
     }
 
-
     public InvalidEmailDomainException(string message, Exception innerException)
         : base(message, innerException)
     {

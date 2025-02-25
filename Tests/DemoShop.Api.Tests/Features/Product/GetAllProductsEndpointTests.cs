@@ -2,8 +2,6 @@
 
 using Ardalis.Result;
 using DemoShop.Api.Features.Product.Endpoints;
-using DemoShop.Api.Features.Product.Models;
-using DemoShop.Api.Features.User.Endpoints;
 using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.Application.Features.Product.Queries.GetAllProducts;
 using DemoShop.TestUtils.Common.Base;
@@ -19,8 +17,8 @@ namespace DemoShop.Api.Tests.Features.Product;
 [Trait("Feature", "Product")]
 public class GetAllProductsEndpointTests : Test
 {
-    private readonly GetAllProductsEndpoint _sut;
     private readonly IMediator _mediator;
+    private readonly GetAllProductsEndpoint _sut;
 
     public GetAllProductsEndpointTests()
     {

@@ -1,3 +1,5 @@
+#region
+
 using System.Security.Claims;
 using Ardalis.Result;
 using DemoShop.Application.Common.Constants;
@@ -5,6 +7,8 @@ using DemoShop.Application.Common.Models;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.TestUtils.Common.Base;
 using Microsoft.Extensions.Logging;
+
+#endregion
 
 namespace DemoShop.Application.Tests.Common.Models;
 
@@ -114,4 +118,3 @@ public class UserIdentityTests : Test
         _logger.Received(1).LogAuthFailed("Authentication failed: Principal is null or not authenticated");
     }
 }
-

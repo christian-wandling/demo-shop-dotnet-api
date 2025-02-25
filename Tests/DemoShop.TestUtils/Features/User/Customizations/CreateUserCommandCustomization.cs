@@ -1,5 +1,9 @@
+#region
+
 using DemoShop.Application.Features.User.Commands.CreateUser;
 using DemoShop.TestUtils.Features.User.Models;
+
+#endregion
 
 namespace DemoShop.TestUtils.Features.User.Customizations;
 

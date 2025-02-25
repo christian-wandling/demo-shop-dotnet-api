@@ -17,8 +17,8 @@ namespace DemoShop.Api.Tests.Features.ShoppingSession;
 [Trait("Feature", "ShoppingSession")]
 public class RemoveCartItemEndpointTests : Test
 {
-    private readonly RemoveCartItemEndpoint _sut;
     private readonly IMediator _mediator;
+    private readonly RemoveCartItemEndpoint _sut;
 
     public RemoveCartItemEndpointTests()
     {

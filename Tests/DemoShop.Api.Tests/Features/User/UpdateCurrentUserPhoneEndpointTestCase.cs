@@ -18,8 +18,8 @@ namespace DemoShop.Api.Tests.Features.User;
 [Trait("Feature", "User")]
 public class UpdateCurrentUserPhoneEndpointTests : Test
 {
-    private readonly UpdateCurrentUserPhoneEndpoint _sut;
     private readonly IMediator _mediator;
+    private readonly UpdateCurrentUserPhoneEndpoint _sut;
 
     public UpdateCurrentUserPhoneEndpointTests()
     {

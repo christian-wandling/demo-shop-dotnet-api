@@ -1,3 +1,5 @@
+#region
+
 using Ardalis.Result;
 using DemoShop.Application.Common.Models;
 using DemoShop.Domain.Common.Logging;
@@ -7,10 +9,14 @@ using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.Extensions.Logging;
 
+#endregion
+
+namespace DemoShop.Application.Tests.Common.Models;
+
 public class ValidationServiceTests : Test
 {
-    private readonly ValidationService _sut;
     private readonly ILogger<ValidationService> _logger;
+    private readonly ValidationService _sut;
 
     public ValidationServiceTests()
     {
@@ -44,10 +50,7 @@ public class ValidationServiceTests : Test
         // Arrange
         var request = Create<TestRequest>();
         var validator = Mock<IValidator<TestRequest>>();
-        var validationFailures = new[]
-        {
-            new ValidationFailure("Name", "Name is required")
-        };
+        var validationFailures = new[] { new ValidationFailure("Name", "Name is required") };
         var validationResult = new ValidationResult(validationFailures);
 
         validator
@@ -70,10 +73,7 @@ public class ValidationServiceTests : Test
         // Arrange
         var request = Create<TestRequest>();
         var validator = Mock<IValidator<TestRequest>>();
-        var validationFailures = new[]
-        {
-            new ValidationFailure("Name", "Name is required")
-        };
+        var validationFailures = new[] { new ValidationFailure("Name", "Name is required") };
         var validationResult = new ValidationResult(validationFailures);
 
         validator
@@ -84,7 +84,7 @@ public class ValidationServiceTests : Test
         await _sut.ValidateAsync(request, validator, CancellationToken.None);
 
         // Assert
-        _logger.Received(1).LogValidationFailed("", "" );
+        _logger.Received(1).LogValidationFailed("", "");
     }
 
     [Theory]

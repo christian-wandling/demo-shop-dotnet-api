@@ -1,3 +1,5 @@
+#region
+
 using System.Text.Json;
 using DemoShop.Api.Common.Middleware;
 using DemoShop.Domain.Common.Base;
@@ -7,11 +9,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
+#endregion
+
+namespace DemoShop.Api.Tests.Common;
+
 public class GlobalExceptionHandlerTests : Test
 {
-    private readonly GlobalExceptionHandler _sut;
     private readonly HttpContext _httpContext;
     private readonly Stream _responseStream;
+    private readonly GlobalExceptionHandler _sut;
 
     public GlobalExceptionHandlerTests()
     {
@@ -140,7 +146,7 @@ public class GlobalExceptionHandlerTests : Test
         var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(responseBody);
 
         problemDetails.Should().NotBeNull();
-        problemDetails!.Title.Should().Be(expectedTitle);
+        problemDetails.Title.Should().Be(expectedTitle);
         problemDetails.Detail.Should().Be(expectedDetail);
         problemDetails.Status.Should().Be(expectedStatus);
         problemDetails.Type.Should().Be($"https://tools.ietf.org/html/rfc7231#section-6.5.{expectedStatus - 399}");

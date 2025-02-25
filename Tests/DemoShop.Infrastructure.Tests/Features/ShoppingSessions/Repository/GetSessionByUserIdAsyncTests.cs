@@ -26,7 +26,7 @@ public class GetSessionByUserIdAsyncTests : RepositoryTest
         const int userId = 1;
         var session = Enumerable.Range(0, 3)
             .Select(_ => Create<ShoppingSessionEntity>())
-            .Select(o => ShoppingSessionEntity.Create(
+            .Select(_ => ShoppingSessionEntity.Create(
                 userId
             ).Value)
             .ToList();

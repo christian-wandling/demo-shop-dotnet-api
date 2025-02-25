@@ -44,8 +44,8 @@ public class PersonNameTests : Test
     public void Create_WithValidInput_ShouldCreatePersonName()
     {
         // Arrange
-        var firstname = "John";
-        var lastname = "Smith";
+        const string firstname = "John";
+        const string lastname = "Smith";
 
         // Act
         var personName = PersonName.Create(firstname, lastname);

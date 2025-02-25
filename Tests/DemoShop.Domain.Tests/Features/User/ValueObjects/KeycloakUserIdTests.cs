@@ -103,7 +103,7 @@ public class KeycloakUserIdTests : Test
     public void ToString_ShouldReturnStringRepresentation()
     {
         // Arrange
-        var id = "user123";
+        const string id = "user123";
         var userId = KeycloakUserId.Create(id);
 
         // Act

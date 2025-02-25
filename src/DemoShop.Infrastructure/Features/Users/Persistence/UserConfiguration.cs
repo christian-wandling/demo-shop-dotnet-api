@@ -46,7 +46,7 @@ public class UserConfiguration : IEntityTypeConfiguration<UserEntity>
         builder.Property(u => u.Phone)
             .IsRequired(false)
             .HasConversion(
-                phone => phone == null ? null : phone.Value,
+                phone => phone.Value,
                 dbPhone => Phone.Create(dbPhone)
             );
 

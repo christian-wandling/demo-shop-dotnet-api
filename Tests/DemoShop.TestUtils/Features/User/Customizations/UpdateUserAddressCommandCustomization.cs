@@ -1,5 +1,9 @@
+#region
+
 using DemoShop.Api.Features.User.Models;
 using DemoShop.Application.Features.User.Commands.UpdateUserAddress;
+
+#endregion
 
 namespace DemoShop.TestUtils.Features.User.Customizations;
 
