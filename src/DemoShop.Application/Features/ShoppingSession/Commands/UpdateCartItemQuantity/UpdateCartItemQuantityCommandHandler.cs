@@ -56,9 +56,14 @@ public sealed class UpdateCartItemQuantityCommandHandler(
 
             var savedResult = await SaveChanges(sessionResult.Value, cancellationToken);
 
-            return savedResult.IsSuccess
-                ? Result.Success(mapper.Map<UpdateCartItemQuantityResponse>(savedResult.Value))
-                : savedResult.Map();
+            if (!savedResult.IsSuccess)
+                return savedResult.Map();
+
+            var savedCartItem = savedResult.Value.CartItems.FirstOrDefault(c => c.Id == request.Id);
+
+            return savedCartItem != null
+                ? Result.Success(mapper.Map<UpdateCartItemQuantityResponse>(savedCartItem))
+                : Result.NotFound("Cart item not found");
         }
         catch (InvalidOperationException ex)
         {
