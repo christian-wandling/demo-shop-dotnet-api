@@ -1,6 +1,7 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:8.0 AS dev
 WORKDIR /app
 ENV DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+COPY src/Directory.Build.props src/
 COPY src/*/*.csproj ./
 RUN for file in $(ls *.csproj); do \
     mkdir -p src/${file%.*}/ \
