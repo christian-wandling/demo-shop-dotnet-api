@@ -1,0 +1,25 @@
+#region
+
+using Microsoft.OpenApi.Models;
+
+#endregion
+
+namespace DemoShop.Api.Common.Configurations;
+
+public static class SwaggerConfiguration
+{
+    public static void ConfigureSwagger(this IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.AddSwaggerGen(
+            c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo Shop API", Version = "v1" });
+                c.AddSecurityDefinition(
+                    "Bearer",
+                    new OpenApiSecurityScheme { Type = SecuritySchemeType.Http, Scheme = "bearer" });
+                c.EnableAnnotations();
+            });
+    }
+}
