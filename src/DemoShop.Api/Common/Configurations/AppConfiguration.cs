@@ -17,6 +17,7 @@ public static class AppConfiguration
 
         services.AddProblemDetails();
         services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddMemoryCache();
 
         services.AddApplication();
         services.AddInfrastructure(configuration);

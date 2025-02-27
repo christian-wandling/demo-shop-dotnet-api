@@ -17,6 +17,7 @@ using DemoShop.Infrastructure.Features.ShoppingSessions.Services;
 using DemoShop.Infrastructure.Features.Users;
 using DemoShop.Infrastructure.Features.Users.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -53,5 +54,7 @@ public static class ServiceRegistration
         services.AddScoped<IUserRepository, UserRepository>();
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddScoped<ICacheService, MemoryCacheService>();
     }
 }

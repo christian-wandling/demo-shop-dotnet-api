@@ -4,6 +4,7 @@ using System.Data.Common;
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using AutoMapper;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Product.Interfaces;
@@ -17,7 +18,8 @@ namespace DemoShop.Application.Features.Product.Queries.GetAllProducts;
 public sealed class GetAllProductsQueryHandler(
     IMapper mapper,
     IProductRepository repository,
-    ILogger<GetAllProductsQueryHandler> logger
+    ILogger<GetAllProductsQueryHandler> logger,
+    ICacheService cacheService
 )
     : IRequestHandler<GetAllProductsQuery, Result<ProductListResponse>>
 {
@@ -28,9 +30,18 @@ public sealed class GetAllProductsQueryHandler(
 
         try
         {
-            var result = await repository.GetAllProductsAsync(cancellationToken);
+            var cacheKey = cacheService.GenerateCacheKey("product", request);
 
-            return Result.Success(mapper.Map<ProductListResponse>(result));
+            var cachedResponse = cacheService.GetFromCache<ProductListResponse>(cacheKey);
+
+            if (cachedResponse is not null)
+                return Result.Success(cachedResponse);
+
+            var products = await repository.GetAllProductsAsync(cancellationToken);
+            var response = mapper.Map<ProductListResponse>(products);
+            cacheService.SetCache(cacheKey, response);
+
+            return Result.Success(response);
         }
         catch (InvalidOperationException ex)
         {

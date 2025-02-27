@@ -2,9 +2,9 @@
 
 using Ardalis.Result;
 using AutoMapper;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.Application.Features.Product.Queries.GetProductById;
-using DemoShop.Application.Features.User.Queries.GetUserByKeycloakId;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Product.Entities;
 using DemoShop.Domain.Product.Interfaces;
@@ -19,17 +19,20 @@ namespace DemoShop.Application.Tests.Features.Product.Queries;
 
 public class GetProductByIdQueryHandlerTests : Test
 {
-    private readonly ILogger<GetUserByKeycloakIdQueryHandler> _logger;
+    private readonly ILogger<GetProductByIdQueryHandler> _logger;
     private readonly IMapper _mapper;
     private readonly IProductRepository _repository;
+    private readonly ICacheService _cacheService;
     private readonly GetProductByIdQueryHandler _sut;
+    private const string CacheKey = "product-1";
 
     public GetProductByIdQueryHandlerTests()
     {
         _mapper = Mock<IMapper>();
         _repository = Mock<IProductRepository>();
-        _logger = Mock<ILogger<GetUserByKeycloakIdQueryHandler>>();
-        _sut = new GetProductByIdQueryHandler(_mapper, _repository, _logger);
+        _logger = Mock<ILogger<GetProductByIdQueryHandler>>();
+        _cacheService = Mock<ICacheService>();
+        _sut = new GetProductByIdQueryHandler(_mapper, _repository, _logger, _cacheService);
     }
 
     [Fact]
@@ -39,6 +42,11 @@ public class GetProductByIdQueryHandlerTests : Test
         var product = Create<ProductEntity>();
         var mappedResponse = Create<ProductResponse>();
         var query = new GetProductByIdQuery(1);
+
+        _cacheService.GenerateCacheKey("product", query)
+            .Returns(CacheKey);
+        _cacheService.GetFromCache<ProductResponse>(CacheKey)
+            .Returns((ProductResponse?)null);
 
         _repository.GetProductByIdAsync(query.Id, Arg.Any<CancellationToken>())
             .Returns(product);
@@ -63,6 +71,11 @@ public class GetProductByIdQueryHandlerTests : Test
     {
         // Arrange
         var query = new GetProductByIdQuery(1);
+
+        _cacheService.GenerateCacheKey("product", query)
+            .Returns(CacheKey);
+        _cacheService.GetFromCache<ProductResponse>(CacheKey)
+            .Returns((ProductResponse?)null);
 
         _repository.GetProductByIdAsync(query.Id, Arg.Any<CancellationToken>())
             .Returns((ProductEntity?)null);
@@ -89,6 +102,11 @@ public class GetProductByIdQueryHandlerTests : Test
         const string errorMessage = "Invalid operation error";
         var query = new GetProductByIdQuery(1);
 
+        _cacheService.GenerateCacheKey("product", query)
+            .Returns(CacheKey);
+        _cacheService.GetFromCache<ProductResponse>(CacheKey)
+            .Returns((ProductResponse?)null);
+
         _repository.GetProductByIdAsync(query.Id, Arg.Any<CancellationToken>())
             .Throws(new InvalidOperationException(errorMessage));
 
@@ -109,6 +127,11 @@ public class GetProductByIdQueryHandlerTests : Test
         // Arrange
         const string errorMessage = "Database error";
         var query = new GetProductByIdQuery(1);
+
+        _cacheService.GenerateCacheKey("product", query)
+            .Returns(CacheKey);
+        _cacheService.GetFromCache<ProductResponse>(CacheKey)
+            .Returns((ProductResponse?)null);
 
         _repository.GetProductByIdAsync(query.Id, Arg.Any<CancellationToken>())
             .Throws(new TestDbException(errorMessage));
@@ -153,5 +176,61 @@ public class GetProductByIdQueryHandlerTests : Test
         // Assert
         await act.Should().ThrowAsync<ArgumentNullException>()
             .WithParameterName("request");
+    }
+
+    [Fact]
+    public async Task Handle_WhenProductExistsInCache_ReturnsSuccessResultFromCache()
+    {
+        // Arrange
+        var query = new GetProductByIdQuery(1);
+        var cachedResponse = Create<ProductResponse>();
+
+        _cacheService.GenerateCacheKey("product", query)
+            .Returns(CacheKey);
+        _cacheService.GetFromCache<ProductResponse>(CacheKey)
+            .Returns(cachedResponse);
+
+        // Act
+        var result = await _sut.Handle(query, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(cachedResponse);
+
+        // Verify cache is checked but repository is not called
+        _cacheService.Received(1).GetFromCache<ProductResponse>(CacheKey);
+        await _repository.DidNotReceive().GetProductByIdAsync(Arg.Any<int>(), Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task Handle_WhenProductNotInCacheButInRepository_SetsCache()
+    {
+        // Arrange
+        var product = Create<ProductEntity>();
+        var mappedResponse = Create<ProductResponse>();
+        var query = new GetProductByIdQuery(1);
+
+        _cacheService.GenerateCacheKey("product", query)
+            .Returns(CacheKey);
+        _cacheService.GetFromCache<ProductResponse>(CacheKey)
+            .Returns((ProductResponse?)null);
+        _repository.GetProductByIdAsync(query.Id, Arg.Any<CancellationToken>())
+            .Returns(product);
+        _mapper.Map<ProductResponse>(product)
+            .Returns(mappedResponse);
+
+        // Act
+        var result = await _sut.Handle(query, CancellationToken.None);
+
+        // Assert
+        result.Should().NotBeNull();
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(mappedResponse);
+
+        // Verify cache interaction
+        _cacheService.Received(1).GetFromCache<ProductResponse>(CacheKey);
+        _cacheService.Received(1).SetCache(CacheKey, mappedResponse);
+        await _repository.Received(1).GetProductByIdAsync(query.Id, Arg.Any<CancellationToken>());
     }
 }

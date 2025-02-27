@@ -10,15 +10,15 @@ using Microsoft.Extensions.Logging;
 
 namespace DemoShop.Application.Features.Product.Handlers;
 
-public class ProductCategoryDeletedHandler(ILogger<ProductCategoryDeletedHandler> logger)
-    : INotificationHandler<CategoryDeletedDomainEvent>
+public class ProductCategoryRestoredHandler(ILogger<ProductCategoryRestoredHandler> logger)
+    : INotificationHandler<CategoryRestoredDomainEvent>
 {
-    public Task Handle(CategoryDeletedDomainEvent notification, CancellationToken cancellationToken)
+    public Task Handle(CategoryRestoredDomainEvent notification, CancellationToken cancellationToken)
     {
         Guard.Against.Null(notification, nameof(notification));
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
 
-        logger.LogOperationSuccess("Delete Category", "id", $"{notification.Id}");
+        logger.LogOperationSuccess("Restore Category", "id", $"{notification.Id}");
 
         return Task.CompletedTask;
     }
