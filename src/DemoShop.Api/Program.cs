@@ -12,3 +12,5 @@ builder.ConfigureServices();
 var app = builder.Build();
 app.ConfigureMiddleware();
 app.Run();
+
+public partial class Program { }
