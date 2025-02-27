@@ -82,7 +82,7 @@ public class UpdateCartItemQuantityCommandHandlerTests : Test
         _repository.UpdateSessionAsync(session, CancellationToken.None)
             .Returns(Task.FromResult(session));
 
-        _mapper.Map<UpdateCartItemQuantityResponse>(session)
+        _mapper.Map<UpdateCartItemQuantityResponse>(cartItem)
             .Returns(response);
 
         // Act
