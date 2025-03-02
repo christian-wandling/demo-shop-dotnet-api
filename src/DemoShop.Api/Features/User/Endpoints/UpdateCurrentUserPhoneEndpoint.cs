@@ -27,7 +27,7 @@ public class UpdateCurrentUserPhoneEndpoint(IMediator mediator)
     [SwaggerOperation(
         Summary = "Update phone of current user",
         Description = "Update the phone of the user based on identity extracted from bearer token",
-        OperationId = "User.UpdateCurrentUserPhone",
+        OperationId = "UpdateCurrentUserPhone",
         Tags = ["User"])
     ]
     public override async Task<Result<UserPhoneResponse>> HandleAsync(

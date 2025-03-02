@@ -1,6 +1,8 @@
 #region
 
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 #endregion
 
@@ -15,6 +17,9 @@ public static class SwaggerConfiguration
         services.AddSwaggerGen(
             c =>
             {
+                c.SupportNonNullableReferenceTypes();
+                c.DescribeAllParametersInCamelCase();
+                c.UseOneOfForPolymorphism();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo Shop API", Version = "v1" });
                 c.AddSecurityDefinition(
                     "Bearer",

@@ -17,11 +17,14 @@ public static class MiddlewareConfiguration
 
     private static void ConfigureSwagger(this WebApplication app)
     {
-        app.UseSwagger();
+        app.UseSwagger(c =>
+        {
+            c.RouteTemplate = "api/{documentname}/swagger.json";
+        });
         app.UseSwaggerUI(options =>
         {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-            options.RoutePrefix = string.Empty;
+            options.SwaggerEndpoint("/api/v1/swagger.json", "v1");
+            options.RoutePrefix = "api";
         });
     }
 }

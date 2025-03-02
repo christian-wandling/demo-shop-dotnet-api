@@ -26,7 +26,7 @@ public class GetProductByIdEndpoint(IMediator mediator)
     [SwaggerOperation(
         Summary = "Get all products",
         Description = "Get all products",
-        OperationId = "Product.GetProductById",
+        OperationId = "GetProductById",
         Tags = ["Product"])
     ]
     public override async Task<Result<ProductResponse>> HandleAsync(

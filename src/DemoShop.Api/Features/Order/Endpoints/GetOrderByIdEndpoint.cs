@@ -28,7 +28,7 @@ public class GetOrderByIdEndpoint(IMediator mediator)
     [SwaggerOperation(
         Summary = "Get order by id",
         Description = "Get order by id of current user based on identity extracted from bearer token",
-        OperationId = "Order.GetOrderById",
+        OperationId = "GetOrderById",
         Tags = ["Order"])
     ]
     public override async Task<Result<OrderResponse>> HandleAsync(

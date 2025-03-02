@@ -26,7 +26,7 @@ public class GetCurrentUserEndpoint(IMediator mediator)
     [SwaggerOperation(
         Summary = "Get current user",
         Description = "Get current user based on identity extracted from bearer token",
-        OperationId = "User.GetCurrentUser",
+        OperationId = "GetCurrentUser",
         Tags = ["User"])
     ]
     public override async Task<Result<UserResponse>> HandleAsync(CancellationToken cancellationToken = default) =>

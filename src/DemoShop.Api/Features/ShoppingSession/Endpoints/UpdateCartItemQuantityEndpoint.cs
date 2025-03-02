@@ -36,7 +36,7 @@ public class UpdateCartItemQuantityEndpoint(IMediator mediator)
         Summary = "Update cart item quantity",
         Description =
             "Update quantity of a cart item in shopping session of current user based on identity extracted from bearer token",
-        OperationId = "ShoppingSession.UpdateCartItemQuantity",
+        OperationId = "UpdateCartItemQuantity",
         Tags = ["ShoppingSession"])
     ]
     public override async Task<Result<UpdateCartItemQuantityResponse>> HandleAsync(

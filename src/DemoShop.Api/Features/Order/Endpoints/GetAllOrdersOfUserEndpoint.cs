@@ -26,7 +26,7 @@ public class GetAllOrdersOfUserEndpoint(IMediator mediator)
     [SwaggerOperation(
         Summary = "Get all orders",
         Description = "Get all orders of current user based on identity extracted from bearer token",
-        OperationId = "Order.GetAllOrders",
+        OperationId = "GetAllOrdersOfCurrentUser",
         Tags = ["Order"])
     ]
     public override async Task<Result<OrderListResponse>> HandleAsync(CancellationToken cancellationToken = default) =>

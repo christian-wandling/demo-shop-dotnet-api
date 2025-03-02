@@ -27,7 +27,7 @@ public class CreateOrderEndpoint(IMediator mediator)
         Summary = "Create order",
         Description =
             "Create order from shopping session of current user based on identity extracted from bearer token",
-        OperationId = "Order.CreateOrder",
+        OperationId = "CreateOrder",
         Tags = ["Order"])
     ]
     public override async Task<Result<OrderResponse>> HandleAsync(CancellationToken cancellationToken = default) =>

@@ -5,7 +5,7 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:8080",
+      "applicationUrl": "http://localhost:3000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -20,7 +20,7 @@
       "httpPort": 3000,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_URLS": "http://+:8080",
+        "ASPNETCORE_URLS": "http://+:3000",
         "DOTNET_WATCH_RESTART_ON_RUDE_EDIT": "true",
         "DOTNET_USE_POLLING_FILE_WATCHER": "true",
         "SENTRY__DSN": "${SENTRY_DSN}",

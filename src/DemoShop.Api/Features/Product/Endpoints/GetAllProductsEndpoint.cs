@@ -23,7 +23,7 @@ public class GetAllProductsEndpoint(IMediator mediator)
     [SwaggerOperation(
         Summary = "Get all products",
         Description = "Get all products",
-        OperationId = "Product.GetAllProducts",
+        OperationId = "GetAllProducts",
         Tags = ["Product"])
     ]
     public override async Task<Result<ProductListResponse>>

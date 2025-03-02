@@ -27,7 +27,7 @@ public class UpdateCurrentUserAddressEndpoint(IMediator mediator)
     [SwaggerOperation(
         Summary = "Update address of current user",
         Description = "Update the address of the user based on identity extracted from bearer token",
-        OperationId = "User.UpdateCurrentUserAddress",
+        OperationId = "UpdateCurrentUserAddress",
         Tags = ["User"])
     ]
     public override async Task<Result<AddressResponse>> HandleAsync(

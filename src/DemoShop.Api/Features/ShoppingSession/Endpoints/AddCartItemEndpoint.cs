@@ -28,7 +28,7 @@ public class AddCartItemEndpoint(IMediator mediator)
         Summary = "Add cart item",
         Description =
             "Add a cart item to the shopping session of current user based on identity extracted from bearer token",
-        OperationId = "ShoppingSession.AddCartItem",
+        OperationId = "AddCartItem",
         Tags = ["ShoppingSession"])
     ]
     public override async Task<Result<CartItemResponse>> HandleAsync(

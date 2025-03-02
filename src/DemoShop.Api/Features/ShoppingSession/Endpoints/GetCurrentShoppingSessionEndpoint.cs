@@ -26,7 +26,7 @@ public class GetCurrentShoppingSessionEndpoint(IMediator mediator)
     [SwaggerOperation(
         Summary = "Get current shopping session",
         Description = "Get the shopping session of current user based on identity extracted from bearer token",
-        OperationId = "ShoppingSession.GetCurrentShoppingSession",
+        OperationId = "GetCurrentShoppingSession",
         Tags = ["ShoppingSession"])
     ]
     public override async Task<Result<ShoppingSessionResponse>> HandleAsync(

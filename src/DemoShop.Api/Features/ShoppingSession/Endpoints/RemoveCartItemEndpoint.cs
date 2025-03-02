@@ -33,7 +33,7 @@ public class RemoveCartItemEndpoint(IMediator mediator)
         Summary = "Remove cart item",
         Description =
             "Remove a cart item from the shopping session of current user based on identity extracted from bearer token",
-        OperationId = "ShoppingSession.RemoveCartItem",
+        OperationId = "RemoveCartItem",
         Tags = ["ShoppingSession"])
     ]
     public override async Task<Result> HandleAsync(
