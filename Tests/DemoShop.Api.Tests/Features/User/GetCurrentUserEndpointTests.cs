@@ -3,7 +3,7 @@
 using Ardalis.Result;
 using DemoShop.Api.Features.User.Endpoints;
 using DemoShop.Application.Features.User.DTOs;
-using DemoShop.Application.Features.User.Queries.GetOrCreateUser;
+using DemoShop.Application.Features.User.Processes.UserResolution;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using NSubstitute.ExceptionExtensions;
@@ -31,7 +31,7 @@ public class GetCurrentUserEndpointTests : Test
     {
         // Arrange
         var expectedResponse = Create<Result<UserResponse>>();
-        _mediator.Send(Arg.Any<GetOrCreateUserQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<UserResolutionProcess>(), Arg.Any<CancellationToken>())
             .Returns(expectedResponse);
 
         // Act
@@ -40,7 +40,7 @@ public class GetCurrentUserEndpointTests : Test
         // Assert
         result.Should().BeEquivalentTo(expectedResponse);
         await _mediator.Received(1)
-            .Send(Arg.Is<GetOrCreateUserQuery>(q => q != null), Arg.Any<CancellationToken>());
+            .Send(Arg.Is<UserResolutionProcess>(q => q != null), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public class GetCurrentUserEndpointTests : Test
     {
         // Arrange
         var expectedException = new Exception("Mediator error");
-        _mediator.Send(Arg.Any<GetOrCreateUserQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<UserResolutionProcess>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(expectedException);
 
         // Act
@@ -63,7 +63,7 @@ public class GetCurrentUserEndpointTests : Test
     public async Task HandleAsync_ShouldReturnExpectedFailureStatus_WhenMediatorReturnsFailure()
     {
         // Arrange
-        _mediator.Send(Arg.Any<GetOrCreateUserQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<UserResolutionProcess>(), Arg.Any<CancellationToken>())
             .Returns(Result.Error("Error message"));
 
         // Act

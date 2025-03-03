@@ -3,6 +3,7 @@
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Application.Common.Interfaces;
+using DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
 using DemoShop.Application.Features.Order.Queries.GetAllOrdersOfUser;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
@@ -14,7 +15,7 @@ using Serilog;
 
 #endregion
 
-namespace DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
+namespace DemoShop.Application.Features.Order.Commands.CreateOrder;
 
 public sealed class CreateOrderCommandHandler(
     IOrderRepository repository,
@@ -35,12 +36,13 @@ public sealed class CreateOrderCommandHandler(
             LogCommandStarted(logger, request.Session.Id);
 
             var unsavedResult = request.Session.ConvertToOrder();
-
             if (!unsavedResult.IsSuccess)
+            {
+                LogCommandError(logger, request.Session.Id);
                 return unsavedResult.Map();
+            }
 
             var savedResult = await SaveChanges(unsavedResult.Value, cancellationToken);
-
             if (!savedResult.IsSuccess)
             {
                 LogCommandError(logger, request.Session.Id);

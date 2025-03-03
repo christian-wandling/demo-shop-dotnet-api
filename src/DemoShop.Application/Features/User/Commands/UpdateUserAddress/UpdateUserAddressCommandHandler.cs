@@ -14,7 +14,7 @@ using DemoShop.Domain.User.Interfaces;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -24,7 +24,7 @@ public sealed class UpdateUserAddressCommandHandler(
     IMapper mapper,
     IUserIdentityAccessor identity,
     IUserRepository repository,
-    ILogger<UpdateUserAddressCommandHandler> logger,
+    ILogger logger,
     IDomainEventDispatcher eventDispatcher,
     IValidator<UpdateUserAddressCommand> validator,
     IValidationService validationService
@@ -38,11 +38,6 @@ public sealed class UpdateUserAddressCommandHandler(
         Guard.Against.Null(request.UpdateUserAddress, nameof(request.UpdateUserAddress));
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
-        var validationResult = await validationService.ValidateAsync(request, validator, cancellationToken);
-
-        if (!validationResult.IsSuccess)
-            return validationResult.Map();
-
         var identityResult = identity.GetCurrentIdentity();
 
         if (!identityResult.IsSuccess)
@@ -50,33 +45,50 @@ public sealed class UpdateUserAddressCommandHandler(
 
         try
         {
+            LogCommandStarted(logger, identityResult.Value.KeycloakUserId);
+
+            var validationResult = await validationService.ValidateAsync(request, validator, cancellationToken);
+
+            if (!validationResult.IsSuccess)
+            {
+                LogCommandError(logger, identityResult.Value.KeycloakUserId);
+                return validationResult.Map();
+            }
+
             var user = await repository.GetUserByKeycloakIdAsync(
                 identityResult.Value.KeycloakUserId,
-                cancellationToken
-            );
-
+                cancellationToken);
             if (user is null)
+            {
+                LogCommandError(logger, identityResult.Value.KeycloakUserId);
                 return Result.NotFound("User not found");
+            }
 
             var unsavedResult = UpdateUserAddress(user, request.UpdateUserAddress);
-
             if (!unsavedResult.IsSuccess)
+            {
+                LogCommandError(logger, identityResult.Value.KeycloakUserId);
                 return unsavedResult.Map();
+            }
 
             var savedResult = await SaveChanges(user, cancellationToken);
+            if (!savedResult.IsSuccess)
+            {
+                LogCommandError(logger, identityResult.Value.KeycloakUserId);
+                return savedResult.Map();
+            }
 
-            return savedResult.IsSuccess
-                ? Result.Success(mapper.Map<AddressResponse>(savedResult.Value.Address))
-                : savedResult.Map();
+            LogCommandSuccess(logger, savedResult.Value.Id);
+            return Result.Success(mapper.Map<AddressResponse>(savedResult.Value.Address));
         }
         catch (InvalidOperationException ex)
         {
-            logger.LogDomainException(ex.Message);
+            LogInvalidOperationException(logger, ex.Message, ex);
             return Result.Error(ex.Message);
         }
         catch (DbUpdateException ex)
         {
-            logger.LogOperationFailed("Update user address", "KeycloakUserId", identityResult.Value.KeycloakUserId, ex);
+            LogDatabaseException(logger, ex.Message, ex);
             return Result.Error(ex.Message);
         }
     }
@@ -120,4 +132,24 @@ public sealed class UpdateUserAddressCommandHandler(
         await eventDispatcher.DispatchEventsAsync(unsavedUser, cancellationToken);
         return Result.Success(savedUser);
     }
+
+    private static void LogCommandStarted(ILogger logger, string keycloakUserId) =>
+        logger.ForContext("EventId", LoggerEventIds.UpdateUserAddressCommandStarted)
+            .Information("Starting to update address for user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
+
+    private static void LogCommandSuccess(ILogger logger, int userId) =>
+        logger.ForContext("EventId", LoggerEventIds.UpdateUserAddressCommandSuccess)
+            .Information("Successfully updated address for user with Id {UserId}", userId);
+
+    private static void LogCommandError(ILogger logger, string keycloakUserId) =>
+        logger.ForContext("EventId", LoggerEventIds.UpdateUserAddressCommandError)
+            .Information("Error updating address for user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
+
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Database error occurred while creating order. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.UpdateUserDatabaseException);
+
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Invalid operation while creating order. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.UpdateUserDomainException);
 }

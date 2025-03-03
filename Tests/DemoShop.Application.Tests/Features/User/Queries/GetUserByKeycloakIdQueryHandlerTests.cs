@@ -38,7 +38,7 @@ public class GetUserByKeycloakIdQueryHandlerTests : Test
         var user = Create<UserEntity>();
         var userResponse = Create<UserResponse>();
 
-        _repository.GetUserByKeycloakIdAsync(query.KeycloakId, Arg.Any<CancellationToken>())
+        _repository.GetUserByKeycloakIdAsync(query.KeycloakUserId, Arg.Any<CancellationToken>())
             .Returns(user);
         _mapper.Map<UserResponse>(user).Returns(userResponse);
 
@@ -56,7 +56,7 @@ public class GetUserByKeycloakIdQueryHandlerTests : Test
         // Arrange
         var query = Create<GetUserByKeycloakIdQuery>();
 
-        _repository.GetUserByKeycloakIdAsync(query.KeycloakId, Arg.Any<CancellationToken>())
+        _repository.GetUserByKeycloakIdAsync(query.KeycloakUserId, Arg.Any<CancellationToken>())
             .Returns((UserEntity?)null);
 
         // Act
@@ -74,7 +74,7 @@ public class GetUserByKeycloakIdQueryHandlerTests : Test
         var query = Create<GetUserByKeycloakIdQuery>();
         const string exceptionMessage = "Invalid operation";
 
-        _repository.GetUserByKeycloakIdAsync(query.KeycloakId, Arg.Any<CancellationToken>())
+        _repository.GetUserByKeycloakIdAsync(query.KeycloakUserId, Arg.Any<CancellationToken>())
             .Throws(new InvalidOperationException(exceptionMessage));
 
         // Act
@@ -91,7 +91,7 @@ public class GetUserByKeycloakIdQueryHandlerTests : Test
         // Arrange
         var query = Create<GetUserByKeycloakIdQuery>();
 
-        _repository.GetUserByKeycloakIdAsync(query.KeycloakId, Arg.Any<CancellationToken>())
+        _repository.GetUserByKeycloakIdAsync(query.KeycloakUserId, Arg.Any<CancellationToken>())
             .Throws(new TestDbException());
 
         // Act

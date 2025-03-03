@@ -14,5 +14,6 @@
 
   <ItemGroup>
     <Folder Include="Features\ShoppingSession\Processes\" />
+    <Folder Include="Features\User\Processes\" />
   </ItemGroup>
 </Project>

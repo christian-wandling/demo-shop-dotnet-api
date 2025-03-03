@@ -12,7 +12,7 @@ using DemoShop.Domain.User.Interfaces;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -21,7 +21,7 @@ namespace DemoShop.Application.Features.User.Commands.CreateUser;
 public sealed class CreateUserCommandHandler(
     IMapper mapper,
     IUserRepository repository,
-    ILogger<CreateUserCommandHandler> logger,
+    ILogger logger,
     IDomainEventDispatcher eventDispatcher,
     IValidator<CreateUserCommand> validator,
     IValidationService validationService
@@ -34,32 +34,42 @@ public sealed class CreateUserCommandHandler(
         Guard.Against.Null(request.UserIdentity, nameof(request.UserIdentity));
         Guard.Against.Null(cancellationToken, nameof(CancellationToken));
 
-        var validationResult = await validationService.ValidateAsync(request, validator, cancellationToken);
-
-        if (!validationResult.IsSuccess)
-            return validationResult.Map();
-
         try
         {
-            var unsavedResult = UserEntity.Create(request.UserIdentity);
+            LogCommandStarted(logger, request.UserIdentity.KeycloakUserId);
 
+            var validationResult = await validationService.ValidateAsync(request, validator, cancellationToken);
+            if (!validationResult.IsSuccess)
+            {
+                LogCommandError(logger, request.UserIdentity.KeycloakUserId);
+                return validationResult.Map();
+            }
+
+            var unsavedResult = UserEntity.Create(request.UserIdentity);
             if (!unsavedResult.IsSuccess)
+            {
+                LogCommandError(logger, request.UserIdentity.KeycloakUserId);
                 return unsavedResult.Map();
+            }
 
             var savedResult = await SaveChanges(unsavedResult.Value, cancellationToken);
+            if (!savedResult.IsSuccess)
+            {
+                LogCommandError(logger, request.UserIdentity.KeycloakUserId);
+                return savedResult.Map();
+            }
 
-            return savedResult.IsSuccess
-                ? Result.Success(mapper.Map<UserResponse>(savedResult.Value))
-                : savedResult.Map();
+            LogCommandSuccess(logger, savedResult.Value.Id, savedResult.Value.KeycloakUserId.Value);
+            return Result.Success(mapper.Map<UserResponse>(savedResult.Value));
         }
         catch (InvalidOperationException ex)
         {
-            logger.LogDomainException(ex.Message);
+            LogInvalidOperationException(logger, ex.Message, ex);
             return Result.Error(ex.Message);
         }
         catch (DbUpdateException ex)
         {
-            logger.LogOperationFailed("Create user", "KeycloakUserId", request.UserIdentity.KeycloakUserId, ex);
+            LogDatabaseException(logger, ex.Message, ex);
             return Result.Error(ex.Message);
         }
     }
@@ -75,4 +85,25 @@ public sealed class CreateUserCommandHandler(
 
         return Result.Success(savedUser);
     }
+
+    private static void LogCommandStarted(ILogger logger, string keycloakUserId) =>
+        logger.ForContext("EventId", LoggerEventIds.CreateUserCommandStarted)
+            .Information("Starting to create user with ID {KeycloakUserId}", keycloakUserId);
+
+    private static void LogCommandSuccess(ILogger logger, int userId, string keycloakUserId) =>
+        logger.ForContext("EventId", LoggerEventIds.CreateUserCommandSuccess)
+            .Information("Successfully created user with Id {UserId} {KeycloakUserId}",
+                userId, keycloakUserId);
+
+    private static void LogCommandError(ILogger logger, string keycloakUserId) =>
+        logger.ForContext("EventId", LoggerEventIds.CreateUserCommandError)
+            .Information("Error creating user with ID {KeycloakUserId}", keycloakUserId);
+
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Database error occurred while creating order. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.CreateUserDatabaseException);
+
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Invalid operation while creating order. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.CreateUserDomainException);
 }

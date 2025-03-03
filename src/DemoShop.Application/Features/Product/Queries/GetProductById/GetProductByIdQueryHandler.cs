@@ -43,7 +43,7 @@ public sealed class GetProductByIdQueryHandler(
                 return Result.NotFound($"Product with Id {request.Id} not found");
             }
 
-            LogQuerySuccess(logger, request.Id);
+            LogQuerySuccess(logger, response.Id);
             return Result.Success(response);
         }
         catch (InvalidOperationException ex)
@@ -59,9 +59,7 @@ public sealed class GetProductByIdQueryHandler(
     }
 
     private async Task<ProductResponse?> GetFromDatabase(
-        int id,
-        string cacheKey,
-        CancellationToken cancellationToken
+        int id, string cacheKey, CancellationToken cancellationToken
     )
     {
         var product = await repository.GetProductByIdAsync(id, cancellationToken);

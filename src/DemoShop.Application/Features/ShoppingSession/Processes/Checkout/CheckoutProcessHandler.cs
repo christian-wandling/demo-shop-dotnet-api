@@ -51,7 +51,7 @@ public sealed class CheckoutProcessHandler(
                 if (!savedOrderResult.IsSuccess)
                 {
                     await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                    LogProcessError(logger, savedOrderResult.Value.UserId, savedOrderResult.Value.Id);
+                    LogProcessFailed(logger, savedOrderResult.Value.UserId, savedOrderResult.Value.Id);
                     return savedOrderResult.Map();
                 }
 
@@ -60,7 +60,7 @@ public sealed class CheckoutProcessHandler(
                 if (!deleteSessionResult.IsSuccess)
                 {
                     await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                    LogProcessError(logger, savedOrderResult.Value.UserId, savedOrderResult.Value.Id);
+                    LogProcessFailed(logger, savedOrderResult.Value.UserId, savedOrderResult.Value.Id);
                     return deleteSessionResult.Map();
                 }
 
@@ -69,26 +69,13 @@ public sealed class CheckoutProcessHandler(
                 if (!savedResult.IsSuccess)
                 {
                     await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                    LogProcessError(logger, savedOrderResult.Value.UserId, savedOrderResult.Value.Id);
+                    LogProcessFailed(logger, savedOrderResult.Value.UserId, savedOrderResult.Value.Id);
                     return savedResult.Map();
                 }
 
                 LogProcessSuccess(logger, savedOrderResult.Value.UserId, savedOrderResult.Value.Id,
                     sessionResult.Value.Id);
                 return Result.Success(mapper.Map<OrderResponse>(savedResult.Value));
-            }
-            catch (InvalidOperationException ex)
-            {
-                logger.LogDomainException(ex.Message);
-                await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                return Result.Error(ex.Message);
-            }
-            catch (DbUpdateException ex)
-            {
-                logger.LogOperationFailed("Create Order from shopping session", "ShoppingSessionId",
-                    $"{sessionResult.Value.Id}", ex);
-                await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                return Result.Error("Failed to create ShoppingSession");
             }
             finally
             {
@@ -127,11 +114,11 @@ public sealed class CheckoutProcessHandler(
     private static void LogProcessSuccess(ILogger logger, int userId, int orderId, int sessionId) =>
         logger.ForContext("EventId", LoggerEventIds.CheckoutProcessSuccess)
             .Information(
-                "Successfully completed checkout for {UserId} - Order {OrderId} was creating from shopping session {SessionId}",
+                "Successfully completed checkout for {UserId} - Order {OrderId} was created from shopping session {SessionId}",
                 userId, orderId, sessionId);
 
-    private static void LogProcessError(ILogger logger, int userId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.CheckoutProcessError)
+    private static void LogProcessFailed(ILogger logger, int userId, int sessionId) =>
+        logger.ForContext("EventId", LoggerEventIds.CheckoutProcessFailed)
             .Information("Error while checkout user {UserId} for shopping session {SessionId}",
                 userId, sessionId);
 }

@@ -3,6 +3,7 @@
 using System.Reflection;
 using Ardalis.Result;
 using DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
+using DemoShop.Application.Features.Order.Commands.CreateOrder;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Entities;

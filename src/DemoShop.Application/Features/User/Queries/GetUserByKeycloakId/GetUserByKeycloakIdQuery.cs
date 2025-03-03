@@ -8,4 +8,4 @@ using MediatR;
 
 namespace DemoShop.Application.Features.User.Queries.GetUserByKeycloakId;
 
-public sealed record GetUserByKeycloakIdQuery(string KeycloakId) : IRequest<Result<UserResponse>>;
+public sealed record GetUserByKeycloakIdQuery(string KeycloakUserId) : IRequest<Result<UserResponse>>;

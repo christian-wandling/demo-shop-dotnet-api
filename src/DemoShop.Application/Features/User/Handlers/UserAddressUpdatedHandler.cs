@@ -4,13 +4,13 @@ using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.User.Events;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
 namespace DemoShop.Application.Features.User.Handlers;
 
-public class UserAddressUpdatedHandler(ILogger<UserAddressUpdatedHandler> logger)
+public class UserAddressUpdatedHandler(ILogger logger)
     : INotificationHandler<UserAddressUpdatedDomainEvent>
 {
     public Task Handle(UserAddressUpdatedDomainEvent notification, CancellationToken cancellationToken)
@@ -19,7 +19,10 @@ public class UserAddressUpdatedHandler(ILogger<UserAddressUpdatedHandler> logger
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
         Guard.Against.Null(notification.NewAddress, nameof(notification.NewAddress));
 
-        logger.LogOperationSuccess("Update user address", "id", $"{notification.Id}");
+        LogUserAddressUpdated(logger, notification.Id);
         return Task.CompletedTask;
     }
+
+    private static void LogUserAddressUpdated(ILogger logger, int id) => logger.Information(
+        "User Address Updated: {Id} {@EventId}", id, LoggerEventIds.UserAddressUpdatedDomainEvent);
 }

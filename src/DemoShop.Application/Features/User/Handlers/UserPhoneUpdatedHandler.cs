@@ -4,13 +4,13 @@ using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.User.Events;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
 namespace DemoShop.Application.Features.User.Handlers;
 
-public class UserPhoneUpdatedHandler(ILogger<UserPhoneUpdatedHandler> logger)
+public class UserPhoneUpdatedHandler(ILogger logger)
     : INotificationHandler<UserPhoneUpdatedDomainEvent>
 {
     public Task Handle(UserPhoneUpdatedDomainEvent notification, CancellationToken cancellationToken)
@@ -19,7 +19,10 @@ public class UserPhoneUpdatedHandler(ILogger<UserPhoneUpdatedHandler> logger)
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
         Guard.Against.Null(notification.NewPhone, nameof(notification.NewPhone));
 
-        logger.LogOperationSuccess("Update user phone", "id", $"{notification.Id}");
+        LogUserPhoneUpdated(logger, notification.Id);
         return Task.CompletedTask;
     }
+
+    private static void LogUserPhoneUpdated(ILogger logger, int id) => logger.Information(
+        "User Phone Updated: {Id} {@EventId}", id, LoggerEventIds.UserPhoneUpdatedDomainEvent);
 }
