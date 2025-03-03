@@ -12,6 +12,7 @@ public static class MiddlewareConfiguration
         app.UseExceptionHandler();
         app.UseStatusCodePages();
         app.UseCors();
+        app.UseRateLimiter();
         app.MapHealthChecks("/health");
     }
 

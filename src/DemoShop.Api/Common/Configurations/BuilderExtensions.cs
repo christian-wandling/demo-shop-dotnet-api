@@ -29,6 +29,7 @@ public static class BuilderExtensions
         builder.Services.ConfigureAuth(builder.Configuration);
         builder.Services.ConfigureCors(builder.Configuration);
         builder.Services.ConfigureApi(builder.Configuration);
+        builder.Services.ConfigureRateLimiting(builder.Configuration);
         builder.Services.ConfigureSwagger();
     }
 }
