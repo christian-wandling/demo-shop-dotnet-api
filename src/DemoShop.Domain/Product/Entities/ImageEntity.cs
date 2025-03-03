@@ -46,7 +46,7 @@ public class ImageEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
         Guard.Against.Null(createImage, nameof(createImage));
 
         var image = new ImageEntity(createImage.Name, createImage.Uri);
-        image.AddDomainEvent(new ImageCreatedDomainEvent(image));
+        image.AddDomainEvent(new ProductImageCreatedDomainEvent(image));
         return Result.Success(image);
     }
 }

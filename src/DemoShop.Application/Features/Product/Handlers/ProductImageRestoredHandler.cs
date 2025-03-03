@@ -4,13 +4,13 @@ using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Product.Events;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
 namespace DemoShop.Application.Features.Product.Handlers;
 
-public class ImageRestoredHandler(ILogger<ImageRestoredHandler> logger)
+public class ProductImageRestoredHandler(ILogger logger)
     : INotificationHandler<ImageRestoredDomainEvent>
 {
     public Task Handle(ImageRestoredDomainEvent notification, CancellationToken cancellationToken)
@@ -18,8 +18,10 @@ public class ImageRestoredHandler(ILogger<ImageRestoredHandler> logger)
         Guard.Against.Null(notification, nameof(notification));
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
 
-        logger.LogOperationSuccess("Restore Image", "id", $"{notification.Id}");
-
+        LogProductImageRestored(logger, notification.Id);
         return Task.CompletedTask;
     }
+
+    private static void LogProductImageRestored(ILogger logger, int id) => logger.Information(
+        "Product image restored: {Id} {@EventId}", id, LoggerEventIds.ProductImageRestoredDomainEvent);
 }

@@ -1,3 +1,5 @@
+using DemoShop.Domain.Common.Logging;
+
 namespace DemoShop.Api.Common.Configurations;
 
 public static class MiddlewareConfiguration

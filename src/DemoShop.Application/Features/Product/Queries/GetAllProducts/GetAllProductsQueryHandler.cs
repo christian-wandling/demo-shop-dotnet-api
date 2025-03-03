@@ -9,7 +9,7 @@ using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Product.Interfaces;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -18,7 +18,7 @@ namespace DemoShop.Application.Features.Product.Queries.GetAllProducts;
 public sealed class GetAllProductsQueryHandler(
     IMapper mapper,
     IProductRepository repository,
-    ILogger<GetAllProductsQueryHandler> logger,
+    ILogger logger,
     ICacheService cacheService
 )
     : IRequestHandler<GetAllProductsQuery, Result<ProductListResponse>>
@@ -30,6 +30,8 @@ public sealed class GetAllProductsQueryHandler(
 
         try
         {
+            LogQueryStarted(logger);
+
             var cacheKey = cacheService.GenerateCacheKey("product", request);
 
             var cachedResponse = cacheService.GetFromCache<ProductListResponse>(cacheKey);
@@ -41,17 +43,34 @@ public sealed class GetAllProductsQueryHandler(
             var response = mapper.Map<ProductListResponse>(products);
             cacheService.SetCache(cacheKey, response);
 
+            LogQuerySuccess(logger, response.Items.Count);
+
             return Result.Success(response);
         }
         catch (InvalidOperationException ex)
         {
-            logger.LogDomainException(ex.Message);
+            LogInvalidOperationException(logger, ex.Message, ex);
             return Result.Error(ex.Message);
         }
         catch (DbException ex)
         {
-            logger.LogOperationFailed("Get all products", "", "", ex);
+            LogDatabaseException(logger, ex.Message, ex);
             return Result.Error(ex.Message);
         }
     }
+
+    private static void LogQueryStarted(ILogger logger) => logger.Information(
+        "Starting query to retrieve all products {@EventId}", LoggerEventIds.GetAllProductsQueryStarted);
+
+    private static void LogQuerySuccess(ILogger logger, int productCount) =>
+        logger.Information("Successfully retrieved {ProductCount} products {@EventId}",
+            productCount, LoggerEventIds.GetAllProductsQuerySuccess);
+
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Database error occurred while retrieving all products. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.GetAllProductsDatabaseException);
+
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Invalid operation while retrieving all products. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.GetAllProductsDomainException);
 }

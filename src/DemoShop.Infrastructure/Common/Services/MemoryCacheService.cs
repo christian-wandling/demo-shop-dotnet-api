@@ -2,18 +2,22 @@ using System.Text.Json;
 using DemoShop.Application.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace DemoShop.Infrastructure.Common.Services;
 
-public class MemoryCacheService(IMemoryCache cache, ILogger<MemoryCacheService> logger) : ICacheService
+public class MemoryCacheService(IMemoryCache cache, ILogger logger) : ICacheService
 {
     public T? GetFromCache<T>(string key) where T : class
     {
-        if (!cache.TryGetValue(key, out T? cachedItem)) return null;
+        if (cache.TryGetValue(key, out T? cachedItem))
+        {
+            logger.LogCacheHit(key);
+            return cachedItem;
+        }
 
-        logger.LogOperationSuccess("Cache hit", "Cache key", key);
-        return cachedItem;
+        logger.LogCacheMiss(key);
+        return null;
     }
 
     public void SetCache<T>(string key, T item, TimeSpan? absoluteExpiration, TimeSpan? slidingExpiration)
@@ -25,6 +29,7 @@ public class MemoryCacheService(IMemoryCache cache, ILogger<MemoryCacheService> 
         cacheEntryOptions.SetSlidingExpiration(slidingExpiration ?? TimeSpan.FromMinutes(10));
 
         cache.Set(key, item, cacheEntryOptions);
+        logger.LogCacheWrite(key);
     }
 
     public string GenerateCacheKey(string prefix, object request)

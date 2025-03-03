@@ -7,9 +7,8 @@ using DemoShop.Domain.Product.Entities;
 
 namespace DemoShop.Domain.Product.Events;
 
-// TODO dry?
-public class ImageCreatedDomainEvent(ImageEntity image) : IDomainEvent
+public class ProductCategoryCreatedDomainEvent(CategoryEntity category) : IDomainEvent
 {
-    public ImageEntity Image { get; } = image;
+    public CategoryEntity Category { get; } = category;
     public DateTime OccurredOn { get; } = DateTime.UtcNow;
 }

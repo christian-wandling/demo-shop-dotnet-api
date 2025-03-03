@@ -6,8 +6,7 @@ using DemoShop.Domain.Common.Interfaces;
 
 namespace DemoShop.Domain.Product.Events;
 
-// TODO dry?
-public class CategoryDeletedDomainEvent(int categoryId) : IDomainEvent
+public class ProductCategoryDeletedDomainEvent(int categoryId) : IDomainEvent
 {
     public int Id { get; } = categoryId;
     public DateTime OccurredOn { get; } = DateTime.UtcNow;

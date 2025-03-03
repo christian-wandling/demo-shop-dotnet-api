@@ -6,8 +6,8 @@ using DemoShop.Domain.Common.Interfaces;
 
 namespace DemoShop.Domain.Product.Events;
 
-public class ImageRestoredDomainEvent(int imageId) : IDomainEvent
+public class ProductCategoryRestoredDomainEvent(int categoryId) : IDomainEvent
 {
-    public int Id { get; } = imageId;
+    public int Id { get; } = categoryId;
     public DateTime OccurredOn { get; } = DateTime.UtcNow;
 }

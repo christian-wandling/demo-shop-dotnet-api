@@ -9,7 +9,7 @@ using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Product.Interfaces;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -18,7 +18,7 @@ namespace DemoShop.Application.Features.Product.Queries.GetProductById;
 public sealed class GetProductByIdQueryHandler(
     IMapper mapper,
     IProductRepository repository,
-    ILogger<GetProductByIdQueryHandler> logger,
+    ILogger logger,
     ICacheService cacheService
 )
     : IRequestHandler<GetProductByIdQuery, Result<ProductResponse>>
@@ -31,6 +31,8 @@ public sealed class GetProductByIdQueryHandler(
 
         try
         {
+            LogQueryStarted(logger, request.Id);
+
             var cacheKey = cacheService.GenerateCacheKey("product", request);
 
             var cachedResponse = cacheService.GetFromCache<ProductResponse>(cacheKey);
@@ -44,22 +46,46 @@ public sealed class GetProductByIdQueryHandler(
             {
                 var response = mapper.Map<ProductResponse>(product);
                 cacheService.SetCache(cacheKey, response);
+                LogQuerySuccess(logger, request.Id);
 
                 return Result.Success(response);
             }
 
-            logger.LogOperationFailed("Get Product By Id", "Id", $"{request.Id}", null);
+            LogNotFound(logger, request.Id);
             return Result.NotFound($"Product with Id {request.Id} not found");
         }
         catch (InvalidOperationException ex)
         {
-            logger.LogDomainException(ex.Message);
+            LogInvalidOperationException(logger, request.Id, ex.Message, ex);
             return Result.Error(ex.Message);
         }
         catch (DbException ex)
         {
-            logger.LogOperationFailed("Get product by Id", "Id", $"{request.Id}", ex);
+            LogDatabaseException(logger, request.Id, ex.Message, ex);
             return Result.Error(ex.Message);
         }
     }
+
+    private static void LogQueryStarted(ILogger logger, int productId) =>
+        logger.ForContext("EventId", LoggerEventIds.GetProductByIdQueryStarted)
+            .Information("Starting query to retrieve product with ID {ProductId}", productId);
+
+    private static void LogQuerySuccess(ILogger logger, long productId) =>
+        logger.ForContext("EventId", LoggerEventIds.GetProductByIdQuerySuccess)
+            .Information("Successfully retrieved product with ID {ProductId}", productId);
+
+    private static void LogNotFound(ILogger logger, long productId) =>
+        logger.ForContext("EventId", LoggerEventIds.GetProductByIdQueryNotFound)
+            .Information("Product with ID {ProductId} was not found", productId);
+
+    private static void LogDatabaseException(ILogger logger, int productId, string errorMessage, Exception ex) =>
+        logger.ForContext("EventId", LoggerEventIds.GetProductByIdDatabaseException)
+            .Error(ex, "Database error occurred while retrieving product with ID {ProductId}. Error: {ErrorMessage}",
+                productId, errorMessage);
+
+    private static void
+        LogInvalidOperationException(ILogger logger, long productId, string errorMessage, Exception ex) =>
+        logger.ForContext("EventId", LoggerEventIds.GetProductByIdDomainException)
+            .Error(ex, "Invalid operation while retrieving product with ID {ProductId}. Error: {ErrorMessage}",
+                productId, errorMessage);
 }

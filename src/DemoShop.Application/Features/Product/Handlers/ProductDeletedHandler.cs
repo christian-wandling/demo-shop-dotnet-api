@@ -4,13 +4,13 @@ using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Product.Events;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
 namespace DemoShop.Application.Features.Product.Handlers;
 
-public class ProductDeletedHandler(ILogger<ProductDeletedHandler> logger)
+public class ProductDeletedHandler(ILogger logger)
     : INotificationHandler<ProductDeletedDomainEvent>
 {
     public Task Handle(ProductDeletedDomainEvent notification, CancellationToken cancellationToken)
@@ -18,7 +18,10 @@ public class ProductDeletedHandler(ILogger<ProductDeletedHandler> logger)
         Guard.Against.Null(notification, nameof(notification));
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
 
-        logger.LogOperationSuccess("Delete Product", "id", $"{notification.Id}");
+        LogProductDeleted(logger, notification.Id);
         return Task.CompletedTask;
     }
+
+    private static void LogProductDeleted(ILogger logger, int id) => logger.Information(
+        "Product deleted: {Id} {@EventId}", id, LoggerEventIds.ProductDeletedDomainEvent);
 }
