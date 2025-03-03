@@ -8,4 +8,6 @@ public interface ICacheService
         where T : class;
 
     string GenerateCacheKey(string prefix, object request);
+
+    void InvalidateCache(string key);
 }

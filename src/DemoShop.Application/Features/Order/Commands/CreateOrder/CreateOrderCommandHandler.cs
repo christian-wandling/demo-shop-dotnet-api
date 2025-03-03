@@ -2,110 +2,105 @@
 
 using Ardalis.GuardClauses;
 using Ardalis.Result;
-using AutoMapper;
 using DemoShop.Application.Common.Interfaces;
-using DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
-using DemoShop.Application.Features.Order.DTOs;
-using DemoShop.Application.Features.ShoppingSession.Commands.DeleteShoppingSession;
-using DemoShop.Application.Features.ShoppingSession.Interfaces;
+using DemoShop.Application.Features.Order.Queries.GetAllOrdersOfUser;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Entities;
-using DemoShop.Domain.ShoppingSession.Entities;
+using DemoShop.Domain.Order.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
-namespace DemoShop.Application.Features.Order.Commands.CreateOrder;
+namespace DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
 
 public sealed class CreateOrderCommandHandler(
-    ICurrentShoppingSessionAccessor currentSession,
-    IMapper mapper,
-    IMediator mediator,
-    ILogger<CreateOrderCommandHandler> logger,
+    IOrderRepository repository,
     IDomainEventDispatcher eventDispatcher,
-    IUnitOfWork unitOfWork
+    ILogger logger,
+    ICacheService cacheService
 )
-    : IRequestHandler<CreateOrderCommand, Result<OrderResponse>>
+    : IRequestHandler<CreateOrderCommand, Result<OrderEntity>>
 {
-    public async Task<Result<OrderResponse>> Handle(CreateOrderCommand request,
+    public async Task<Result<OrderEntity>> Handle(CreateOrderCommand request,
         CancellationToken cancellationToken)
     {
         Guard.Against.Null(request, nameof(request));
+        Guard.Against.Null(request.Session, nameof(request.Session));
 
-        var sessionResult = await currentSession.GetCurrent(cancellationToken);
-
-        if (!sessionResult.IsSuccess) return Result.NotFound("No active session found");
-
-        using (unitOfWork)
+        try
         {
-            try
+            LogCommandStarted(logger, request.Session.Id);
+
+            var unsavedResult = request.Session.ConvertToOrder();
+
+            if (!unsavedResult.IsSuccess)
+                return unsavedResult.Map();
+
+            var savedResult = await SaveChanges(unsavedResult.Value, cancellationToken);
+
+            if (!savedResult.IsSuccess)
             {
-                await unitOfWork.BeginTransactionAsync(cancellationToken);
-
-                var savedOrderResult = await ConvertShoppingSessionToOrder(sessionResult.Value, cancellationToken);
-
-                if (!savedOrderResult.IsSuccess)
-                {
-                    await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                    return savedOrderResult.Map();
-                }
-
-                var deleteSessionResult = await DeleteShoppingSession(sessionResult.Value, cancellationToken);
-
-                if (!deleteSessionResult.IsSuccess)
-                {
-                    await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                    return deleteSessionResult.Map();
-                }
-
-                var savedResult = await SaveChanges(savedOrderResult.Value, cancellationToken);
-
-                return savedResult.IsSuccess
-                    ? Result.Success(mapper.Map<OrderResponse>(savedResult.Value))
-                    : savedResult.Map();
+                LogCommandError(logger, request.Session.Id);
+                return savedResult.Map();
             }
-            catch (InvalidOperationException ex)
-            {
-                logger.LogDomainException(ex.Message);
-                await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                return Result.Error(ex.Message);
-            }
-            catch (DbUpdateException ex)
-            {
-                logger.LogOperationFailed("Create Order from shopping session", "ShoppingSessionId",
-                    $"{sessionResult.Value.Id}", ex);
-                await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                return Result.Error("Failed to create ShoppingSession");
-            }
-            finally
-            {
-                await unitOfWork.RollbackTransactionAsync(cancellationToken);
-            }
+
+            InvalidateOrdersCache();
+            LogCommandSuccess(logger, request.Session.Id, savedResult.Value.Id);
+            return savedResult;
+        }
+        catch (InvalidOperationException ex)
+        {
+            LogInvalidOperationException(logger, ex.Message, ex);
+            return Result.Error(ex.Message);
+        }
+        catch (DbUpdateException ex)
+        {
+            LogDatabaseException(logger, ex.Message, ex);
+            return Result.Error(ex.Message);
         }
     }
 
-    private async Task<Result<OrderEntity>> ConvertShoppingSessionToOrder(ShoppingSessionEntity session,
-        CancellationToken cancellationToken)
+    private async Task<Result<OrderEntity>> SaveChanges(OrderEntity unsavedOrder, CancellationToken cancellationToken)
     {
-        var command = new ConvertShoppingSessionToOrderCommand(session);
-        return await mediator.Send(command, cancellationToken);
-    }
+        var savedOrder = await repository.CreateOrderAsync(unsavedOrder, cancellationToken);
 
-    private async Task<Result> DeleteShoppingSession(ShoppingSessionEntity session,
-        CancellationToken cancellationToken)
-    {
-        var command = new DeleteShoppingSessionCommand(session);
-        return await mediator.Send(command, cancellationToken);
-    }
+        if (savedOrder is null)
+            return Result.Error("Failed to create order");
 
-    private async Task<Result<OrderEntity>> SaveChanges(OrderEntity savedOrder, CancellationToken cancellationToken)
-    {
-        await unitOfWork.CommitTransactionAsync(cancellationToken);
-        await eventDispatcher.DispatchEventsAsync(savedOrder, cancellationToken);
+        await eventDispatcher.DispatchEventsAsync(unsavedOrder, cancellationToken);
 
         return Result.Success(savedOrder);
     }
+
+    private void InvalidateOrdersCache()
+    {
+        var cacheKey = cacheService.GenerateCacheKey("order", new GetAllOrdersOfUserQuery());
+        cacheService.InvalidateCache(cacheKey);
+    }
+
+    private static void LogCommandStarted(ILogger logger, int sessionId) =>
+        logger.ForContext("EventId", LoggerEventIds.CreateOrderCommandStarted)
+            .Information("Starting to create order from shopping session with ID {SessionId}",
+                sessionId);
+
+    private static void LogCommandSuccess(ILogger logger, int orderId, int sessionId) =>
+        logger.ForContext("EventId", LoggerEventIds.CreateOrderCommandSuccess)
+            .Information("Successfully created order with Id {OrderId} from shopping session {SessionId}",
+                orderId, sessionId);
+
+    private static void LogCommandError(ILogger logger, int sessionId) =>
+        logger.ForContext("EventId", LoggerEventIds.CreateOrderCommandError)
+            .Information("Error creating order from shopping session with ID {SessionId}",
+                sessionId);
+
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Database error occurred while creating order. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.CreateOrderDatabaseException);
+
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Invalid operation while creating order. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.CreateOrderDomainException);
 }

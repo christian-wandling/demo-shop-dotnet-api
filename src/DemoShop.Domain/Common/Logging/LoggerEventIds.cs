@@ -21,6 +21,12 @@ public static class LoggerEventIds
     public static readonly EventId HttpRequestReceived = new(3000, "HttpRequestReceived");
     public static readonly EventId HttpResponseSent = new(3001, "HttpResponseSent");
     public static readonly EventId ApiRateLimited = new(3002, "ApiRateLimited");
+    public static readonly EventId GetAllOrdersOfUserRequestStarted = new(3100, "GetAllOrdersOfUserRequestStarted");
+    public static readonly EventId GetAllOrdersOfUserRequestSuccess = new(3101, "GetAllOrdersOfUserRequestSuccess");
+    public static readonly EventId GetAllOrdersOfUserRequestFailed = new(3102, "GetAllOrdersOfUserRequestSuccess");
+    public static readonly EventId GetOrderByIdRequestStarted = new(3110, "GetOrderByIdRequestStarted");
+    public static readonly EventId GetOrderByIdRequestSuccess = new(3111, "GetOrderByIdRequestSuccess");
+    public static readonly EventId GetOrderByIdRequestFailed = new(3112, "GetOrderByIdRequestSuccess");
     public static readonly EventId GetAllProductsRequestStarted = new(3200, "GetAllProductsRequestStarted");
     public static readonly EventId GetAllProductsRequestSuccess = new(3201, "GetAllProductsRequestSuccess");
     public static readonly EventId GetAllProductsRequestFailed = new(3202, "GetAllProductsRequestSuccess");
@@ -34,25 +40,26 @@ public static class LoggerEventIds
     public static readonly EventId GetOrderByIdQueryStarted = new(4110, "GetOrderByIdQueryStarted");
     public static readonly EventId GetOrderByIdQuerySuccess = new(4111, "GetOrderByIdQuerySuccess");
     public static readonly EventId GetOrderByIdQueryNotFound = new(4112, "GetOrderByIdQueryNotFound");
-
-    public static readonly EventId ConvertShoppingSessionToOrderCommandStarted =
-        new(4110, "ConvertShoppingSessionToOrderCommandStarted");
-
-    public static readonly EventId ConvertShoppingSessionToOrderCommandSuccess =
-        new(4111, "ConvertShoppingSessionToOrderCommandSuccess");
-
-    public static readonly EventId ConvertShoppingSessionToOrderCommandError =
-        new(4112, "ConvertShoppingSessionToOrderCommandError");
-
+    public static readonly EventId CreateOrderCommandStarted = new(4120, "CreateOrderCommandStarted");
+    public static readonly EventId CreateOrderCommandSuccess = new(4121, "CreateOrderCommandSuccess");
+    public static readonly EventId CreateOrderCommandError = new(4122, "CreateOrderCommandError");
     public static readonly EventId GetAllProductsQueryStarted = new(4200, "GetAllProductsQueryStarted");
     public static readonly EventId GetAllProductsQuerySuccess = new(4201, "GetAllProductsQuerySuccess");
     public static readonly EventId GetProductByIdQueryStarted = new(4210, "GetProductByIdQueryStarted");
     public static readonly EventId GetProductByIdQuerySuccess = new(4211, "GetProductByIdQuerySuccess");
     public static readonly EventId GetProductByIdQueryNotFound = new(4212, "GetProductByIdQueryNotFound");
+    public static readonly EventId CheckoutProcessStarted = new(4310, "CheckoutProcessStarted");
+    public static readonly EventId CheckoutProcessSuccess = new(4311, "CheckoutProcessSuccess");
+    public static readonly EventId CheckoutProcessError = new(4312, "CheckoutProcessError");
 
     // Domain events: 5000-5999
     public static readonly EventId OperationSuccess = new(5000, "OperationSuccess");
     public static readonly EventId DomainEvent = new(5010, "DomainEvent");
+    public static readonly EventId OrderCreatedDomainEvent = new(5100, "OrderCreatedDomainEvent");
+    public static readonly EventId OrderDeletedDomainEvent = new(5101, "OrderDeletedDomainEvent");
+    public static readonly EventId OrderRestoredDomainEvent = new(5102, "OrderRestoredDomainEvent");
+    public static readonly EventId OrderItemDeletedDomainEvent = new(5103, "OrderItemDeletedDomainEvent");
+    public static readonly EventId OrderItemRestoredDomainEvent = new(5104, "OrderItemRestoredDomainEvent");
     public static readonly EventId ProductCreatedDomainEvent = new(5200, "ProductCreatedDomainEvent");
     public static readonly EventId ProductDeletedDomainEvent = new(5201, "ProductDeletedDomainEvent");
     public static readonly EventId ProductRestoredDomainEvent = new(5202, "ProductRestoredDomainEvent");
@@ -63,12 +70,14 @@ public static class LoggerEventIds
     public static readonly EventId ProductCategoryDeletedDomainEvent = new(5207, "ProductCategoryDeletedDomainEvent");
     public static readonly EventId ProductCategoryRestoredDomainEvent = new(5208, "ProductCategoryRestoredDomainEvent");
 
+
     // Domain exceptions: 6000-6999
     public static readonly EventId OperationFailed = new(6001, "OperationFailed");
     public static readonly EventId DomainException = new(6002, "DomainException");
     public static readonly EventId ValidationFailed = new(6003, "ValidationFailed");
     public static readonly EventId GetOrderByIdDomainException = new(6100, "GetProductByIdDomainException");
-    public static readonly EventId GetAllOrdersOfUserDomainException = new(6100, "GetAllOrdersOfUserDomainException");
+    public static readonly EventId GetAllOrdersOfUserDomainException = new(6101, "GetAllOrdersOfUserDomainException");
+    public static readonly EventId CreateOrderDomainException = new(6102, "CreateOrderDomainException");
     public static readonly EventId GetAllProductsDomainException = new(6200, "GetAllProductsDomainException");
     public static readonly EventId GetProductByIdDomainException = new(6201, "GetProductByIdDomainException");
 
@@ -76,6 +85,11 @@ public static class LoggerEventIds
     public static readonly EventId CacheWrite = new(7000, "CacheHit");
     public static readonly EventId CacheHit = new(7001, "CacheHit");
     public static readonly EventId CacheMiss = new(7002, "CacheMiss");
+    public static readonly EventId CacheInvalidate = new(7003, "CacheInvalidate");
+    public static readonly EventId TransactionStarted = new(7010, "TransactionStarted");
+    public static readonly EventId TransactionSuccess = new(7011, "TransactionSuccess");
+    public static readonly EventId TransactionRollback = new(7012, "TransactionRollback");
+    public static readonly EventId TransactionDisposed = new(7014, "TransactionDisposed");
     public static readonly EventId GetOrdersByUserIdStarted = new(7100, "GetOrdersByUserIdStarted");
     public static readonly EventId GetOrdersByUserIdSuccess = new(7101, "GetOrdersByUserIdCompleted");
     public static readonly EventId GetOrdersByUserIdDatabaseException = new(7102, "GetOrdersByUserIdDatabaseException");

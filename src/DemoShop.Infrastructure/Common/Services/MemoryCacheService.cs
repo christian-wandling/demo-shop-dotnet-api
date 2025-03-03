@@ -8,15 +8,22 @@ namespace DemoShop.Infrastructure.Common.Services;
 
 public class MemoryCacheService(IMemoryCache cache, ILogger logger) : ICacheService
 {
+    public string GenerateCacheKey(string prefix, object request)
+    {
+        ArgumentNullException.ThrowIfNull(request, nameof(request));
+
+        return $"{prefix}--{request.GetType().Name}-{JsonSerializer.Serialize(request)}";
+    }
+
     public T? GetFromCache<T>(string key) where T : class
     {
         if (cache.TryGetValue(key, out T? cachedItem))
         {
-            logger.LogCacheHit(key);
+            LogCacheHit(logger, key);
             return cachedItem;
         }
 
-        logger.LogCacheMiss(key);
+        LogCacheMiss(logger, key);
         return null;
     }
 
@@ -29,13 +36,24 @@ public class MemoryCacheService(IMemoryCache cache, ILogger logger) : ICacheServ
         cacheEntryOptions.SetSlidingExpiration(slidingExpiration ?? TimeSpan.FromMinutes(10));
 
         cache.Set(key, item, cacheEntryOptions);
-        logger.LogCacheWrite(key);
+        LogCacheWrite(logger, key);
     }
 
-    public string GenerateCacheKey(string prefix, object request)
+    public void InvalidateCache(string key)
     {
-        ArgumentNullException.ThrowIfNull(request, nameof(request));
-
-        return $"prefix--{request.GetType().Name}-{JsonSerializer.Serialize(request)}";
+        cache.Remove(key);
+        LogCacheInvalidate(logger, key);
     }
+
+    private static void LogCacheWrite(ILogger logger, string key) =>
+        logger.Information("[{EventId}] Cache write for {Key}", LoggerEventIds.CacheWrite, key);
+
+    private static void LogCacheHit(ILogger logger, string key) =>
+        logger.Information("[{EventId}] Cache hit for {Key}", LoggerEventIds.CacheHit, key);
+
+    private static void LogCacheMiss(ILogger logger, string key) =>
+        logger.Information("[{EventId}] Cache miss for {Key}", LoggerEventIds.CacheMiss, key);
+
+    private static void LogCacheInvalidate(ILogger logger, string key) =>
+        logger.Information("[{EventId}] Cache invalidate for {Key}", LoggerEventIds.CacheInvalidate, key);
 }

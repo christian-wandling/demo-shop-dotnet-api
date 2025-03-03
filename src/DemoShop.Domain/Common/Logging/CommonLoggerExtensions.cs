@@ -115,43 +115,4 @@ public static class CommonLoggerExtensions
             LoggerEventIds.DomainException,
             message);
     }
-
-    public static void LogCacheWrite(
-        this ILogger logger,
-        string key
-    )
-    {
-        ArgumentNullException.ThrowIfNull(logger);
-
-        logger.Information(
-            "[{EventId}] Cache write for {Key}",
-            LoggerEventIds.CacheWrite,
-            key);
-    }
-
-    public static void LogCacheHit(
-        this ILogger logger,
-        string key
-    )
-    {
-        ArgumentNullException.ThrowIfNull(logger);
-
-        logger.Information(
-            "[{EventId}] Cache hit for {Key}",
-            LoggerEventIds.CacheHit,
-            key);
-    }
-
-    public static void LogCacheMiss(
-        this ILogger logger,
-        string key
-    )
-    {
-        ArgumentNullException.ThrowIfNull(logger);
-
-        logger.Information(
-            "[{EventId}] Cache miss for {Key}",
-            LoggerEventIds.CacheMiss,
-            key);
-    }
 }
