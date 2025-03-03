@@ -115,6 +115,6 @@ public class UserIdentityTests : Test
         UserIdentity.FromClaimsPrincipal(principal, _logger);
 
         // Assert
-        _logger.Received(1).LogAuthFailed("Authentication failed: Principal is null or not authenticated");
+        _logger.Received(1).LogAuthenticationFailed("Authentication failed: Principal is null or not authenticated");
     }
 }

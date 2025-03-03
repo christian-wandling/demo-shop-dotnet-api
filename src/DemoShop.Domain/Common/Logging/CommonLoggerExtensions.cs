@@ -57,15 +57,36 @@ public static class CommonLoggerExtensions
             errors);
     }
 
-    public static void LogAuthFailed(
-        this ILogger logger,
-        string error)
+    public static void LogAuthSuccess(this ILogger logger, string keycloakUserId)
+    {
+        ArgumentNullException.ThrowIfNull(logger);
+
+        logger.Information(
+            "[{EventId}] Authentication success for user with KeycloakUserId {KeycloakUserId}",
+            LoggerEventIds.AuthSuccess,
+            keycloakUserId);
+    }
+
+    public static void LogAuthenticationFailed(this ILogger logger, string error)
     {
         ArgumentNullException.ThrowIfNull(logger);
 
         logger.Error(
-            "[{EventId}] Auth failed, Reason: {Error}",
-            LoggerEventIds.AuthFailed,
+            "[{EventId}] Authentication failed, Reason: {Error}",
+            LoggerEventIds.AuthenticationFailed,
+            error);
+    }
+
+    public static void LogAuthorizationDenied(
+        this ILogger logger,
+        string error
+    )
+    {
+        ArgumentNullException.ThrowIfNull(logger);
+
+        logger.Error(
+            "[{EventId}] Authorization denied, Reason: {Error}",
+            LoggerEventIds.AuthorizationDenied,
             error);
     }
 

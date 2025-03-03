@@ -33,18 +33,10 @@ public sealed class GetAllProductsQueryHandler(
             LogQueryStarted(logger);
 
             var cacheKey = cacheService.GenerateCacheKey("product", request);
-
-            var cachedResponse = cacheService.GetFromCache<ProductListResponse>(cacheKey);
-
-            if (cachedResponse is not null)
-                return Result.Success(cachedResponse);
-
-            var products = await repository.GetAllProductsAsync(cancellationToken);
-            var response = mapper.Map<ProductListResponse>(products);
-            cacheService.SetCache(cacheKey, response);
+            var response = cacheService.GetFromCache<ProductListResponse>(cacheKey)
+                           ?? await GetFromDatabase(cacheKey, cancellationToken);
 
             LogQuerySuccess(logger, response.Items.Count);
-
             return Result.Success(response);
         }
         catch (InvalidOperationException ex)
@@ -57,6 +49,19 @@ public sealed class GetAllProductsQueryHandler(
             LogDatabaseException(logger, ex.Message, ex);
             return Result.Error(ex.Message);
         }
+    }
+
+    private async Task<Result<ProductListResponse>> GetFromDatabase(
+        string cacheKey,
+        CancellationToken cancellationToken)
+    {
+        var products = await repository.GetAllProductsAsync(cancellationToken);
+        var response = mapper.Map<ProductListResponse>(products);
+
+        if (response.Items.Count > 0)
+            cacheService.SetCache(cacheKey, response);
+
+        return response;
     }
 
     private static void LogQueryStarted(ILogger logger) => logger.Information(

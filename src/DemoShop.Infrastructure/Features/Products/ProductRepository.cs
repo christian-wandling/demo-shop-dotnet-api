@@ -27,7 +27,7 @@ public class ProductRepository(ApplicationDbContext context, ILogger logger) : I
         if (result is null)
             LogGetProductByIdNotFound(logger, id);
         else
-            LogGetProductByIdCompleted(logger, id);
+            LogGetProductByIdSuccess(logger, id);
 
         return result;
     }
@@ -41,7 +41,7 @@ public class ProductRepository(ApplicationDbContext context, ILogger logger) : I
             .Include(p => p.Images)
             .ToListAsync(cancellationToken);
 
-        LogGetAllProductsCompleted(logger, result.Count);
+        LogGetAllProductsSuccess(logger, result.Count);
 
         return result;
     }
@@ -51,23 +51,23 @@ public class ProductRepository(ApplicationDbContext context, ILogger logger) : I
             .ForContext("EventId", LoggerEventIds.GetAllProductsStarted)
             .Debug("Getting all products started");
 
-    private static void LogGetAllProductsCompleted(ILogger logger, int productCount) =>
+    private static void LogGetAllProductsSuccess(ILogger logger, int count) =>
         logger
             .ForContext("EventId", LoggerEventIds.GetAllProductsSuccess)
-            .Debug("Getting all products completed. Retrieved {ProductCount} products successfully", productCount);
+            .Debug("Getting all products completed. Retrieved {Count} products successfully", count);
 
-    private static void LogGetProductByIdStarted(ILogger logger, int productId) =>
+    private static void LogGetProductByIdStarted(ILogger logger, int id) =>
         logger
             .ForContext("EventId", LoggerEventIds.GetProductByIdStarted)
-            .Debug("Attempting to get Product with ID {ProductId}", productId);
+            .Debug("Attempting to get Product with ID {Id}", id);
 
-    private static void LogGetProductByIdCompleted(ILogger logger, int productId) =>
+    private static void LogGetProductByIdSuccess(ILogger logger, int id) =>
         logger
             .ForContext("EventId", LoggerEventIds.GetProductByIdSuccess)
-            .Debug("Attempting to get product with ID {ProductId} completed successfully", productId);
+            .Debug("Attempting to get product with ID {Id} completed successfully", id);
 
-    private static void LogGetProductByIdNotFound(ILogger logger, int productId) =>
+    private static void LogGetProductByIdNotFound(ILogger logger, int id) =>
         logger
             .ForContext("EventId", LoggerEventIds.GetProductByIdNotFound)
-            .Debug("Product with ID {ProductId} not found in database", productId);
+            .Debug("Product with ID {Id} not found in database", id);
 }

@@ -6,7 +6,7 @@ using Ardalis.Result;
 using DemoShop.Application.Common.Constants;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -27,17 +27,19 @@ public sealed record UserIdentity : IUserIdentity
     public string FirstName { get; }
     public string LastName { get; }
 
-    public static Result<IUserIdentity> FromClaimsPrincipal(ClaimsPrincipal? principal, ILogger<UserIdentity> logger)
+    public static Result<IUserIdentity> FromClaimsPrincipal(ClaimsPrincipal? principal, ILogger logger)
     {
+        ArgumentNullException.ThrowIfNull(logger, nameof(logger));
+
         if (principal?.Identity?.IsAuthenticated != true)
         {
-            logger.LogAuthFailed("Authentication failed: Principal is null or not authenticated");
+            logger.LogAuthenticationFailed("Authentication failed: Principal is null or not authenticated");
             return Result.Unauthorized("User is not authenticated");
         }
 
         if (!ClaimRequirements.HasRequiredClaims(principal, out var claimValues))
         {
-            logger.LogAuthFailed("Missing required claims");
+            logger.LogAuthorizationDenied("Missing required claims");
             return Result.Forbidden("Missing required claims");
         }
 
@@ -49,11 +51,13 @@ public sealed record UserIdentity : IUserIdentity
                 claimValues[KeycloakClaimTypes.GivenName],
                 claimValues[KeycloakClaimTypes.FamilyName]);
 
+            logger.LogAuthSuccess(identity.KeycloakUserId);
             return Result<IUserIdentity>.Success(identity);
         }
         catch (ArgumentException ex)
         {
-            return Result.Unauthorized(ex.Message);
+            logger.LogAuthorizationDenied(ex.Message);
+            return Result.Forbidden(ex.Message);
         }
     }
 }

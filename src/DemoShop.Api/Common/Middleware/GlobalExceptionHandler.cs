@@ -39,7 +39,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 StatusCodes.Status401Unauthorized,
                 "Unauthorized",
                 ex.Message,
-                () => logger.LogAuthFailed(ex.Message)
+                () => logger.LogAuthenticationFailed(ex.Message)
             ),
             InvalidOperationException ex => CreateProblemDetails(
                 StatusCodes.Status409Conflict,

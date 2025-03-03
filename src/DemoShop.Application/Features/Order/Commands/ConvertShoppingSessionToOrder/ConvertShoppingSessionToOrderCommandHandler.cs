@@ -8,7 +8,7 @@ using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.Order.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -17,7 +17,7 @@ namespace DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToO
 public sealed class ConvertShoppingSessionToOrderCommandHandler(
     IOrderRepository repository,
     IDomainEventDispatcher eventDispatcher,
-    ILogger<ConvertShoppingSessionToOrderCommandHandler> logger
+    ILogger logger
 )
     : IRequestHandler<ConvertShoppingSessionToOrderCommand, Result<OrderEntity>>
 {
@@ -29,12 +29,23 @@ public sealed class ConvertShoppingSessionToOrderCommandHandler(
 
         try
         {
+            LogCommandStarted(logger, request.Session.Id, request.Session.UserId);
+
             var unsavedResult = request.Session.ConvertToOrder();
 
             if (!unsavedResult.IsSuccess)
                 return unsavedResult.Map();
 
-            return await SaveChanges(unsavedResult.Value, cancellationToken);
+            var savedResult = await SaveChanges(unsavedResult.Value, cancellationToken);
+
+            if (!savedResult.IsSuccess)
+            {
+                LogCommandError(logger, request.Session.Id);
+                return savedResult.Map();
+            }
+
+            LogCommandSuccess(logger, request.Session.Id, savedResult.Value.Id);
+            return savedResult;
         }
         catch (InvalidOperationException ex)
         {
@@ -60,4 +71,19 @@ public sealed class ConvertShoppingSessionToOrderCommandHandler(
 
         return Result.Success(savedOrder);
     }
+
+    private static void LogCommandStarted(ILogger logger, int sessionId, int userId) =>
+        logger.ForContext("EventId", LoggerEventIds.ConvertShoppingSessionToOrderCommandStarted)
+            .Information("Starting to convert shopping session with ID {SessionId} for user {UserId}",
+                sessionId, userId);
+
+    private static void LogCommandSuccess(ILogger logger, int sessionId, int orderId) =>
+        logger.ForContext("EventId", LoggerEventIds.ConvertShoppingSessionToOrderCommandSuccess)
+            .Information("Successfully completed converting shopping session with ID {SessionId} to order {OrderId}",
+                sessionId, orderId);
+
+    private static void LogCommandError(ILogger logger, int sessionId) =>
+        logger.ForContext("EventId", LoggerEventIds.ConvertShoppingSessionToOrderCommandError)
+            .Information("Error converting shopping session with ID {SessionId} to order",
+                sessionId);
 }
