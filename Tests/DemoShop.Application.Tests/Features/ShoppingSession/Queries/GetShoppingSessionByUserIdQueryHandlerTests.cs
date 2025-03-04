@@ -5,13 +5,12 @@ using AutoMapper;
 using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.ShoppingSession.DTOs;
 using DemoShop.Application.Features.ShoppingSession.Queries.GetShoppingSessionByUserId;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
-using Serilog;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -19,10 +18,10 @@ namespace DemoShop.Application.Tests.Features.ShoppingSession.Queries;
 
 public class GetShoppingSessionByUserIdQueryHandlerTests : Test
 {
+    private readonly ICacheService _cacheService;
     private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IShoppingSessionRepository _repository;
-    private readonly ICacheService _cacheService;
     private readonly GetShoppingSessionByUserIdQueryHandler _sut;
 
     public GetShoppingSessionByUserIdQueryHandlerTests()
@@ -49,12 +48,37 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
     }
 
     [Fact]
-    public async Task Handle_WhenSessionExists_ReturnsSuccessResult()
+    public async Task Handle_WhenSessionExistsInCache_ReturnsSuccessResultFromCache()
+    {
+        // Arrange
+        var request = Create<GetShoppingSessionByUserIdQuery>();
+        var expectedResponse = Create<ShoppingSessionResponse>();
+        var cacheKey = Create<string>();
+
+        _cacheService.GenerateCacheKey("shoppingSession", request).Returns(cacheKey);
+        _cacheService.GetFromCache<ShoppingSessionResponse>(cacheKey).Returns(expectedResponse);
+
+        // Act
+        var result = await _sut.Handle(request, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(expectedResponse);
+        await _repository.DidNotReceive().GetSessionByUserIdAsync(request.UserId, Arg.Any<CancellationToken>());
+
+    }
+
+    [Fact]
+    public async Task Handle_WhenSessionExistsButNotInCache_ReturnsSuccessResultFromDatabase()
     {
         // Arrange
         var request = Create<GetShoppingSessionByUserIdQuery>();
         var shoppingSession = Create<ShoppingSessionEntity>();
         var expectedResponse = Create<ShoppingSessionResponse>();
+        var cacheKey = Create<string>();
+
+        _cacheService.GenerateCacheKey("shoppingSession", request).Returns(cacheKey);
+        _cacheService.GetFromCache<ShoppingSessionResponse>(cacheKey).Returns((ShoppingSessionResponse)null);
 
         _repository.GetSessionByUserIdAsync(request.UserId, Arg.Any<CancellationToken>())
             .Returns(shoppingSession);
@@ -67,6 +91,8 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(expectedResponse);
+        await _repository.Received(1).GetSessionByUserIdAsync(request.UserId, Arg.Any<CancellationToken>());
+
     }
 
     [Fact]
@@ -82,8 +108,7 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
 
         // Assert
         result.IsSuccess.Should().BeFalse();
-        result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
+        result.Status.Should().Be(ResultStatus.NotFound);
     }
 
     [Fact]
@@ -92,7 +117,10 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         // Arrange
         var request = Create<GetShoppingSessionByUserIdQuery>();
         var exception = new InvalidOperationException("Invalid operation");
+        var cacheKey = Create<string>();
 
+        _cacheService.GenerateCacheKey("shoppingSession", request).Returns(cacheKey);
+        _cacheService.GetFromCache<ShoppingSessionResponse>(cacheKey).Returns((ShoppingSessionResponse)null);
         _repository.GetSessionByUserIdAsync(request.UserId, Arg.Any<CancellationToken>())
             .Throws(exception);
 
@@ -102,7 +130,6 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Fact]
@@ -111,7 +138,10 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         // Arrange
         var request = Create<GetShoppingSessionByUserIdQuery>();
         var exception = new TestDbException("Database error");
+        var cacheKey = Create<string>();
 
+        _cacheService.GenerateCacheKey("shoppingSession", request).Returns(cacheKey);
+        _cacheService.GetFromCache<ShoppingSessionResponse>(cacheKey).Returns((ShoppingSessionResponse)null);
         _repository.GetSessionByUserIdAsync(request.UserId, Arg.Any<CancellationToken>())
             .Throws(exception);
 
@@ -121,6 +151,6 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
+        await _repository.Received(1).GetSessionByUserIdAsync(request.UserId, Arg.Any<CancellationToken>());
     }
 }

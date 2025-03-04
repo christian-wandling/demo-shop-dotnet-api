@@ -45,8 +45,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="..\..\Test\DemoShop.IntegratinTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DemoShop.Infrastructure\DemoShop.Infrastructure.csproj"/>
     <ProjectReference Include="..\DemoShop.Application\DemoShop.Application.csproj"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="logs\" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,6 @@
 
 using DemoShop.Domain.Common.Base;
 using DemoShop.Domain.Common.Interfaces;
-using DemoShop.Domain.Product.Entities;
 
 #endregion
 

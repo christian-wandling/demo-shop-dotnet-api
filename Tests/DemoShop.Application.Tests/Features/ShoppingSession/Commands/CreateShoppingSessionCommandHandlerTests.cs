@@ -10,8 +10,8 @@ using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
-using Serilog;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 using DbUpdateException = Microsoft.EntityFrameworkCore.DbUpdateException;
 
 #endregion

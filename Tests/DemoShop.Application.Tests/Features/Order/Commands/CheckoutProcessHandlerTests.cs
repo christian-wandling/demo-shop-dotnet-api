@@ -3,20 +3,19 @@
 using Ardalis.Result;
 using AutoMapper;
 using DemoShop.Application.Common.Interfaces;
-using DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
+using DemoShop.Application.Features.Order.Commands.CreateOrder;
 using DemoShop.Application.Features.Order.DTOs;
 using DemoShop.Application.Features.ShoppingSession.Commands.DeleteShoppingSession;
 using DemoShop.Application.Features.ShoppingSession.Interfaces;
 using DemoShop.Application.Features.ShoppingSession.Processes.Checkout;
 using DemoShop.Domain.Common.Interfaces;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -210,5 +209,4 @@ public class CheckoutProcessHandlerTests : Test
             Arg.Any<string>(),
             Arg.Any<object>());
     }
-
 }

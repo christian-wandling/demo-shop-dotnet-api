@@ -4,7 +4,7 @@ using Ardalis.GuardClauses;
 using Ardalis.Result;
 using AutoMapper;
 using DemoShop.Application.Common.Interfaces;
-using DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
+using DemoShop.Application.Features.Order.Commands.CreateOrder;
 using DemoShop.Application.Features.Order.DTOs;
 using DemoShop.Application.Features.ShoppingSession.Commands.DeleteShoppingSession;
 using DemoShop.Application.Features.ShoppingSession.Interfaces;
@@ -13,7 +13,6 @@ using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.ShoppingSession.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 #endregion
@@ -51,7 +50,7 @@ public sealed class CheckoutProcessHandler(
                 if (!savedOrderResult.IsSuccess)
                 {
                     await unitOfWork.RollbackTransactionAsync(cancellationToken);
-                    LogProcessFailed(logger, savedOrderResult.Value.UserId, savedOrderResult.Value.Id);
+                    LogProcessFailed(logger, sessionResult.Value.UserId, sessionResult.Value.Id);
                     return savedOrderResult.Map();
                 }
 

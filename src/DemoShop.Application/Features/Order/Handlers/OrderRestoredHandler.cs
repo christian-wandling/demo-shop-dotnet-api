@@ -1,8 +1,6 @@
 #region
 
 using Ardalis.GuardClauses;
-using DemoShop.Application.Common.Interfaces;
-using DemoShop.Application.Features.Order.Queries.GetOrderById;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Events;
 using MediatR;

@@ -100,7 +100,8 @@ public sealed class UpdateUserPhoneCommandHandler(
 
     private static void LogCommandStarted(ILogger logger, string keycloakUserId) =>
         logger.ForContext("EventId", LoggerEventIds.UpdateUserPhoneCommandStarted)
-            .Information("Starting to update phone for user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
+            .Information("Starting to update phone for user with KeycloakUserId {KeycloakUserId}",
+                keycloakUserId);
 
     private static void LogCommandSuccess(ILogger logger, int userId) =>
         logger.ForContext("EventId", LoggerEventIds.UpdateUserPhoneCommandSuccess)

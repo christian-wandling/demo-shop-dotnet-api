@@ -7,7 +7,6 @@ using Ardalis.Result.AspNetCore;
 using Asp.Versioning;
 using DemoShop.Application.Features.User.DTOs;
 using DemoShop.Application.Features.User.Processes.ResolveUser;
-using DemoShop.Application.Features.User.Processes.ResolveUser;
 using DemoShop.Domain.Common.Logging;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

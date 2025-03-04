@@ -2,7 +2,6 @@
 
 using Ardalis.GuardClauses;
 using Ardalis.Result;
-using DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Entities;

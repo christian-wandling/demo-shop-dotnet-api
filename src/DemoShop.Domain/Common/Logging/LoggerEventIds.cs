@@ -8,6 +8,7 @@ namespace DemoShop.Domain.Common.Logging;
 
 public static class LoggerEventIds
 {
+    // App: 1000-1999
     public static readonly EventId ApplicationStartup = new(1000, "ApplicationStartup");
     public static readonly EventId ApplicationShutdown = new(1001, "ApplicationShutdown");
     public static readonly EventId ConfigurationLoaded = new(1002, "ConfigurationLoaded");
@@ -16,12 +17,9 @@ public static class LoggerEventIds
     public static readonly EventId AuthenticationStarted = new(2000, "AuthenticationStarted");
     public static readonly EventId AuthenticationSuccess = new(2001, "AuthenticationSuccess");
     public static readonly EventId AuthenticationFailed = new(2002, "AuthenticationFailed");
-    public static readonly EventId AuthorizationDenied = new(2003, "AuthorizationDenied");
 
     // API/HTTP operations: 3000-3999
-    public static readonly EventId HttpRequestReceived = new(3000, "HttpRequestReceived");
-    public static readonly EventId HttpResponseSent = new(3001, "HttpResponseSent");
-    public static readonly EventId ApiRateLimited = new(3002, "ApiRateLimited");
+    public static readonly EventId ApiRateLimited = new(3000, "ApiRateLimited");
     public static readonly EventId GetAllOrdersOfUserRequestStarted = new(3100, "GetAllOrdersOfUserRequestStarted");
     public static readonly EventId GetAllOrdersOfUserRequestSuccess = new(3101, "GetAllOrdersOfUserRequestSuccess");
     public static readonly EventId GetAllOrdersOfUserRequestFailed = new(3102, "GetAllOrdersOfUserRequestSuccess");
@@ -37,15 +35,29 @@ public static class LoggerEventIds
     public static readonly EventId CheckoutRequestStarted = new(3300, "CheckoutRequestStarted");
     public static readonly EventId CheckoutRequestSuccess = new(3301, "CheckoutRequestSuccess");
     public static readonly EventId CheckoutRequestFailed = new(3302, "CheckoutRequestSuccess");
-    public static readonly EventId ResolveCurrentShoppingSessionRequestStarted = new(3310, "ResolveCurrentShoppingSessionRequestStarted");
-    public static readonly EventId ResolveCurrentShoppingSessionRequestSuccess = new(3311, "ResolveCurrentShoppingSessionRequestSuccess");
-    public static readonly EventId ResolveCurrentShoppingSessionRequestFailed = new(3312, "ResolveCurrentShoppingSessionRequestSuccess");
+
+    public static readonly EventId ResolveCurrentShoppingSessionRequestStarted =
+        new(3310, "ResolveCurrentShoppingSessionRequestStarted");
+
+    public static readonly EventId ResolveCurrentShoppingSessionRequestSuccess =
+        new(3311, "ResolveCurrentShoppingSessionRequestSuccess");
+
+    public static readonly EventId ResolveCurrentShoppingSessionRequestFailed =
+        new(3312, "ResolveCurrentShoppingSessionRequestSuccess");
+
     public static readonly EventId AddCartItemRequestStarted = new(3350, "AddCartItemRequestStarted");
     public static readonly EventId AddCartItemRequestSuccess = new(3351, "AddCartItemRequestSuccess");
     public static readonly EventId AddCartItemRequestFailed = new(3352, "AddCartItemRequestSuccess");
-    public static readonly EventId UpdateCartItemQuantityRequestStarted = new(3360, "UpdateCartItemQuantityRequestStarted");
-    public static readonly EventId UpdateCartItemQuantityRequestSuccess = new(3361, "UpdateCartItemQuantityRequestSuccess");
-    public static readonly EventId UpdateCartItemQuantityRequestFailed = new(3362, "UpdateCartItemQuantityRequestSuccess");
+
+    public static readonly EventId UpdateCartItemQuantityRequestStarted =
+        new(3360, "UpdateCartItemQuantityRequestStarted");
+
+    public static readonly EventId UpdateCartItemQuantityRequestSuccess =
+        new(3361, "UpdateCartItemQuantityRequestSuccess");
+
+    public static readonly EventId UpdateCartItemQuantityRequestFailed =
+        new(3362, "UpdateCartItemQuantityRequestSuccess");
+
     public static readonly EventId RemoveCartItemRequestStarted = new(3370, "RemoveCartItemRequestStarted");
     public static readonly EventId RemoveCartItemRequestSuccess = new(3371, "RemoveCartItemRequestSuccess");
     public static readonly EventId RemoveCartItemRequestFailed = new(3372, "RemoveCartItemRequestSuccess");
@@ -127,7 +139,6 @@ public static class LoggerEventIds
 
     public static readonly EventId UpdateCartItemQuantityCommandError = new(4362, "UpdateCartItemQuantityCommandError");
 
-
     public static readonly EventId RemoveCartItemCommandStarted =
         new(4370, "RemoveCartItemCommandStarted");
 
@@ -156,8 +167,6 @@ public static class LoggerEventIds
     public static readonly EventId OrderCreatedDomainEvent = new(5100, "OrderCreatedDomainEvent");
     public static readonly EventId OrderDeletedDomainEvent = new(5101, "OrderDeletedDomainEvent");
     public static readonly EventId OrderRestoredDomainEvent = new(5102, "OrderRestoredDomainEvent");
-    public static readonly EventId OrderItemDeletedDomainEvent = new(5103, "OrderItemDeletedDomainEvent");
-    public static readonly EventId OrderItemRestoredDomainEvent = new(5104, "OrderItemRestoredDomainEvent");
     public static readonly EventId ProductCreatedDomainEvent = new(5200, "ProductCreatedDomainEvent");
     public static readonly EventId ProductDeletedDomainEvent = new(5201, "ProductDeletedDomainEvent");
     public static readonly EventId ProductRestoredDomainEvent = new(5202, "ProductRestoredDomainEvent");
@@ -168,7 +177,10 @@ public static class LoggerEventIds
     public static readonly EventId ProductCategoryDeletedDomainEvent = new(5207, "ProductCategoryDeletedDomainEvent");
     public static readonly EventId ProductCategoryRestoredDomainEvent = new(5208, "ProductCategoryRestoredDomainEvent");
     public static readonly EventId ShoppingSessionCreatedDomainEvent = new(5300, "ShoppingSessionCreatedDomainEvent");
-    public static readonly EventId ShoppingSessionConvertedDomainEvent = new(5301, "ShoppingSessionConvertedDomainEvent");
+
+    public static readonly EventId ShoppingSessionConvertedDomainEvent =
+        new(5301, "ShoppingSessionConvertedDomainEvent");
+
     public static readonly EventId CartItemAddedDomainEvent = new(5302, "CartItemAddedDomainEvent");
     public static readonly EventId CartItemQuantityChangedDomainEvent = new(5303, "CartItemQuantityChangedDomainEvent");
     public static readonly EventId CartItemRemovedDomainEvent = new(5304, "CartItemRemovedDomainEvent");
@@ -177,7 +189,6 @@ public static class LoggerEventIds
     public static readonly EventId UserRestoredDomainEvent = new(5402, "UserRestoredDomainEvent");
     public static readonly EventId UserAddressUpdatedDomainEvent = new(5403, "UserAddressUpdatedDomainEvent");
     public static readonly EventId UserPhoneUpdatedDomainEvent = new(5404, "UserPhoneUpdatedDomainEvent");
-
 
     // Domain exceptions: 6000-6999
     public static readonly EventId UnhandledException = new(6000, "UnhandledException");
@@ -210,7 +221,7 @@ public static class LoggerEventIds
     public static readonly EventId CreateUserDomainException = new(6401, "CreateUserDomainException");
     public static readonly EventId UpdateUserDomainException = new(6402, "UpdateUserDomainException");
 
-    // Data access: 6000-6999
+    // Data access: 7000-7999
     public static readonly EventId CacheWrite = new(7000, "CacheHit");
     public static readonly EventId CacheHit = new(7001, "CacheHit");
     public static readonly EventId CacheMiss = new(7002, "CacheMiss");
@@ -288,8 +299,4 @@ public static class LoggerEventIds
     public static readonly EventId UpdateUserStarted = new(7430, "UpdateUserStarted");
     public static readonly EventId UpdateUserSuccess = new(7431, "UpdateUserSuccess");
     public static readonly EventId UpdateUserDatabaseException = new(7432, "UpdateUserDatabaseException");
-
-    // External services: 7000-7999
-    public static readonly EventId ExternalServiceCalled = new(8000, "ExternalServiceCalled");
-    public static readonly EventId ExternalServiceFailed = new(8001, "ExternalServiceFailed");
 }

@@ -8,4 +8,5 @@ using DemoShop.Domain.ShoppingSession.Entities;
 
 namespace DemoShop.Domain.ShoppingSession.Events;
 
-public sealed record CartItemQuantityChanged(CartItemEntity CartItem, int OldQuantity, int UserId) : DomainEvent, IDomainEvent;
+public sealed record CartItemQuantityChanged(CartItemEntity CartItem, int OldQuantity, int UserId)
+    : DomainEvent, IDomainEvent;

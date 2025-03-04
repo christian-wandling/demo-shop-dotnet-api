@@ -98,5 +98,6 @@ public class OrderRepository(ApplicationDbContext context, ILogger logger) : IOr
     private static void LogCreateOrderSuccess(ILogger logger, int orderId, int userId) =>
         logger
             .ForContext("EventId", LoggerEventIds.CreateOrderSuccess)
-            .Debug("Attempting to create order with ID {OrderId} for user {UserId} completed successfully", orderId, userId);
+            .Debug("Attempting to create order with ID {OrderId} for user {UserId} completed successfully", orderId,
+                userId);
 }

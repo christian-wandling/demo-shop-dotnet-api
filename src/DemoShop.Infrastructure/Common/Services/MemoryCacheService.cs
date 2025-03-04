@@ -1,8 +1,12 @@
+#region
+
 using System.Text.Json;
 using DemoShop.Application.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
 using Microsoft.Extensions.Caching.Memory;
 using Serilog;
+
+#endregion
 
 namespace DemoShop.Infrastructure.Common.Services;
 

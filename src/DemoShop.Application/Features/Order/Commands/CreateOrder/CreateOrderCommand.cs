@@ -7,7 +7,7 @@ using MediatR;
 
 #endregion
 
-namespace DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
+namespace DemoShop.Application.Features.Order.Commands.CreateOrder;
 
 public sealed record CreateOrderCommand(ShoppingSessionEntity Session)
     : IRequest<Result<OrderEntity>>;

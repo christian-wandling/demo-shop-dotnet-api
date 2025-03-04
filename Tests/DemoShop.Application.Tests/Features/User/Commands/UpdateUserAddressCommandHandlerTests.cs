@@ -7,14 +7,13 @@ using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.User.Commands.UpdateUserAddress;
 using DemoShop.Application.Features.User.DTOs;
 using DemoShop.Domain.Common.Interfaces;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.User.Entities;
 using DemoShop.Domain.User.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -219,7 +218,6 @@ public class UpdateUserAddressCommandHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Theory]

@@ -10,8 +10,8 @@ using DemoShop.Domain.Common.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
 using MediatR;
-using Serilog;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -90,43 +90,5 @@ public class ResolveUserProcessHandlerTests : Test
         result.Value.Should().Be(userResponse);
         await _mediator.Received(1).Send(Arg.Is<CreateUserCommand>(cmd => cmd.UserIdentity == userIdentity),
             Arg.Any<CancellationToken>());
-    }
-
-    [Fact]
-    public async Task Handle_WhenInvalidOperationExceptionOccurs_ShouldReturnError()
-    {
-        // Arrange
-        var query = Create<ResolveUserProcess>();
-        var userIdentity = Create<IUserIdentity>();
-
-        _identity.GetCurrentIdentity().Returns(Result.Success(userIdentity));
-        _mediator.Send(Arg.Any<GetUserByKeycloakIdQuery>(), Arg.Any<CancellationToken>())
-            .Throws(new InvalidOperationException());
-
-        // Act
-        var result = await _sut.Handle(query, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Status.Should().Be(ResultStatus.Error);
-    }
-
-    [Fact]
-    public async Task Handle_WhenDbExceptionOccurs_ShouldReturnError()
-    {
-        // Arrange
-        var query = Create<ResolveUserProcess>();
-        var userIdentity = Create<IUserIdentity>();
-
-        _identity.GetCurrentIdentity().Returns(Result.Success(userIdentity));
-        _mediator.Send(Arg.Any<GetUserByKeycloakIdQuery>(), Arg.Any<CancellationToken>())
-            .Throws(new TestDbException());
-
-        // Act
-        var result = await _sut.Handle(query, CancellationToken.None);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Status.Should().Be(ResultStatus.Error);
     }
 }

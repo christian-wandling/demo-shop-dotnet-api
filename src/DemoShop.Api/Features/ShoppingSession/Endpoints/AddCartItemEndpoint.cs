@@ -56,7 +56,8 @@ public class AddCartItemEndpoint(IMediator mediator, ILogger logger)
     private static void LogRequestStarting(ILogger logger, string endpoint) =>
         logger
             .ForContext("EventId", LoggerEventIds.AddCartItemRequestStarted)
-            .Information("Starting POST request for adding cart item to current shopping session at {Endpoint}", endpoint);
+            .Information("Starting POST request for adding cart item to current shopping session at {Endpoint}",
+                endpoint);
 
     private static void LogRequestSuccess(ILogger logger, int id, TimeSpan elapsedMs) =>
         logger

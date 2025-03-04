@@ -18,9 +18,9 @@ namespace DemoShop.Infrastructure.Tests.Features.ShoppingSessions.Services;
 [Trait("Feature", "ShoppingSession")]
 public class CurrentShoppingSessionAccessorTests : Test
 {
+    private readonly ICacheService _cacheService;
     private readonly ICurrentUserAccessor _currentUser;
     private readonly IShoppingSessionRepository _repository;
-    private readonly ICacheService _cacheService;
     private readonly CurrentShoppingSessionAccessor _sut;
 
     public CurrentShoppingSessionAccessorTests()
@@ -50,6 +50,10 @@ public class CurrentShoppingSessionAccessorTests : Test
     {
         // Arrange
         var userId = Create<int>();
+        var cacheKey = Create<string>();
+
+        _cacheService.GenerateCacheKey("current-session-accessor", userId).Returns(cacheKey);
+        _cacheService.GetFromCache<ShoppingSessionEntity>(cacheKey).Returns((ShoppingSessionEntity?)null);
         _currentUser.GetId(CancellationToken.None).Returns(Result.Success(userId));
         _repository.GetSessionByUserIdAsync(userId, CancellationToken.None).Returns((ShoppingSessionEntity?)null);
 
@@ -62,11 +66,15 @@ public class CurrentShoppingSessionAccessorTests : Test
     }
 
     [Fact]
-    public async Task GetCurrent_WhenSessionExists_ReturnsSuccess()
+    public async Task GetCurrent_WhenSessionExistsButNotInCache_ReturnsSuccessFromDatabase()
     {
         // Arrange
         var userId = Create<int>();
         var session = Create<ShoppingSessionEntity>();
+        var cacheKey = Create<string>();
+
+        _cacheService.GenerateCacheKey("current-session-accessor", userId).Returns(cacheKey);
+        _cacheService.GetFromCache<ShoppingSessionEntity>(cacheKey).Returns((ShoppingSessionEntity?)null);
         _currentUser.GetId(CancellationToken.None).Returns(Result.Success(userId));
         _repository.GetSessionByUserIdAsync(userId, CancellationToken.None).Returns(session);
 
@@ -76,5 +84,27 @@ public class CurrentShoppingSessionAccessorTests : Test
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(session);
+        await _repository.Received(1).GetSessionByUserIdAsync(userId, CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task GetCurrent_WhenSessionExistsButInCache_ReturnsSuccessFromCache()
+    {
+        // Arrange
+        var userId = Create<int>();
+        var session = Create<ShoppingSessionEntity>();
+        var cacheKey = Create<string>();
+
+        _cacheService.GenerateCacheKey("current-session-accessor", userId).Returns(cacheKey);
+        _cacheService.GetFromCache<ShoppingSessionEntity>(cacheKey).Returns(session);
+        _currentUser.GetId(CancellationToken.None).Returns(Result.Success(userId));
+
+        // Act
+        var result = await _sut.GetCurrent(CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(session);
+        await _repository.DidNotReceive().GetSessionByUserIdAsync(userId, CancellationToken.None);
     }
 }

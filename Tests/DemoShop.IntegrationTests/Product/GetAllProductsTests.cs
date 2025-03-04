@@ -1,18 +1,19 @@
+#region
+
 using System.Text.Json;
 using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.TestUtils.Common.Services;
 using FluentAssertions;
 using Xunit.Abstractions;
 
+#endregion
+
 namespace DemoShop.IntegrationTests.Product;
 
 public class GetAllProductsTests(CustomWebApplicationFactory<Program> factory, ITestOutputHelper output)
     : IClassFixture<CustomWebApplicationFactory<Program>>
 {
-    private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
 
     [Fact]
@@ -46,5 +47,3 @@ public class GetAllProductsTests(CustomWebApplicationFactory<Program> factory, I
         products.Items.Should().NotBeEmpty();
     }
 }
-
-

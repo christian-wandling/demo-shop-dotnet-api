@@ -1,16 +1,13 @@
 #region
 
-using System.Data.Common;
 using Ardalis.GuardClauses;
 using Ardalis.Result;
 using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.User.Commands.CreateUser;
 using DemoShop.Application.Features.User.DTOs;
-using DemoShop.Application.Features.User.Processes.ResolveUser;
 using DemoShop.Application.Features.User.Queries.GetUserByKeycloakId;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
-using DemoShop.Domain.User.Entities;
 using MediatR;
 using Serilog;
 

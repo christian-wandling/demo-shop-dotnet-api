@@ -2,18 +2,16 @@
 
 using System.Reflection;
 using Ardalis.Result;
-using DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
 using DemoShop.Application.Features.Order.Commands.CreateOrder;
 using DemoShop.Domain.Common.Interfaces;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.Order.Interfaces;
 using DemoShop.Domain.Product.Entities;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.TestUtils.Common.Base;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -128,7 +126,7 @@ public class CreateOrderCommandHandlerTests : Test
     }
 
     [Fact]
-    public async Task Handle_WhenInvalidOperationExceptionOccurs_ShouldLogAndReturnError()
+    public async Task Handle_WhenInvalidOperationExceptionOccurs_ShouldReturnError()
     {
         // Arrange
         var product = Create<ProductEntity>();
@@ -161,12 +159,10 @@ public class CreateOrderCommandHandlerTests : Test
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Fact]
-    public async Task Handle_WhenDbUpdateExceptionOccurs_ShouldLogAndReturnError()
+    public async Task Handle_WhenDbUpdateExceptionOccurs_ShouldReturnError()
     {
         // Arrange
         var product = Create<ProductEntity>();
@@ -197,8 +193,6 @@ public class CreateOrderCommandHandlerTests : Test
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Theory]

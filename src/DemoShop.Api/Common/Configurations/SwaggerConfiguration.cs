@@ -1,8 +1,6 @@
 #region
 
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 #endregion
 

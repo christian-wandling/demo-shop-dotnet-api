@@ -11,8 +11,8 @@ using DemoShop.Domain.User.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 

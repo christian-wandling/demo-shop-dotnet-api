@@ -40,7 +40,7 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
         SoftDelete = SoftDelete.Create();
     }
 
-    public KeycloakUserId KeycloakUserId { get; private init; }
+    public KeycloakUserId KeycloakUserId { get; }
     public Email Email { get; private init; }
     public PersonName PersonName { get; private set; }
     public Phone Phone { get; private set; }

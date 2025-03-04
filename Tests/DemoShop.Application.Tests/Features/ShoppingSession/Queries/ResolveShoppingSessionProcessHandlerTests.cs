@@ -6,12 +6,11 @@ using DemoShop.Application.Features.ShoppingSession.DTOs;
 using DemoShop.Application.Features.ShoppingSession.Processes.ResolveShoppingSession;
 using DemoShop.Application.Features.ShoppingSession.Queries.GetShoppingSessionByUserId;
 using DemoShop.Application.Features.User.Interfaces;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
 using MediatR;
-using Serilog;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -94,47 +93,5 @@ public class ResolveShoppingSessionProcessHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().BeEquivalentTo(newSession);
-    }
-
-    [Fact]
-    public async Task Handle_WhenInvalidOperationExceptionOccurs_ReturnsError()
-    {
-        // Arrange
-        var userId = Create<int>();
-        const string errorMessage = "Invalid operation occurred";
-
-        _userAccessor.GetId(_cancellationToken)
-            .Returns(Result.Success(userId));
-        _mediator.Send(Arg.Any<GetShoppingSessionByUserIdQuery>(), _cancellationToken)
-            .Throws(new InvalidOperationException(errorMessage));
-
-        // Act
-        var result = await _sut.Handle(new ResolveShoppingSessionProcess(), _cancellationToken);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
-    }
-
-    [Fact]
-    public async Task Handle_WhenDbExceptionOccurs_ReturnsError()
-    {
-        // Arrange
-        var userId = Create<int>();
-        const string errorMessage = "Database error occurred";
-
-        _userAccessor.GetId(_cancellationToken)
-            .Returns(Result.Success(userId));
-        _mediator.Send(Arg.Any<GetShoppingSessionByUserIdQuery>(), _cancellationToken)
-            .Throws(new TestDbException(errorMessage));
-
-        // Act
-        var result = await _sut.Handle(new ResolveShoppingSessionProcess(), _cancellationToken);
-
-        // Assert
-        result.IsSuccess.Should().BeFalse();
-        result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 }

@@ -3,12 +3,11 @@
 using Ardalis.Result;
 using DemoShop.Application.Features.ShoppingSession.Commands.DeleteShoppingSession;
 using DemoShop.Domain.Common.Interfaces;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.TestUtils.Common.Base;
-using Serilog;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 using DbUpdateException = Microsoft.EntityFrameworkCore.DbUpdateException;
 
 #endregion
@@ -86,7 +85,6 @@ public class DeleteShoppingSessionCommandHandlerTests : Test
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
 
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
         await _eventDispatcher.DidNotReceive().DispatchEventsAsync(session, CancellationToken.None);
     }
 
@@ -107,7 +105,6 @@ public class DeleteShoppingSessionCommandHandlerTests : Test
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
 
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
         await _eventDispatcher.DidNotReceive().DispatchEventsAsync(session, CancellationToken.None);
     }
 

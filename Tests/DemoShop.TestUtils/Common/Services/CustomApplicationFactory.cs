@@ -1,6 +1,11 @@
+#region
+
+using DemoShop.Api.Common.Configurations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+
+#endregion
 
 namespace DemoShop.TestUtils.Common.Services;
 
@@ -10,5 +15,6 @@ public class CustomWebApplicationFactory<TStartup> : WebApplicationFactory<TStar
     {
         builder.UseEnvironment("Test");
         builder.ConfigureAppConfiguration((_, config) => config.AddUserSecrets<TStartup>());
+
     }
 }

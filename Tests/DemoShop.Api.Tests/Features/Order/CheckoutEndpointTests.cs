@@ -1,7 +1,6 @@
 #region
 
 using Ardalis.Result;
-using DemoShop.Api.Features.Order.Endpoints;
 using DemoShop.Api.Features.ShoppingSession.Endpoints;
 using DemoShop.Application.Features.Order.DTOs;
 using DemoShop.Application.Features.ShoppingSession.Processes.Checkout;

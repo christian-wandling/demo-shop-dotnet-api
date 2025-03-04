@@ -7,7 +7,6 @@ using DemoShop.Application.Features.User.Interfaces;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
-using DemoShop.Domain.User.Entities;
 using Serilog;
 
 #endregion

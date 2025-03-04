@@ -4,7 +4,6 @@ using System.Security.Claims;
 using Ardalis.Result;
 using DemoShop.Application.Common.Constants;
 using DemoShop.Application.Common.Models;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.TestUtils.Common.Base;
 using Serilog;
 

@@ -2,7 +2,6 @@
 
 using Ardalis.Result;
 using DemoShop.Application.Common.Interfaces;
-using DemoShop.Application.Features.User.DTOs;
 using DemoShop.Application.Features.User.Interfaces;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.User.Entities;

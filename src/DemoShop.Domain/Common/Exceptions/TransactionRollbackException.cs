@@ -1,10 +1,14 @@
+#region
+
 using DemoShop.Domain.Common.Base;
+
+#endregion
 
 namespace DemoShop.Domain.Common.Exceptions;
 
 public class TransactionRollbackException : DomainException
 {
-    public TransactionRollbackException() : base()
+    public TransactionRollbackException()
     {
     }
 

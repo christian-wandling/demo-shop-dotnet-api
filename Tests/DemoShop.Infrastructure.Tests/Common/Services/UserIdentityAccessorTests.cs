@@ -1,7 +1,6 @@
 #region
 
 using System.Security.Claims;
-using DemoShop.Application.Common.Models;
 using DemoShop.Infrastructure.Common.Services;
 using DemoShop.TestUtils.Common.Base;
 using Microsoft.AspNetCore.Http;

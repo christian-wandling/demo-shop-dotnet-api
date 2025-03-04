@@ -1,6 +1,7 @@
 #region
 
 using System.Globalization;
+using DemoShop.Api.Common.Extensions;
 using Serilog;
 using Serilog.Events;
 
@@ -10,7 +11,7 @@ namespace DemoShop.Api.Common.Configurations;
 
 public static class LoggingConfiguration
 {
-    public static void ConfigureLogging(WebApplicationBuilder builder)
+    public static void ConfigureLogging(IHostApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
 
@@ -18,30 +19,23 @@ public static class LoggingConfiguration
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
             .Enrich.FromLogContext()
+            .Enrich.WithProperty("Application", "DemoShop")
+            .Enrich.WithProperty("Environment", builder.Environment.EnvironmentName)
             .WriteTo.Console(
-                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {NewLine}{Exception}",
+                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {EventId} {Message:lj} {NewLine}{Exception}",
                 formatProvider: CultureInfo.InvariantCulture
             )
-            .WriteTo.Logger(lc => lc
-                .Filter.ByIncludingOnly(evt => evt.Level == LogEventLevel.Error)
-                .WriteTo.File("logs/errors-.txt",
-                    formatProvider: CultureInfo.InvariantCulture,
-                    rollingInterval: RollingInterval.Day))
-            .WriteTo.Sentry(o =>
-            {
-                o.Dsn = builder.Configuration["Sentry:Dsn"];
-                o.Debug = false;
-                o.AutoSessionTracking = true;
-                o.IsGlobalModeEnabled = false;
-                o.TracesSampleRate = builder.Environment.IsProduction() ? 0.5 : 1.0;
-                o.MinimumBreadcrumbLevel = LogEventLevel.Debug;
-                o.MinimumEventLevel = LogEventLevel.Warning;
-                o.CaptureFailedRequests = true;
-            })
+            .WriteTo.File("logs/errors-.txt",
+                restrictedToMinimumLevel: LogEventLevel.Error,
+                formatProvider: CultureInfo.InvariantCulture,
+                rollingInterval: RollingInterval.Day)
+            .AddEventIdBasedLogging()
+            .ConfigureSentryLogging(builder)
             .CreateLogger();
 
         builder.Logging.ClearProviders();
         builder.Logging.AddConsole();
         builder.Logging.AddDebug();
+        builder.Services.AddSingleton(Log.Logger);
     }
 }

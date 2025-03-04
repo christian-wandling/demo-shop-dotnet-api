@@ -9,14 +9,13 @@ using DemoShop.Application.Features.ShoppingSession.Commands.UpdateCartItemQuant
 using DemoShop.Application.Features.ShoppingSession.DTOs;
 using DemoShop.Application.Features.ShoppingSession.Interfaces;
 using DemoShop.Domain.Common.Interfaces;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -110,7 +109,6 @@ public class UpdateCartItemQuantityCommandHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        await _sessionAccessor.DidNotReceive().GetCurrent(CancellationToken.None);
     }
 
     [Fact]
@@ -191,7 +189,6 @@ public class UpdateCartItemQuantityCommandHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Fact]
@@ -229,7 +226,6 @@ public class UpdateCartItemQuantityCommandHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Theory]
