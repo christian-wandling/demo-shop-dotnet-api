@@ -1,6 +1,9 @@
 #region
 
 using Ardalis.GuardClauses;
+using DemoShop.Application.Common.Interfaces;
+using DemoShop.Application.Features.Product.Queries.GetAllProducts;
+using DemoShop.Application.Features.Product.Queries.GetProductById;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Product.Events;
 using MediatR;

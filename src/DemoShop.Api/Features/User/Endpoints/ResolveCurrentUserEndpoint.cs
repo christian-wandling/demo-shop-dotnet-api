@@ -6,7 +6,8 @@ using Ardalis.Result;
 using Ardalis.Result.AspNetCore;
 using Asp.Versioning;
 using DemoShop.Application.Features.User.DTOs;
-using DemoShop.Application.Features.User.Processes.UserResolution;
+using DemoShop.Application.Features.User.Processes.ResolveUser;
+using DemoShop.Application.Features.User.Processes.ResolveUser;
 using DemoShop.Domain.Common.Logging;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -20,24 +21,24 @@ namespace DemoShop.Api.Features.User.Endpoints;
 
 [ApiVersion("1.0")]
 [Authorize(Policy = "RequireBuyProductsRole")]
-public class GetCurrentUserEndpoint(IMediator mediator, ILogger logger)
+public class ResolveCurrentUserEndpoint(IMediator mediator, ILogger logger)
     : EndpointBaseAsync.WithoutRequest.WithResult<Result<UserResponse>>
 {
     [TranslateResultToActionResult]
     [ExpectedFailures(ResultStatus.Unauthorized, ResultStatus.Forbidden, ResultStatus.Error)]
-    [HttpGet("api/v{version:apiVersion}/users/me")]
+    [HttpPost("api/v{version:apiVersion}/users/me")]
     [SwaggerOperation(
-        Summary = "Get current user",
-        Description = "Get current user based on identity extracted from bearer token",
-        OperationId = "GetCurrentUser",
+        Summary = "Resolve current user",
+        Description = "Resolve current user based on identity extracted from bearer token",
+        OperationId = "ResolveCurrentUser",
         Tags = ["User"])
     ]
     public override async Task<Result<UserResponse>> HandleAsync(CancellationToken cancellationToken = default)
     {
         var stopwatch = Stopwatch.StartNew();
-        LogRequestStarting(logger, "Get current user");
+        LogRequestStarting(logger, "Resolve current user");
 
-        var result = await mediator.Send(new UserResolutionProcess(), cancellationToken);
+        var result = await mediator.Send(new ResolveUserProcess(), cancellationToken);
         stopwatch.Stop();
 
         if (result.IsSuccess)
@@ -50,18 +51,18 @@ public class GetCurrentUserEndpoint(IMediator mediator, ILogger logger)
 
     private static void LogRequestStarting(ILogger logger, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetCurrentUserRequestStarted)
-            .Information("Starting GET request for user at {Endpoint}", endpoint);
+            .ForContext("EventId", LoggerEventIds.ResolveCurrentUserRequestStarted)
+            .Information("Starting POST request for resolving current user at {Endpoint}", endpoint);
 
     private static void LogRequestSuccess(ILogger logger, int id, TimeSpan elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetCurrentUserRequestSuccess)
+            .ForContext("EventId", LoggerEventIds.ResolveCurrentUserRequestSuccess)
             .Information(
-                "Completed GET request for user {Id} in {ElapsedMs}ms",
+                "Completed POST request for resolving user {Id} in {ElapsedMs}ms",
                 id, elapsedMs);
 
     private static void LogRequestFailed(ILogger logger, TimeSpan elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetCurrentUserRequestFailed)
-            .Error("Failed GET request to retrieve current user in {ElapsedMs}ms", elapsedMs);
+            .ForContext("EventId", LoggerEventIds.ResolveCurrentUserRequestFailed)
+            .Error("Failed POST request to resolving current user in {ElapsedMs}ms", elapsedMs);
 }

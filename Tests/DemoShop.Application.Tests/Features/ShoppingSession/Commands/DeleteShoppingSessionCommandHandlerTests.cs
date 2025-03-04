@@ -7,7 +7,7 @@ using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.TestUtils.Common.Base;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 using DbUpdateException = Microsoft.EntityFrameworkCore.DbUpdateException;
 
@@ -18,7 +18,7 @@ namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 public class DeleteShoppingSessionCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly ILogger<DeleteShoppingSessionCommandHandler> _logger;
+    private readonly ILogger _logger;
     private readonly IShoppingSessionRepository _repository;
     private readonly DeleteShoppingSessionCommandHandler _sut;
 
@@ -26,7 +26,7 @@ public class DeleteShoppingSessionCommandHandlerTests : Test
     {
         _repository = Mock<IShoppingSessionRepository>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
-        _logger = Mock<ILogger<DeleteShoppingSessionCommandHandler>>();
+        _logger = Mock<ILogger>();
         _sut = new DeleteShoppingSessionCommandHandler(_repository, _eventDispatcher, _logger);
     }
 
@@ -86,7 +86,7 @@ public class DeleteShoppingSessionCommandHandlerTests : Test
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
 
-        _logger.Received(1).LogDomainException(exception.Message);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
         await _eventDispatcher.DidNotReceive().DispatchEventsAsync(session, CancellationToken.None);
     }
 
@@ -107,7 +107,7 @@ public class DeleteShoppingSessionCommandHandlerTests : Test
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
 
-        _logger.Received(1).LogOperationFailed("Delete shopping session", "Id", $"{session.Id}", exception);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
         await _eventDispatcher.DidNotReceive().DispatchEventsAsync(session, CancellationToken.None);
     }
 

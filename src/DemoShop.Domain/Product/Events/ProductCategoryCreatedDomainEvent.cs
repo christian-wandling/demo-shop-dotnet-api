@@ -1,5 +1,6 @@
 #region
 
+using DemoShop.Domain.Common.Base;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Product.Entities;
 
@@ -7,8 +8,4 @@ using DemoShop.Domain.Product.Entities;
 
 namespace DemoShop.Domain.Product.Events;
 
-public class ProductCategoryCreatedDomainEvent(CategoryEntity category) : IDomainEvent
-{
-    public CategoryEntity Category { get; } = category;
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-}
+public record ProductCategoryCreatedDomainEvent(CategoryEntity Category) : DomainEvent, IDomainEvent;

@@ -35,7 +35,7 @@ public sealed class GetAllOrdersOfUserQueryHandler(
 
             LogQueryStarted(logger, userIdResult.Value);
 
-            var cacheKey = cacheService.GenerateCacheKey("order", request);
+            var cacheKey = cacheService.GenerateCacheKey("orders-of-user", userIdResult.Value);
             var response = cacheService.GetFromCache<OrderListResponse>(cacheKey)
                            ?? await GetFromDatabase(userIdResult.Value, cacheKey, cancellationToken);
 

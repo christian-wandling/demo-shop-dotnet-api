@@ -10,7 +10,7 @@ using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 using DbUpdateException = Microsoft.EntityFrameworkCore.DbUpdateException;
 
@@ -32,7 +32,7 @@ public class RemoveCartItemCommandHandlerTests : Test
         _sessionAccessor = Mock<ICurrentShoppingSessionAccessor>();
         _repository = Mock<IShoppingSessionRepository>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
-        var logger = Mock<ILogger<RemoveCartItemCommandHandler>>();
+        var logger = Mock<ILogger>();
         _validator = Mock<IValidator<RemoveCartItemCommand>>();
         _validationService = Mock<IValidationService>();
 

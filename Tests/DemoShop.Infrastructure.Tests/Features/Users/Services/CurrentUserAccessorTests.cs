@@ -7,6 +7,7 @@ using DemoShop.Domain.User.Entities;
 using DemoShop.Domain.User.Interfaces;
 using DemoShop.Infrastructure.Features.Users.Services;
 using DemoShop.TestUtils.Common.Base;
+using Serilog;
 
 #endregion
 
@@ -18,6 +19,7 @@ namespace DemoShop.Infrastructure.Tests.Features.Users.Services;
 public class CurrentUserAccessorTests : Test
 {
     private readonly IUserRepository _repository;
+    private readonly ICacheService _cacheService;
     private readonly CurrentUserAccessor _sut;
     private readonly IUserIdentityAccessor _userIdentity;
 
@@ -25,7 +27,9 @@ public class CurrentUserAccessorTests : Test
     {
         _repository = Mock<IUserRepository>();
         _userIdentity = Mock<IUserIdentityAccessor>();
-        _sut = new CurrentUserAccessor(_repository, _userIdentity);
+        var logger = Mock<ILogger>();
+        _cacheService = Mock<ICacheService>();
+        _sut = new CurrentUserAccessor(_repository, _userIdentity, logger, _cacheService);
     }
 
     [Fact]

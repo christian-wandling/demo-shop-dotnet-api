@@ -7,6 +7,7 @@ using DemoShop.Application.Features.Order.Queries.GetAllOrdersOfUser;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -23,7 +24,8 @@ public class GetAllOrdersOfUserEndpointTests : Test
     public GetAllOrdersOfUserEndpointTests()
     {
         _mediator = Mock<IMediator>();
-        _sut = new GetAllOrdersOfUserEndpoint(_mediator);
+        var logger = Mock<ILogger>();
+        _sut = new GetAllOrdersOfUserEndpoint(_mediator, logger);
     }
 
     [Fact]

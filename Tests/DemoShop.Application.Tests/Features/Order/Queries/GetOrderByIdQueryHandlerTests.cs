@@ -2,6 +2,7 @@
 
 using Ardalis.Result;
 using AutoMapper;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.Order.DTOs;
 using DemoShop.Application.Features.Order.Queries.GetOrderById;
 using DemoShop.Application.Features.User.Interfaces;
@@ -9,7 +10,7 @@ using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.Order.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
@@ -20,21 +21,24 @@ public class GetOrderByIdQueryHandlerTests : Test
 {
     private readonly IMapper _mapper;
     private readonly IOrderRepository _repository;
-    private readonly GetOrderByIdQueryHandler _sut;
     private readonly ICurrentUserAccessor _userAccessor;
+    private readonly ICacheService _cacheService;
+    private readonly GetOrderByIdQueryHandler _sut;
 
     public GetOrderByIdQueryHandlerTests()
     {
         _userAccessor = Mock<ICurrentUserAccessor>();
         _mapper = Mock<IMapper>();
-        var logger = Mock<ILogger<GetOrderByIdQueryHandler>>();
+        var logger = Mock<ILogger>();
         _repository = Mock<IOrderRepository>();
+        _cacheService = Mock<ICacheService>();
 
         _sut = new GetOrderByIdQueryHandler(
             _userAccessor,
             _mapper,
             logger,
-            _repository
+            _repository,
+            _cacheService
         );
     }
 

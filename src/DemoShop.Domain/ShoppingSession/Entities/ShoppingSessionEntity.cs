@@ -55,7 +55,7 @@ public sealed class ShoppingSessionEntity : IEntity, IAuditable, IAggregateRoot
 
         _cartItems.Add(cartItemResult.Value);
         Audit.UpdateModified();
-        this.AddDomainEvent(new CartItemAdded(cartItemResult.Value));
+        this.AddDomainEvent(new CartItemAdded(cartItemResult.Value.Id, UserId));
 
         return cartItemResult;
     }
@@ -69,7 +69,7 @@ public sealed class ShoppingSessionEntity : IEntity, IAuditable, IAggregateRoot
         var oldQuantity = cartItemToUpdate.Quantity;
         cartItemToUpdate.UpdateQuantity(quantity);
         Audit.UpdateModified();
-        this.AddDomainEvent(new CartItemQuantityChanged(cartItemToUpdate, oldQuantity.Value));
+        this.AddDomainEvent(new CartItemQuantityChanged(cartItemToUpdate, oldQuantity.Value, UserId));
 
         return Result.Success(cartItemToUpdate);
     }
@@ -82,7 +82,7 @@ public sealed class ShoppingSessionEntity : IEntity, IAuditable, IAggregateRoot
 
         _cartItems.Remove(cartItemToRemove);
 
-        this.AddDomainEvent(new CartItemRemoved(this, cartItemToRemove));
+        this.AddDomainEvent(new CartItemRemoved(cartItemToRemove.Id, UserId));
 
         return Result.Success();
     }

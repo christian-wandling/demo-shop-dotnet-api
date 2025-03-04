@@ -1,13 +1,10 @@
 #region
 
+using DemoShop.Domain.Common.Base;
 using DemoShop.Domain.Common.Interfaces;
 
 #endregion
 
 namespace DemoShop.Domain.Product.Events;
 
-public class ProductDeletedDomainEvent(int id) : IDomainEvent
-{
-    public int Id { get; } = id;
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-}
+public record ProductDeletedDomainEvent(int Id) : DomainEvent, IDomainEvent;

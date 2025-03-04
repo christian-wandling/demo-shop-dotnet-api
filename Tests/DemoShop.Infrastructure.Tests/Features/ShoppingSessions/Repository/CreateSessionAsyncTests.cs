@@ -4,6 +4,7 @@ using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Infrastructure.Features.ShoppingSessions;
 using DemoShop.Infrastructure.Tests.Common.Base;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Xunit.Abstractions;
 
 #endregion
@@ -17,7 +18,8 @@ public class CreateSessionAsyncTests : RepositoryTest
 
     public CreateSessionAsyncTests(ITestOutputHelper output) : base(output)
     {
-        _sut = new ShoppingSessionRepository(Context);
+        var logger = Mock<ILogger>();
+        _sut = new ShoppingSessionRepository(Context, logger);
     }
 
     [Fact]

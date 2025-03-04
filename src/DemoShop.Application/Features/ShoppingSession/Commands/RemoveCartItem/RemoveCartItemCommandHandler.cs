@@ -11,7 +11,7 @@ using DemoShop.Domain.ShoppingSession.Interfaces;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -21,7 +21,7 @@ public sealed class RemoveCartItemCommandHandler(
     ICurrentShoppingSessionAccessor currentSession,
     IShoppingSessionRepository repository,
     IDomainEventDispatcher eventDispatcher,
-    ILogger<RemoveCartItemCommandHandler> logger,
+    ILogger logger,
     IValidator<RemoveCartItemCommand> validator,
     IValidationService validationService
 )
@@ -33,11 +33,6 @@ public sealed class RemoveCartItemCommandHandler(
         Guard.Against.Null(request, nameof(request));
         Guard.Against.NegativeOrZero(request.Id, nameof(request.Id));
 
-        var validationResult = await validationService.ValidateAsync(request, validator, cancellationToken);
-
-        if (!validationResult.IsSuccess)
-            return validationResult.Map();
-
         var sessionResult = await currentSession.GetCurrent(cancellationToken);
 
         if (!sessionResult.IsSuccess)
@@ -45,25 +40,40 @@ public sealed class RemoveCartItemCommandHandler(
 
         try
         {
-            var unsavedResult = sessionResult.Value.RemoveCartItem(request.Id);
+            LogCommandStarted(logger, request.Id, sessionResult.Value.Id);
 
+            var validationResult = await validationService.ValidateAsync(request, validator, cancellationToken);
+            if (!validationResult.IsSuccess)
+            {
+                LogCommandError(logger, request.Id, sessionResult.Value.Id);
+                return validationResult.Map();
+            }
+
+            var unsavedResult = sessionResult.Value.RemoveCartItem(request.Id);
             if (!unsavedResult.IsSuccess)
+            {
+                LogCommandError(logger, request.Id, sessionResult.Value.Id);
                 return unsavedResult;
+            }
 
             var savedResult = await SaveChanges(sessionResult, cancellationToken);
+            if (!savedResult.IsSuccess)
+            {
+                LogCommandError(logger, request.Id, savedResult.Value.Id);
+                return savedResult.Map();
+            }
 
-            return savedResult.IsSuccess
-                ? Result.NoContent()
-                : savedResult.Map();
+            LogCommandSuccess(logger, request.Id, sessionResult.Value.Id);
+            return Result.NoContent();
         }
         catch (InvalidOperationException ex)
         {
-            logger.LogDomainException(ex.Message);
+            LogInvalidOperationException(logger, ex.Message, ex);
             return Result.Error(ex.Message);
         }
         catch (DbUpdateException ex)
         {
-            logger.LogOperationFailed("Remove cart item", "Id", $"{request.Id}", ex);
+            LogDatabaseException(logger, ex.Message, ex);
             return Result.Error(ex.Message);
         }
     }
@@ -76,4 +86,28 @@ public sealed class RemoveCartItemCommandHandler(
         await eventDispatcher.DispatchEventsAsync(unsavedSession, cancellationToken);
         return Result.Success(savedSession);
     }
+
+    private static void LogCommandStarted(ILogger logger, int carItemId, int sessionId) =>
+        logger.ForContext("EventId", LoggerEventIds.RemoveCartItemCommandStarted)
+            .Information("Starting to remove cart item with Id {CartItemId} from shopping session {SessionId}",
+                carItemId, sessionId);
+
+    private static void LogCommandSuccess(ILogger logger, int carItemId, int sessionId) =>
+        logger.ForContext("EventId", LoggerEventIds.RemoveCartItemCommandSuccess)
+            .Information(
+                "Successfully removed cart item with Id {CartItemId} from shopping session with Id {SessionId}",
+                carItemId, sessionId);
+
+    private static void LogCommandError(ILogger logger, int carItemId, int sessionId) =>
+        logger.ForContext("EventId", LoggerEventIds.RemoveCartItemCommandError)
+            .Information("Error removing cart item with id {CartItemId} from shopping session {SessionId}",
+                carItemId, sessionId);
+
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Database error occurred while updating shopping session. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.UpdateShoppingSessionDatabaseException);
+
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Invalid operation while updating shopping session. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.UpdateShoppingSessionDomainException);
 }

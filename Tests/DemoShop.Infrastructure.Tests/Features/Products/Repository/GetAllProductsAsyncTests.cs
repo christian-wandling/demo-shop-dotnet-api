@@ -3,6 +3,7 @@
 using DemoShop.Domain.Product.Entities;
 using DemoShop.Infrastructure.Features.Products;
 using DemoShop.Infrastructure.Tests.Common.Base;
+using Serilog;
 using Xunit.Abstractions;
 
 #endregion
@@ -16,7 +17,8 @@ public class GetAllProductsAsyncTests : RepositoryTest
 
     public GetAllProductsAsyncTests(ITestOutputHelper output) : base(output)
     {
-        _sut = new ProductRepository(Context);
+        var logger = Mock<ILogger>();
+        _sut = new ProductRepository(Context, logger);
     }
 
     [Fact]

@@ -1,16 +1,18 @@
 #region
 
 using Ardalis.GuardClauses;
+using DemoShop.Application.Common.Interfaces;
+using DemoShop.Application.Features.ShoppingSession.Queries.GetShoppingSessionByUserId;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.ShoppingSession.Events;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
 namespace DemoShop.Application.Features.ShoppingSession.Handlers;
 
-public class CartItemQuantityChangedHandler(ILogger<CartItemQuantityChangedHandler> logger)
+public class CartItemQuantityChangedHandler(ILogger logger, ICacheService cacheService)
     : INotificationHandler<CartItemQuantityChanged>
 {
     public Task Handle(CartItemQuantityChanged notification, CancellationToken cancellationToken)
@@ -19,14 +21,22 @@ public class CartItemQuantityChangedHandler(ILogger<CartItemQuantityChangedHandl
         Guard.Against.Null(notification.CartItem, nameof(notification.CartItem));
         Guard.Against.NegativeOrZero(notification.OldQuantity, nameof(notification.OldQuantity));
 
-        logger.LogDomainEvent(
-            $"Cart item quantitiy changed - CartItemId: {notification.CartItem.Id}, " +
-            $"Product: {notification.CartItem.Product?.Name}, " +
-            $"Quantity: {notification.OldQuantity} to {notification.CartItem.Quantity}, " +
-            $"SessionId: {notification.CartItem.ShoppingSessionId}, " +
-            $"UserId: {notification.CartItem.ShoppingSession?.UserId}"
-        );
-
+        LogCartItemQuantityChanged(logger, notification.CartItem.Id);
+        InvalidateCache(notification.UserId);
         return Task.CompletedTask;
     }
+
+    private void InvalidateCache(int userId)
+    {
+        List<string> cacheKeys =
+        [
+            cacheService.GenerateCacheKey("user", new GetShoppingSessionByUserIdQuery(userId)),
+            cacheService.GenerateCacheKey("current-session-accessor", userId)
+        ];
+
+        cacheKeys.ForEach(cacheService.InvalidateCache);
+    }
+
+    private static void LogCartItemQuantityChanged(ILogger logger, int id) => logger.Information(
+        "CartItem quantity changed: {Id} {@EventId}", id, LoggerEventIds.CartItemQuantityChangedDomainEvent);
 }

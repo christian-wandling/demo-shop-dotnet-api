@@ -7,6 +7,7 @@ using DemoShop.Application.Features.ShoppingSession.Commands.RemoveCartItem;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -23,7 +24,8 @@ public class RemoveCartItemEndpointTests : Test
     public RemoveCartItemEndpointTests()
     {
         _mediator = Mock<IMediator>();
-        _sut = new RemoveCartItemEndpoint(_mediator);
+        var logger = Mock<ILogger>();
+        _sut = new RemoveCartItemEndpoint(_mediator, logger);
     }
 
     [Fact]

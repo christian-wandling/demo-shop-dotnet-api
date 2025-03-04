@@ -16,7 +16,6 @@ public class ProductImageCreatedHandler(ILogger logger)
     public Task Handle(ProductImageCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
         Guard.Against.Null(notification, nameof(notification));
-        Guard.Against.Null(notification.Image, nameof(notification.Image));
 
         LogProductImageCreated(logger, notification.Image.Id);
         return Task.CompletedTask;

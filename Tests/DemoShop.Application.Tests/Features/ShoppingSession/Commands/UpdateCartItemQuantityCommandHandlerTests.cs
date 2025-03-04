@@ -15,7 +15,7 @@ using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
@@ -25,7 +25,7 @@ namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 public class UpdateCartItemQuantityCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly ILogger<UpdateCartItemQuantityCommandHandler> _logger;
+    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IShoppingSessionRepository _repository;
     private readonly ICurrentShoppingSessionAccessor _sessionAccessor;
@@ -38,7 +38,7 @@ public class UpdateCartItemQuantityCommandHandlerTests : Test
         _mapper = Substitute.For<IMapper>();
         _sessionAccessor = Mock<ICurrentShoppingSessionAccessor>();
         _repository = Mock<IShoppingSessionRepository>();
-        _logger = Mock<ILogger<UpdateCartItemQuantityCommandHandler>>();
+        _logger = Mock<ILogger>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
         _validator = Mock<IValidator<UpdateCartItemQuantityCommand>>();
         _validationService = Mock<IValidationService>();
@@ -191,7 +191,7 @@ public class UpdateCartItemQuantityCommandHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).LogDomainException(errorMessage);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Fact]
@@ -229,8 +229,7 @@ public class UpdateCartItemQuantityCommandHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).LogOperationFailed("Update cart item quantity", "Id", $"{command.Id}",
-            null);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Theory]

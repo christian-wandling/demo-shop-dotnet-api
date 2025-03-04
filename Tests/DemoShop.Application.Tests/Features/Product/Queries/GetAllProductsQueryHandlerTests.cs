@@ -10,7 +10,7 @@ using DemoShop.Domain.Product.Entities;
 using DemoShop.Domain.Product.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
@@ -19,7 +19,7 @@ namespace DemoShop.Application.Tests.Features.Product.Queries;
 
 public class GetAllProductsQueryHandlerTests : Test
 {
-    private readonly ILogger<GetAllProductsQueryHandler> _logger;
+    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IProductRepository _repository;
     private readonly ICacheService _cacheService;
@@ -30,7 +30,7 @@ public class GetAllProductsQueryHandlerTests : Test
     {
         _mapper = Mock<IMapper>();
         _repository = Mock<IProductRepository>();
-        _logger = Mock<ILogger<GetAllProductsQueryHandler>>();
+        _logger = Mock<ILogger>();
         _cacheService = Mock<ICacheService>();
         _sut = new GetAllProductsQueryHandler(_mapper, _repository, _logger, _cacheService);
     }
@@ -89,7 +89,7 @@ public class GetAllProductsQueryHandlerTests : Test
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
 
-        _logger.Received(1).LogDomainException(errorMessage);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Fact]
@@ -115,12 +115,7 @@ public class GetAllProductsQueryHandlerTests : Test
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
 
-        _logger.Received(1).LogOperationFailed(
-            "Get all products",
-            "",
-            "",
-            null
-        );
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
      [Fact]

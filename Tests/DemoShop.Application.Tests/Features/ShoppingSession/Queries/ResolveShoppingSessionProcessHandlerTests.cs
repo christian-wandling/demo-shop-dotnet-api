@@ -3,36 +3,36 @@
 using Ardalis.Result;
 using DemoShop.Application.Features.ShoppingSession.Commands.CreateShoppingSession;
 using DemoShop.Application.Features.ShoppingSession.DTOs;
-using DemoShop.Application.Features.ShoppingSession.Queries.GetOrCreateShoppingSession;
+using DemoShop.Application.Features.ShoppingSession.Processes.ResolveShoppingSession;
 using DemoShop.Application.Features.ShoppingSession.Queries.GetShoppingSessionByUserId;
 using DemoShop.Application.Features.User.Interfaces;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Queries;
 
-public class GetOrCreateShoppingSessionQueryHandlerTests : Test
+public class ResolveShoppingSessionProcessHandlerTests : Test
 {
     private readonly CancellationToken _cancellationToken;
-    private readonly ILogger<GetOrCreateShoppingSessionQueryHandler> _logger;
+    private readonly ILogger _logger;
     private readonly IMediator _mediator;
-    private readonly GetOrCreateShoppingSessionQueryHandler _sut;
+    private readonly ResolveShoppingSessionProcessHandler _sut;
     private readonly ICurrentUserAccessor _userAccessor;
 
-    public GetOrCreateShoppingSessionQueryHandlerTests()
+    public ResolveShoppingSessionProcessHandlerTests()
     {
         _userAccessor = Substitute.For<ICurrentUserAccessor>();
         _mediator = Substitute.For<IMediator>();
-        _logger = Substitute.For<ILogger<GetOrCreateShoppingSessionQueryHandler>>();
+        _logger = Substitute.For<ILogger>();
         _cancellationToken = CancellationToken.None;
 
-        _sut = new GetOrCreateShoppingSessionQueryHandler(
+        _sut = new ResolveShoppingSessionProcessHandler(
             _userAccessor,
             _mediator,
             _logger
@@ -47,7 +47,7 @@ public class GetOrCreateShoppingSessionQueryHandlerTests : Test
             .Returns(Result.Forbidden("Unauthorized"));
 
         // Act
-        var result = await _sut.Handle(new GetOrCreateShoppingSessionQuery(), _cancellationToken);
+        var result = await _sut.Handle(new ResolveShoppingSessionProcess(), _cancellationToken);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
@@ -67,7 +67,7 @@ public class GetOrCreateShoppingSessionQueryHandlerTests : Test
             .Returns(Result.Success(expectedSession));
 
         // Act
-        var result = await _sut.Handle(new GetOrCreateShoppingSessionQuery(), _cancellationToken);
+        var result = await _sut.Handle(new ResolveShoppingSessionProcess(), _cancellationToken);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -89,7 +89,7 @@ public class GetOrCreateShoppingSessionQueryHandlerTests : Test
             .Returns(Result.Success(newSession));
 
         // Act
-        var result = await _sut.Handle(new GetOrCreateShoppingSessionQuery(), _cancellationToken);
+        var result = await _sut.Handle(new ResolveShoppingSessionProcess(), _cancellationToken);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -109,12 +109,12 @@ public class GetOrCreateShoppingSessionQueryHandlerTests : Test
             .Throws(new InvalidOperationException(errorMessage));
 
         // Act
-        var result = await _sut.Handle(new GetOrCreateShoppingSessionQuery(), _cancellationToken);
+        var result = await _sut.Handle(new ResolveShoppingSessionProcess(), _cancellationToken);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).LogDomainException(errorMessage);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Fact]
@@ -130,15 +130,11 @@ public class GetOrCreateShoppingSessionQueryHandlerTests : Test
             .Throws(new TestDbException(errorMessage));
 
         // Act
-        var result = await _sut.Handle(new GetOrCreateShoppingSessionQuery(), _cancellationToken);
+        var result = await _sut.Handle(new ResolveShoppingSessionProcess(), _cancellationToken);
 
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).LogOperationFailed(
-            "Get Session By UserId",
-            "UserId",
-            userId.ToString(),
-            null);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 }

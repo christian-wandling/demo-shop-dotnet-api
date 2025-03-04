@@ -146,10 +146,10 @@ public sealed class UpdateUserAddressCommandHandler(
             .Information("Error updating address for user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
     private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while creating order. Error: {ErrorMessage} {@EventId}",
+        logger.Error(ex, "Database error occurred while updating user address. Error: {ErrorMessage} {@EventId}",
             errorMessage, LoggerEventIds.UpdateUserDatabaseException);
 
     private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while creating order. Error: {ErrorMessage} {@EventId}",
+        logger.Error(ex, "Invalid operation while updating user address. Error: {ErrorMessage} {@EventId}",
             errorMessage, LoggerEventIds.UpdateUserDomainException);
 }

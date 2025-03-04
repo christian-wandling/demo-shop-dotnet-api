@@ -2,9 +2,7 @@
 
 using Ardalis.GuardClauses;
 using Ardalis.Result;
-using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
-using DemoShop.Application.Features.Order.Queries.GetAllOrdersOfUser;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Entities;
@@ -20,8 +18,7 @@ namespace DemoShop.Application.Features.Order.Commands.CreateOrder;
 public sealed class CreateOrderCommandHandler(
     IOrderRepository repository,
     IDomainEventDispatcher eventDispatcher,
-    ILogger logger,
-    ICacheService cacheService
+    ILogger logger
 )
     : IRequestHandler<CreateOrderCommand, Result<OrderEntity>>
 {
@@ -49,7 +46,6 @@ public sealed class CreateOrderCommandHandler(
                 return savedResult.Map();
             }
 
-            InvalidateOrdersCache();
             LogCommandSuccess(logger, request.Session.Id, savedResult.Value.Id);
             return savedResult;
         }
@@ -75,12 +71,6 @@ public sealed class CreateOrderCommandHandler(
         await eventDispatcher.DispatchEventsAsync(unsavedOrder, cancellationToken);
 
         return Result.Success(savedOrder);
-    }
-
-    private void InvalidateOrdersCache()
-    {
-        var cacheKey = cacheService.GenerateCacheKey("order", new GetAllOrdersOfUserQuery());
-        cacheService.InvalidateCache(cacheKey);
     }
 
     private static void LogCommandStarted(ILogger logger, int sessionId) =>

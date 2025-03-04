@@ -7,6 +7,7 @@ using DemoShop.Application.Features.Product.Queries.GetAllProducts;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -23,7 +24,8 @@ public class GetAllProductsEndpointTests : Test
     public GetAllProductsEndpointTests()
     {
         _mediator = Mock<IMediator>();
-        _sut = new GetAllProductsEndpoint(_mediator);
+        var logger = Mock<ILogger>();
+        _sut = new GetAllProductsEndpoint(_mediator, logger);
     }
 
     [Fact]

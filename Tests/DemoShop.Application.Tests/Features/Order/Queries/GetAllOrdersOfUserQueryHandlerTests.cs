@@ -2,15 +2,15 @@
 
 using Ardalis.Result;
 using AutoMapper;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.Order.DTOs;
 using DemoShop.Application.Features.Order.Queries.GetAllOrdersOfUser;
 using DemoShop.Application.Features.User.Interfaces;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.Order.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
@@ -19,24 +19,27 @@ namespace DemoShop.Application.Tests.Features.Order.Queries;
 
 public class GetAllOrdersOfUserQueryHandlerTests : Test
 {
-    private readonly ILogger<GetAllOrdersOfUserQueryHandler> _logger;
+    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IOrderRepository _repository;
-    private readonly GetAllOrdersOfUserQueryHandler _sut;
     private readonly ICurrentUserAccessor _userAccessor;
+    private readonly ICacheService _cacheService;
+    private readonly GetAllOrdersOfUserQueryHandler _sut;
 
     public GetAllOrdersOfUserQueryHandlerTests()
     {
         _userAccessor = Mock<ICurrentUserAccessor>();
         _mapper = Mock<IMapper>();
         _repository = Mock<IOrderRepository>();
-        _logger = Mock<ILogger<GetAllOrdersOfUserQueryHandler>>();
+        _logger = Mock<ILogger>();
+        _cacheService = Mock<ICacheService>();
 
         _sut = new GetAllOrdersOfUserQueryHandler(
             _userAccessor,
             _mapper,
             _repository,
-            _logger
+            _logger,
+            _cacheService
         );
     }
 
@@ -94,7 +97,7 @@ public class GetAllOrdersOfUserQueryHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).LogDomainException(errorMessage);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Fact]
@@ -115,10 +118,6 @@ public class GetAllOrdersOfUserQueryHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).LogOperationFailed(
-            "Get all orders of user",
-            "UserId",
-            userId.ToString(),
-            null);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 }

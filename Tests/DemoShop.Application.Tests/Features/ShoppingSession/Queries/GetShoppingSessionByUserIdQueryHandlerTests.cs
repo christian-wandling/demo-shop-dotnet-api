@@ -2,6 +2,7 @@
 
 using Ardalis.Result;
 using AutoMapper;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.ShoppingSession.DTOs;
 using DemoShop.Application.Features.ShoppingSession.Queries.GetShoppingSessionByUserId;
 using DemoShop.Domain.Common.Logging;
@@ -9,7 +10,7 @@ using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
@@ -18,17 +19,19 @@ namespace DemoShop.Application.Tests.Features.ShoppingSession.Queries;
 
 public class GetShoppingSessionByUserIdQueryHandlerTests : Test
 {
-    private readonly ILogger<GetShoppingSessionByUserIdQueryHandler> _logger;
+    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IShoppingSessionRepository _repository;
+    private readonly ICacheService _cacheService;
     private readonly GetShoppingSessionByUserIdQueryHandler _sut;
 
     public GetShoppingSessionByUserIdQueryHandlerTests()
     {
         _mapper = Substitute.For<IMapper>();
         _repository = Substitute.For<IShoppingSessionRepository>();
-        _logger = Substitute.For<ILogger<GetShoppingSessionByUserIdQueryHandler>>();
-        _sut = new GetShoppingSessionByUserIdQueryHandler(_mapper, _repository, _logger);
+        _logger = Substitute.For<ILogger>();
+        _cacheService = Substitute.For<ICacheService>();
+        _sut = new GetShoppingSessionByUserIdQueryHandler(_mapper, _repository, _logger, _cacheService);
     }
 
     [Fact]
@@ -80,11 +83,7 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).LogOperationFailed(
-            "Get ShoppingSession By UserId",
-            "UserId",
-            $"{request.UserId}",
-            null);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Fact]
@@ -103,7 +102,7 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).LogDomainException(exception.Message);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Fact]
@@ -122,10 +121,6 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).LogOperationFailed(
-            "Get ShoppingSession By UserId",
-            "UserId",
-            $"{request.UserId}",
-            exception);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 }

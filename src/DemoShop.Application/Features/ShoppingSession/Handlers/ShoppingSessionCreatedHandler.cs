@@ -4,13 +4,13 @@ using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.ShoppingSession.Events;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
 namespace DemoShop.Application.Features.ShoppingSession.Handlers;
 
-public class ShoppingSessionCreatedHandler(ILogger<ShoppingSessionCreatedHandler> logger)
+public class ShoppingSessionCreatedHandler(ILogger logger)
     : INotificationHandler<ShoppingSessionCreated>
 {
     public Task Handle(ShoppingSessionCreated notification, CancellationToken cancellationToken)
@@ -18,11 +18,11 @@ public class ShoppingSessionCreatedHandler(ILogger<ShoppingSessionCreatedHandler
         Guard.Against.Null(notification, nameof(notification));
         Guard.Against.Null(notification.ShoppingSession, nameof(notification.ShoppingSession));
 
-        logger.LogDomainEvent(
-            $"Shopping session converted to order - SessionId: {notification.ShoppingSession.Id}, " +
-            $"UserId: {notification.ShoppingSession.UserId}"
-        );
+        LogShoppingSessionCreated(logger, notification.ShoppingSession.Id);
 
         return Task.CompletedTask;
     }
+
+    private static void LogShoppingSessionCreated(ILogger logger, int id) => logger.Information(
+        "ShoppingSession Created: {Id} {@EventId}", id, LoggerEventIds.ShoppingSessionCreatedDomainEvent);
 }

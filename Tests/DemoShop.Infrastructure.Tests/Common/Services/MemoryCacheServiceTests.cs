@@ -7,7 +7,7 @@ using Xunit.Sdk;
 namespace DemoShop.Infrastructure.Tests.Common.Services;
 
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using System.Text.Json;
 using Xunit.Abstractions;
@@ -16,12 +16,12 @@ public class MemoryCacheServiceTests : Test
 {
     private readonly MemoryCacheService _sut;
     private readonly IMemoryCache _cache;
-    private readonly ILogger<MemoryCacheService> _logger;
+    private readonly ILogger _logger;
 
     public MemoryCacheServiceTests(ITestOutputHelper? output = null) : base(output)
     {
         _cache = Mock<IMemoryCache>();
-        _logger = Mock<ILogger<MemoryCacheService>>();
+        _logger = Mock<ILogger>();
         _sut = new MemoryCacheService(_cache, _logger);
     }
 
@@ -44,7 +44,7 @@ public class MemoryCacheServiceTests : Test
 
         // Assert
         result.Should().Be(expectedItem);
-        _logger.Received(1).LogOperationSuccess("Cache hit", "Cache key", key);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Fact]

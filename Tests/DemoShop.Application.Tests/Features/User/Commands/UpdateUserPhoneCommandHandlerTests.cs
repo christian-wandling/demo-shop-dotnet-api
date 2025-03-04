@@ -11,7 +11,7 @@ using DemoShop.Domain.User.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
@@ -33,7 +33,7 @@ public class UpdateUserPhoneCommandHandlerTests : Test
         _mapper = Substitute.For<IMapper>();
         _identity = Mock<IUserIdentityAccessor>();
         _repository = Mock<IUserRepository>();
-        var logger = Mock<ILogger<UpdateUserPhoneCommandHandler>>();
+        var logger = Mock<ILogger>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
         _validator = Mock<IValidator<UpdateUserPhoneCommand>>();
         _validationService = Mock<IValidationService>();

@@ -88,22 +88,22 @@ public sealed class CreateUserCommandHandler(
 
     private static void LogCommandStarted(ILogger logger, string keycloakUserId) =>
         logger.ForContext("EventId", LoggerEventIds.CreateUserCommandStarted)
-            .Information("Starting to create user with ID {KeycloakUserId}", keycloakUserId);
+            .Information("Starting to create user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
     private static void LogCommandSuccess(ILogger logger, int userId, string keycloakUserId) =>
         logger.ForContext("EventId", LoggerEventIds.CreateUserCommandSuccess)
-            .Information("Successfully created user with Id {UserId} {KeycloakUserId}",
+            .Information("Successfully created user with Id {UserId} for KeycloakUserId {KeycloakUserId}",
                 userId, keycloakUserId);
 
     private static void LogCommandError(ILogger logger, string keycloakUserId) =>
         logger.ForContext("EventId", LoggerEventIds.CreateUserCommandError)
-            .Information("Error creating user with ID {KeycloakUserId}", keycloakUserId);
+            .Information("Error creating user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
     private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while creating order. Error: {ErrorMessage} {@EventId}",
+        logger.Error(ex, "Database error occurred while creating user. Error: {ErrorMessage} {@EventId}",
             errorMessage, LoggerEventIds.CreateUserDatabaseException);
 
     private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while creating order. Error: {ErrorMessage} {@EventId}",
+        logger.Error(ex, "Invalid operation while creating user. Error: {ErrorMessage} {@EventId}",
             errorMessage, LoggerEventIds.CreateUserDomainException);
 }

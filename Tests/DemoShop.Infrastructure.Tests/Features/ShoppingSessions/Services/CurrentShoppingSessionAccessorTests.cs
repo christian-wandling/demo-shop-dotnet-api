@@ -1,11 +1,13 @@
 #region
 
 using Ardalis.Result;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.User.Interfaces;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.Infrastructure.Features.ShoppingSessions.Services;
 using DemoShop.TestUtils.Common.Base;
+using Serilog;
 
 #endregion
 
@@ -18,13 +20,16 @@ public class CurrentShoppingSessionAccessorTests : Test
 {
     private readonly ICurrentUserAccessor _currentUser;
     private readonly IShoppingSessionRepository _repository;
+    private readonly ICacheService _cacheService;
     private readonly CurrentShoppingSessionAccessor _sut;
 
     public CurrentShoppingSessionAccessorTests()
     {
         _repository = Mock<IShoppingSessionRepository>();
         _currentUser = Mock<ICurrentUserAccessor>();
-        _sut = new CurrentShoppingSessionAccessor(_repository, _currentUser);
+        var logger = Mock<ILogger>();
+        _cacheService = Mock<ICacheService>();
+        _sut = new CurrentShoppingSessionAccessor(_repository, _currentUser, logger, _cacheService);
     }
 
     [Fact]

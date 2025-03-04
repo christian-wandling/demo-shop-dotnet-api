@@ -4,39 +4,39 @@ using Ardalis.Result;
 using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.User.Commands.CreateUser;
 using DemoShop.Application.Features.User.DTOs;
-using DemoShop.Application.Features.User.Processes.UserResolution;
+using DemoShop.Application.Features.User.Processes.ResolveUser;
 using DemoShop.Application.Features.User.Queries.GetUserByKeycloakId;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
 
 namespace DemoShop.Application.Tests.Features.User.Queries;
 
-public class UserResolutionProcessHandlerTests : Test
+public class ResolveUserProcessHandlerTests : Test
 {
     private readonly IUserIdentityAccessor _identity;
     private readonly IMediator _mediator;
-    private readonly UserResolutionProcessHandler _sut;
+    private readonly ResolveUserProcessHandler _sut;
 
-    public UserResolutionProcessHandlerTests()
+    public ResolveUserProcessHandlerTests()
     {
         _identity = Mock<IUserIdentityAccessor>();
         _mediator = Mock<IMediator>();
-        var logger = Mock<ILogger<UserResolutionProcessHandler>>();
+        var logger = Mock<ILogger>();
 
-        _sut = new UserResolutionProcessHandler(_identity, _mediator, logger);
+        _sut = new ResolveUserProcessHandler(_identity, _mediator, logger);
     }
 
     [Fact]
     public async Task Handle_WhenIdentityResultFails_ShouldReturnError()
     {
         // Arrange
-        var query = Create<UserResolutionProcess>();
+        var query = Create<ResolveUserProcess>();
         _identity.GetCurrentIdentity().Returns(Result.Error());
 
         // Act
@@ -51,7 +51,7 @@ public class UserResolutionProcessHandlerTests : Test
     public async Task Handle_WhenUserExists_ShouldReturnExistingUser()
     {
         // Arrange
-        var query = Create<UserResolutionProcess>();
+        var query = Create<ResolveUserProcess>();
         var userIdentity = Create<IUserIdentity>();
         var userResponse = Create<UserResponse>();
 
@@ -72,7 +72,7 @@ public class UserResolutionProcessHandlerTests : Test
     public async Task Handle_WhenUserDoesNotExist_ShouldCreateAndReturnNewUser()
     {
         // Arrange
-        var query = Create<UserResolutionProcess>();
+        var query = Create<ResolveUserProcess>();
         var userIdentity = Create<IUserIdentity>();
         var userResponse = Create<UserResponse>();
 
@@ -96,7 +96,7 @@ public class UserResolutionProcessHandlerTests : Test
     public async Task Handle_WhenInvalidOperationExceptionOccurs_ShouldReturnError()
     {
         // Arrange
-        var query = Create<UserResolutionProcess>();
+        var query = Create<ResolveUserProcess>();
         var userIdentity = Create<IUserIdentity>();
 
         _identity.GetCurrentIdentity().Returns(Result.Success(userIdentity));
@@ -115,7 +115,7 @@ public class UserResolutionProcessHandlerTests : Test
     public async Task Handle_WhenDbExceptionOccurs_ShouldReturnError()
     {
         // Arrange
-        var query = Create<UserResolutionProcess>();
+        var query = Create<ResolveUserProcess>();
         var userIdentity = Create<IUserIdentity>();
 
         _identity.GetCurrentIdentity().Returns(Result.Success(userIdentity));

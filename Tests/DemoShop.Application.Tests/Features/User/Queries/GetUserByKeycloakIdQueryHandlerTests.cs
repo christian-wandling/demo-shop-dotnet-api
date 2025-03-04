@@ -2,13 +2,15 @@
 
 using Ardalis.Result;
 using AutoMapper;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.User.DTOs;
 using DemoShop.Application.Features.User.Queries.GetUserByKeycloakId;
+using DemoShop.Domain.Product.Interfaces;
 using DemoShop.Domain.User.Entities;
 using DemoShop.Domain.User.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
@@ -19,15 +21,16 @@ public class GetUserByKeycloakIdQueryHandlerTests : Test
 {
     private readonly IMapper _mapper;
     private readonly IUserRepository _repository;
+    private readonly ICacheService _cacheService;
     private readonly GetUserByKeycloakIdQueryHandler _sut;
 
     public GetUserByKeycloakIdQueryHandlerTests()
     {
         _mapper = Mock<IMapper>();
         _repository = Mock<IUserRepository>();
-        var logger = Mock<ILogger<GetUserByKeycloakIdQueryHandler>>();
-
-        _sut = new GetUserByKeycloakIdQueryHandler(_mapper, _repository, logger);
+        var logger = Mock<ILogger>();
+        _cacheService = Mock<ICacheService>();
+        _sut = new GetUserByKeycloakIdQueryHandler(_mapper, _repository, logger, _cacheService);
     }
 
     [Fact]

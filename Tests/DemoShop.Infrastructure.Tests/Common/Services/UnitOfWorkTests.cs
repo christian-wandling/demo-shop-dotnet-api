@@ -6,6 +6,7 @@ using DemoShop.TestUtils.Common.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Serilog;
 
 #endregion
 
@@ -30,7 +31,8 @@ public class UnitOfWorkTests : Test
         database.BeginTransactionAsync(Arg.Any<CancellationToken>())
             .Returns(_transaction);
 
-        _sut = new UnitOfWork(_context);
+        var logger = Mock<ILogger>();
+        _sut = new UnitOfWork(_context, logger);
     }
 
     [Fact]

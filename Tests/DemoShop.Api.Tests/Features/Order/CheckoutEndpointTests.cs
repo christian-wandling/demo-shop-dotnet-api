@@ -8,6 +8,7 @@ using DemoShop.Application.Features.ShoppingSession.Processes.Checkout;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -24,7 +25,8 @@ public class CheckoutEndpointTests : Test
     public CheckoutEndpointTests()
     {
         _mediator = Mock<IMediator>();
-        _sut = new CheckoutEndpoint(_mediator);
+        var logger = Mock<ILogger>();
+        _sut = new CheckoutEndpoint(_mediator, logger);
     }
 
     [Fact]

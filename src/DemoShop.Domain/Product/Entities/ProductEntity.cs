@@ -53,7 +53,7 @@ public class ProductEntity : IEntity, IAuditable, ISoftDeletable, IAggregateRoot
     public static Result<ProductEntity> Create(string name, string description, decimal price)
     {
         var product = new ProductEntity(name, description, price);
-        product.AddDomainEvent(new ProductCreatedDomainEvent(product));
+        product.AddDomainEvent(new ProductCreatedDomainEvent(product.Id));
         return Result.Success(product);
     }
 }

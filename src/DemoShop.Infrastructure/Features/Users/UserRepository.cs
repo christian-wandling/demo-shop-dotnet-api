@@ -28,9 +28,9 @@ public class UserRepository(ApplicationDbContext context, ILogger logger) : IUse
             .FirstOrDefaultAsync(u => u.KeycloakUserId.Equals(keycloakUserId), cancellationToken);
 
         if (result is null)
-            LogGetUserByKeycloakUserIdSuccess(logger, value);
-        else
             LogGetUserByKeycloakUserIdNotFound(logger, value);
+        else
+            LogGetUserByKeycloakUserIdSuccess(logger, value);
 
         return result;
     }
@@ -59,7 +59,7 @@ public class UserRepository(ApplicationDbContext context, ILogger logger) : IUse
         await context.SaveChangesAsync(cancellationToken);
         await entry.ReloadAsync(cancellationToken);
 
-        LogUpdateUserSuccess(logger, user.Id);
+        LogUpdateUserSuccess(logger, entry.Entity.Id);
         return entry.Entity;
     }
 

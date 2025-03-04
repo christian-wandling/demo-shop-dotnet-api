@@ -1,13 +1,10 @@
 #region
 
+using DemoShop.Domain.Common.Base;
 using DemoShop.Domain.Common.Interfaces;
 
 #endregion
 
 namespace DemoShop.Domain.Order.Events;
 
-public class OrderRestoredDomainEvent(int orderId) : IDomainEvent
-{
-    public int Id { get; } = orderId;
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-}
+public record OrderRestoredDomainEvent(int Id, int UserId) : DomainEvent, IDomainEvent;

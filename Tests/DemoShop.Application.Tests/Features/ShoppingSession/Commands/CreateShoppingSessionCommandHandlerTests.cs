@@ -10,7 +10,7 @@ using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 using DbUpdateException = Microsoft.EntityFrameworkCore.DbUpdateException;
 
@@ -31,7 +31,7 @@ public class CreateShoppingSessionCommandHandlerTests : Test
     {
         _mapper = Substitute.For<IMapper>();
         _repository = Mock<IShoppingSessionRepository>();
-        var logger = Mock<ILogger<CreateShoppingSessionCommandHandler>>();
+        var logger = Mock<ILogger>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
         _validator = Mock<IValidator<CreateShoppingSessionCommand>>();
         _validationService = Mock<IValidationService>();

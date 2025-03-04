@@ -6,6 +6,7 @@ using Ardalis.Result;
 using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.User.Commands.CreateUser;
 using DemoShop.Application.Features.User.DTOs;
+using DemoShop.Application.Features.User.Processes.ResolveUser;
 using DemoShop.Application.Features.User.Queries.GetUserByKeycloakId;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
@@ -15,23 +16,23 @@ using Serilog;
 
 #endregion
 
-namespace DemoShop.Application.Features.User.Processes.UserResolution;
+namespace DemoShop.Application.Features.User.Processes.ResolveUser;
 
-public sealed class UserResolutionProcessHandler(
+public sealed class ResolveUserProcessHandler(
     IUserIdentityAccessor identity,
     IMediator mediator,
     ILogger logger
 )
-    : IRequestHandler<UserResolutionProcess, Result<UserResponse>>
+    : IRequestHandler<ResolveUserProcess, Result<UserResponse>>
 {
-    public async Task<Result<UserResponse>> Handle(UserResolutionProcess request, CancellationToken cancellationToken)
+    public async Task<Result<UserResponse>> Handle(ResolveUserProcess request, CancellationToken cancellationToken)
     {
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
 
         var identityResult = identity.GetCurrentIdentity();
 
         if (!identityResult.IsSuccess)
-            return identityResult.Map<IUserIdentity, UserResponse>(null);
+            return identityResult.Map();
 
         LogProcessStarted(logger, identityResult.Value.KeycloakUserId);
 
@@ -61,16 +62,16 @@ public sealed class UserResolutionProcessHandler(
     }
 
     private static void LogProcessStarted(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.UserResolutionProcessStarted)
+        logger.ForContext("EventId", LoggerEventIds.ResolveUserProcessStarted)
             .Information("Resolving user for keycloakUserId {KeycloakUserId}", keycloakUserId);
 
     private static void LogProcessSuccess(ILogger logger, int userId, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.UserResolutionProcessSuccess)
+        logger.ForContext("EventId", LoggerEventIds.ResolveUserProcessSuccess)
             .Information(
                 "Successfully resolved user with Id {UserId} for KeycloakUserId {KeycloakUserId}",
                 userId, keycloakUserId);
 
     private static void LogProcessFailed(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.UserResolutionProcessFailed)
+        logger.ForContext("EventId", LoggerEventIds.ResolveUserProcessFailed)
             .Information("Error while resolving user for keycloakUserId {KeycloakUserId}", keycloakUserId);
 }

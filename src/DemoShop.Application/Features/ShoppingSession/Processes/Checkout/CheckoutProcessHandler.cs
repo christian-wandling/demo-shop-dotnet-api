@@ -77,9 +77,13 @@ public sealed class CheckoutProcessHandler(
                     sessionResult.Value.Id);
                 return Result.Success(mapper.Map<OrderResponse>(savedResult.Value));
             }
-            finally
+#pragma warning disable CA1031
+            catch (Exception ex)
+#pragma warning restore CA1031
             {
                 await unitOfWork.RollbackTransactionAsync(cancellationToken);
+                LogUnhandledException(logger, ex.Message, ex);
+                return Result.CriticalError(ex.Message);
             }
         }
     }
@@ -121,4 +125,8 @@ public sealed class CheckoutProcessHandler(
         logger.ForContext("EventId", LoggerEventIds.CheckoutProcessFailed)
             .Information("Error while checkout user {UserId} for shopping session {SessionId}",
                 userId, sessionId);
+
+    private static void LogUnhandledException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Unhandled exception while checkout user. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.UnhandledException);
 }

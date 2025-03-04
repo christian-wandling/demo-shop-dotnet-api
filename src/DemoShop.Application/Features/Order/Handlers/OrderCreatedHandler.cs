@@ -1,6 +1,7 @@
 #region
 
 using Ardalis.GuardClauses;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Events;
 using MediatR;
@@ -10,15 +11,17 @@ using Serilog;
 
 namespace DemoShop.Application.Features.Order.Handlers;
 
-public class OrderCreatedHandler(ILogger logger)
+public class OrderCreatedHandler(ILogger logger, ICacheService cacheService)
     : INotificationHandler<OrderCreatedDomainEvent>
 {
     public Task Handle(OrderCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
         Guard.Against.Null(notification, nameof(notification));
-        Guard.Against.Null(notification.Order, nameof(notification.Order));
 
-        LogOrderCreated(logger, notification.Order.Id);
+        var cacheKey = cacheService.GenerateCacheKey("orders-of-user", notification.UserId);
+        cacheService.InvalidateCache(cacheKey);
+
+        LogOrderCreated(logger, notification.Id);
         return Task.CompletedTask;
     }
 

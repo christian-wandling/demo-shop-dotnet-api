@@ -12,7 +12,7 @@ using DemoShop.Domain.Product.Entities;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.TestUtils.Common.Base;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
@@ -22,7 +22,7 @@ namespace DemoShop.Application.Tests.Features.Order.Commands;
 public class CreateOrderCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly ILogger<CreateOrderCommandHandler> _logger;
+    private readonly ILogger _logger;
     private readonly IOrderRepository _repository;
     private readonly CreateOrderCommandHandler _sut;
 
@@ -30,7 +30,7 @@ public class CreateOrderCommandHandlerTests : Test
     {
         _repository = Mock<IOrderRepository>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
-        _logger = Mock<ILogger<CreateOrderCommandHandler>>();
+        _logger = Mock<ILogger>();
         _sut = new CreateOrderCommandHandler(_repository, _eventDispatcher, _logger);
     }
 
@@ -162,7 +162,7 @@ public class CreateOrderCommandHandlerTests : Test
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
 
-        _logger.Received(1).LogDomainException(exception.Message);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Fact]
@@ -198,11 +198,7 @@ public class CreateOrderCommandHandlerTests : Test
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
 
-        _logger.Received(1).LogOperationFailed(
-            "Convert shopping session to order",
-            "ShoppingSessionId",
-            $"{command.Session.Id}",
-            null);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Theory]

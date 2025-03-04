@@ -13,7 +13,7 @@ using DemoShop.Domain.User.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 using NSubstitute.ExceptionExtensions;
 
 #endregion
@@ -25,7 +25,7 @@ public class UpdateUserAddressCommandHandlerTests : Test
     private readonly IDomainEventDispatcher _eventDispatcher;
     private readonly UpdateUserAddressCommandHandler _handler;
     private readonly IUserIdentityAccessor _identity;
-    private readonly ILogger<UpdateUserAddressCommandHandler> _logger;
+    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IUserRepository _repository;
     private readonly IValidationService _validationService;
@@ -36,7 +36,7 @@ public class UpdateUserAddressCommandHandlerTests : Test
         _mapper = Substitute.For<IMapper>();
         _identity = Mock<IUserIdentityAccessor>();
         _repository = Mock<IUserRepository>();
-        _logger = Mock<ILogger<UpdateUserAddressCommandHandler>>();
+        _logger = Mock<ILogger>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
         _validator = Mock<IValidator<UpdateUserAddressCommand>>();
         _validationService = Mock<IValidationService>();
@@ -219,11 +219,7 @@ public class UpdateUserAddressCommandHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).LogOperationFailed(
-            "Update user address",
-            "KeycloakUserId",
-            userIdentity.KeycloakUserId,
-            null);
+        _logger.Received(1).Error(Arg.Any<Exception>(), Arg.Any<string>());
     }
 
     [Theory]
