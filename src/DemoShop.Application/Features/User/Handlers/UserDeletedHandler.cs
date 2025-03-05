@@ -40,6 +40,7 @@ public class UserDeletedHandler(ILogger logger, ICacheService cacheService)
         cacheKeys.ForEach(cacheService.InvalidateCache);
     }
 
-    private static void LogUserDeleted(ILogger logger, int id) => logger.Information(
-        "User Deleted: {Id} {@EventId}", id, LoggerEventIds.UserDeletedDomainEvent);
+    private static void LogUserDeleted(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.UserDeletedDomainEvent)
+        .Information("User Deleted: {Id}", id);
 }

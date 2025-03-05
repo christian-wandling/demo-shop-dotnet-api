@@ -32,6 +32,7 @@ public class UserPhoneUpdatedHandler(ILogger logger, ICacheService cacheService)
         cacheService.InvalidateCache(cacheKeyUser);
     }
 
-    private static void LogUserPhoneUpdated(ILogger logger, int id) => logger.Information(
-        "User Phone Updated: {Id} {@EventId}", id, LoggerEventIds.UserPhoneUpdatedDomainEvent);
+    private static void LogUserPhoneUpdated(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.UserPhoneUpdatedDomainEvent)
+        .Information("User Phone Updated: {Id}", id);
 }

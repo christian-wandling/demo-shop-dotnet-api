@@ -1,302 +1,211 @@
-#region
-
-using Microsoft.Extensions.Logging;
-
-#endregion
-
 namespace DemoShop.Domain.Common.Logging;
 
-public static class LoggerEventIds
+public static class LoggerEventId
 {
-    // App: 1000-1999
-    public static readonly EventId ApplicationStartup = new(1000, "ApplicationStartup");
-    public static readonly EventId ApplicationShutdown = new(1001, "ApplicationShutdown");
-    public static readonly EventId ConfigurationLoaded = new(1002, "ConfigurationLoaded");
+    // Program Life cycle: 1000-1999
+    public const int ConfigurationLoaded = 1000;
+    public const int ApplicationStartup = 1001;
+    public const int ApplicationStartupFailed = 1003;
+    public const int ApplicationShutdown = 1004;
 
-    // Authentication/Authorization: 2000-2999
-    public static readonly EventId AuthenticationStarted = new(2000, "AuthenticationStarted");
-    public static readonly EventId AuthenticationSuccess = new(2001, "AuthenticationSuccess");
-    public static readonly EventId AuthenticationFailed = new(2002, "AuthenticationFailed");
+    // Auth events: 2000-2999
+    public const int AuthenticationStarted = 2000;
+    public const int AuthenticationSuccess = 2001;
+    public const int AuthenticationFailed = 2002;
 
-    // API/HTTP operations: 3000-3999
-    public static readonly EventId ApiRateLimited = new(3000, "ApiRateLimited");
-    public static readonly EventId GetAllOrdersOfUserRequestStarted = new(3100, "GetAllOrdersOfUserRequestStarted");
-    public static readonly EventId GetAllOrdersOfUserRequestSuccess = new(3101, "GetAllOrdersOfUserRequestSuccess");
-    public static readonly EventId GetAllOrdersOfUserRequestFailed = new(3102, "GetAllOrdersOfUserRequestSuccess");
-    public static readonly EventId GetOrderByIdRequestStarted = new(3110, "GetOrderByIdRequestStarted");
-    public static readonly EventId GetOrderByIdRequestSuccess = new(3111, "GetOrderByIdRequestSuccess");
-    public static readonly EventId GetOrderByIdRequestFailed = new(3112, "GetOrderByIdRequestSuccess");
-    public static readonly EventId GetAllProductsRequestStarted = new(3200, "GetAllProductsRequestStarted");
-    public static readonly EventId GetAllProductsRequestSuccess = new(3201, "GetAllProductsRequestSuccess");
-    public static readonly EventId GetAllProductsRequestFailed = new(3202, "GetAllProductsRequestSuccess");
-    public static readonly EventId GetProductByIdRequestStarted = new(3210, "GetProductByIdRequestStarted");
-    public static readonly EventId GetProductByIdRequestSuccess = new(3211, "GetProductByIdRequestSuccess");
-    public static readonly EventId GetProductByIdRequestFailed = new(3212, "GetProductByIdRequestSuccess");
-    public static readonly EventId CheckoutRequestStarted = new(3300, "CheckoutRequestStarted");
-    public static readonly EventId CheckoutRequestSuccess = new(3301, "CheckoutRequestSuccess");
-    public static readonly EventId CheckoutRequestFailed = new(3302, "CheckoutRequestSuccess");
+    // Api events: 3000-3999
+    public const int ApiRateLimited = 3000;
+    public const int GetAllOrdersOfUserRequestStarted = 3100;
+    public const int GetAllOrdersOfUserRequestSuccess = 3101;
+    public const int GetAllOrdersOfUserRequestFailed = 3102;
+    public const int GetOrderByIdRequestStarted = 3110;
+    public const int GetOrderByIdRequestSuccess = 3111;
+    public const int GetOrderByIdRequestFailed = 3112;
+    public const int GetAllProductsRequestStarted = 3200;
+    public const int GetAllProductsRequestSuccess = 3201;
+    public const int GetAllProductsRequestFailed = 3202;
+    public const int GetProductByIdRequestStarted = 3210;
+    public const int GetProductByIdRequestSuccess = 3211;
+    public const int GetProductByIdRequestFailed = 3212;
+    public const int CheckoutRequestStarted = 3300;
+    public const int CheckoutRequestSuccess = 3301;
+    public const int CheckoutRequestFailed = 3302;
+    public const int ResolveCurrentShoppingSessionRequestStarted = 3310;
+    public const int ResolveCurrentShoppingSessionRequestSuccess = 3311;
+    public const int ResolveCurrentShoppingSessionRequestFailed = 3312;
+    public const int AddCartItemRequestStarted = 3350;
+    public const int AddCartItemRequestSuccess = 3351;
+    public const int AddCartItemRequestFailed = 3352;
+    public const int UpdateCartItemQuantityRequestStarted = 3360;
+    public const int UpdateCartItemQuantityRequestSuccess = 3361;
+    public const int UpdateCartItemQuantityRequestFailed = 3362;
+    public const int RemoveCartItemRequestStarted = 3370;
+    public const int RemoveCartItemRequestSuccess = 3371;
+    public const int RemoveCartItemRequestFailed = 3372;
+    public const int ResolveCurrentUserRequestStarted = 3400;
+    public const int ResolveCurrentUserRequestSuccess = 3401;
+    public const int ResolveCurrentUserRequestFailed = 3402;
+    public const int UpdateUserAddressRequestStarted = 3410;
+    public const int UpdateUserAddressRequestSuccess = 3411;
+    public const int UpdateUserAddressRequestFailed = 3412;
+    public const int UpdateUserPhoneRequestStarted = 3420;
+    public const int UpdateUserPhoneRequestSuccess = 3421;
+    public const int UpdateUserPhoneRequestFailed = 3422;
 
-    public static readonly EventId ResolveCurrentShoppingSessionRequestStarted =
-        new(3310, "ResolveCurrentShoppingSessionRequestStarted");
-
-    public static readonly EventId ResolveCurrentShoppingSessionRequestSuccess =
-        new(3311, "ResolveCurrentShoppingSessionRequestSuccess");
-
-    public static readonly EventId ResolveCurrentShoppingSessionRequestFailed =
-        new(3312, "ResolveCurrentShoppingSessionRequestSuccess");
-
-    public static readonly EventId AddCartItemRequestStarted = new(3350, "AddCartItemRequestStarted");
-    public static readonly EventId AddCartItemRequestSuccess = new(3351, "AddCartItemRequestSuccess");
-    public static readonly EventId AddCartItemRequestFailed = new(3352, "AddCartItemRequestSuccess");
-
-    public static readonly EventId UpdateCartItemQuantityRequestStarted =
-        new(3360, "UpdateCartItemQuantityRequestStarted");
-
-    public static readonly EventId UpdateCartItemQuantityRequestSuccess =
-        new(3361, "UpdateCartItemQuantityRequestSuccess");
-
-    public static readonly EventId UpdateCartItemQuantityRequestFailed =
-        new(3362, "UpdateCartItemQuantityRequestSuccess");
-
-    public static readonly EventId RemoveCartItemRequestStarted = new(3370, "RemoveCartItemRequestStarted");
-    public static readonly EventId RemoveCartItemRequestSuccess = new(3371, "RemoveCartItemRequestSuccess");
-    public static readonly EventId RemoveCartItemRequestFailed = new(3372, "RemoveCartItemRequestSuccess");
-    public static readonly EventId ResolveCurrentUserRequestStarted = new(3400, "ResolveCurrentUserRequestStarted");
-    public static readonly EventId ResolveCurrentUserRequestSuccess = new(3401, "ResolveCurrentUserRequestSuccess");
-    public static readonly EventId ResolveCurrentUserRequestFailed = new(3402, "ResolveCurrentUserRequestSuccess");
-    public static readonly EventId UpdateUserAddressRequestStarted = new(3410, "UpdateUserAddressRequestStarted");
-    public static readonly EventId UpdateUserAddressRequestSuccess = new(3411, "UpdateUserAddressRequestSuccess");
-    public static readonly EventId UpdateUserAddressRequestFailed = new(3412, "UpdateUserAddressRequestSuccess");
-    public static readonly EventId UpdateUserPhoneRequestStarted = new(3420, "UpdateUserPhoneRequestStarted");
-    public static readonly EventId UpdateUserPhoneRequestSuccess = new(3421, "UpdateUserPhoneRequestSuccess");
-    public static readonly EventId UpdateUserPhoneRequestFailed = new(3422, "UpdateUserPhoneRequestSuccess");
-
-    // Application commands/queries 4000-4999
-    public static readonly EventId GetAllOrdersOfUserQueryStarted = new(4100, "GetAllOrdersOfUserQueryStarted");
-    public static readonly EventId GetAllOrdersOfUserQuerySuccess = new(4101, "GetAllOrdersOfUserQuerySuccess");
-    public static readonly EventId GetOrderByIdQueryStarted = new(4110, "GetOrderByIdQueryStarted");
-    public static readonly EventId GetOrderByIdQuerySuccess = new(4111, "GetOrderByIdQuerySuccess");
-    public static readonly EventId GetOrderByIdQueryNotFound = new(4112, "GetOrderByIdQueryNotFound");
-    public static readonly EventId CreateOrderCommandStarted = new(4120, "CreateOrderCommandStarted");
-    public static readonly EventId CreateOrderCommandSuccess = new(4121, "CreateOrderCommandSuccess");
-    public static readonly EventId CreateOrderCommandError = new(4122, "CreateOrderCommandError");
-    public static readonly EventId GetAllProductsQueryStarted = new(4200, "GetAllProductsQueryStarted");
-    public static readonly EventId GetAllProductsQuerySuccess = new(4201, "GetAllProductsQuerySuccess");
-    public static readonly EventId GetProductByIdQueryStarted = new(4210, "GetProductByIdQueryStarted");
-    public static readonly EventId GetProductByIdQuerySuccess = new(4211, "GetProductByIdQuerySuccess");
-    public static readonly EventId GetProductByIdQueryNotFound = new(4212, "GetProductByIdQueryNotFound");
-    public static readonly EventId CheckoutProcessStarted = new(4300, "CheckoutProcessStarted");
-    public static readonly EventId CheckoutProcessSuccess = new(4301, "CheckoutProcessSuccess");
-    public static readonly EventId CheckoutProcessFailed = new(4302, "CheckoutProcessFailed");
-
-    public static readonly EventId ResolveShoppingSessionProcessStarted =
-        new(4310, "ResolveShoppingSessionProcessStarted");
-
-    public static readonly EventId ResolveShoppingSessionProcessSuccess =
-        new(4311, "ResolveShoppingSessionProcessSuccess");
-
-    public static readonly EventId ResolveShoppingSessionProcessFailed =
-        new(4312, "ResolveShoppingSessionProcessFailed");
-
-    public static readonly EventId GetShoppingSessionByUserIdQueryStarted =
-        new(4320, "GetShoppingSessionByUserIdQueryStarted");
-
-    public static readonly EventId GetShoppingSessionByUserIdQuerySuccess =
-        new(4321, "GetShoppingSessionByUserIdQuerySuccess");
-
-    public static readonly EventId GetShoppingSessionByUserIdQueryNotFound =
-        new(4322, "GetShoppingSessionByUserIdQueryNotFound");
-
-    public static readonly EventId CreateShoppingSessionCommandStarted =
-        new(4330, "CreateShoppingSessionCommandStarted");
-
-    public static readonly EventId CreateShoppingSessionCommandSuccess =
-        new(4331, "CreateShoppingSessionCommandSuccess");
-
-    public static readonly EventId CreateShoppingSessionCommandError = new(4332, "CreateShoppingSessionCommandError");
-
-    public static readonly EventId DeleteShoppingSessionCommandStarted =
-        new(4340, "DeleteShoppingSessionCommandStarted");
-
-    public static readonly EventId DeleteShoppingSessionCommandSuccess =
-        new(4341, "DeleteShoppingSessionCommandSuccess");
-
-    public static readonly EventId DeleteShoppingSessionCommandError = new(4342, "DeleteShoppingSessionCommandError");
-
-    public static readonly EventId AddCartItemCommandStarted =
-        new(4350, "AddCartItemCommandStarted");
-
-    public static readonly EventId AddCartItemCommandSuccess =
-        new(4351, "AddCartItemCommandSuccess");
-
-    public static readonly EventId AddCartItemCommandError = new(4352, "AddCartItemCommandError");
-
-    public static readonly EventId UpdateCartItemQuantityCommandStarted =
-        new(4360, "UpdateCartItemQuantityCommandStarted");
-
-    public static readonly EventId UpdateCartItemQuantityCommandSuccess =
-        new(4361, "UpdateCartItemQuantityCommandSuccess");
-
-    public static readonly EventId UpdateCartItemQuantityCommandError = new(4362, "UpdateCartItemQuantityCommandError");
-
-    public static readonly EventId RemoveCartItemCommandStarted =
-        new(4370, "RemoveCartItemCommandStarted");
-
-    public static readonly EventId RemoveCartItemCommandSuccess =
-        new(4371, "RemoveCartItemCommandSuccess");
-
-    public static readonly EventId RemoveCartItemCommandError = new(4372, "RemoveCartItemCommandError");
-
-    public static readonly EventId ResolveUserProcessStarted = new(4400, "ResolveUserProcessStarted");
-    public static readonly EventId ResolveUserProcessSuccess = new(4401, "ResolveUserProcessSuccess");
-    public static readonly EventId ResolveUserProcessFailed = new(4402, "ResolveUserProcessFailed");
-    public static readonly EventId GetUserByKeycloakIdQueryStarted = new(4410, "GetUserByKeycloakIdQueryStarted");
-    public static readonly EventId GetUserByKeycloakIdQuerySuccess = new(4411, "GetUserByKeycloakIdQuerySuccess");
-    public static readonly EventId GetUserByKeycloakIdQueryNotFound = new(4412, "GetUserByKeycloakIdQueryNotFound");
-    public static readonly EventId CreateUserCommandStarted = new(4420, "CreateUserCommandStarted");
-    public static readonly EventId CreateUserCommandSuccess = new(4421, "CreateUserCommandSuccess");
-    public static readonly EventId CreateUserCommandError = new(4422, "CreateUserCommandError");
-    public static readonly EventId UpdateUserAddressCommandStarted = new(4430, "UpdateUserAddressCommandStarted");
-    public static readonly EventId UpdateUserAddressCommandSuccess = new(4431, "UpdateUserAddressCommandSuccess");
-    public static readonly EventId UpdateUserAddressCommandError = new(4432, "UpdateUserAddressCommandError");
-    public static readonly EventId UpdateUserPhoneCommandStarted = new(4440, "UpdateUserPhoneCommandStarted");
-    public static readonly EventId UpdateUserPhoneCommandSuccess = new(4441, "UpdateUserPhoneCommandSuccess");
-    public static readonly EventId UpdateUserPhoneCommandError = new(4442, "UpdateUserPhoneCommandError");
+    // Application events 4000-4999
+    public const int GetAllOrdersOfUserQueryStarted = 4100;
+    public const int GetAllOrdersOfUserQuerySuccess = 4101;
+    public const int GetOrderByIdQueryStarted = 4110;
+    public const int GetOrderByIdQuerySuccess = 4111;
+    public const int GetOrderByIdQueryNotFound = 4112;
+    public const int CreateOrderCommandStarted = 4120;
+    public const int CreateOrderCommandSuccess = 4121;
+    public const int CreateOrderCommandError = 4122;
+    public const int GetAllProductsQueryStarted = 4200;
+    public const int GetAllProductsQuerySuccess = 4201;
+    public const int GetProductByIdQueryStarted = 4210;
+    public const int GetProductByIdQuerySuccess = 4211;
+    public const int GetProductByIdQueryNotFound = 4212;
+    public const int CheckoutProcessStarted = 4300;
+    public const int CheckoutProcessSuccess = 4301;
+    public const int CheckoutProcessFailed = 4302;
+    public const int ResolveShoppingSessionProcessStarted = 4310;
+    public const int ResolveShoppingSessionProcessSuccess = 4311;
+    public const int ResolveShoppingSessionProcessFailed = 4312;
+    public const int GetShoppingSessionByUserIdQueryStarted = 4320;
+    public const int GetShoppingSessionByUserIdQuerySuccess = 4321;
+    public const int GetShoppingSessionByUserIdQueryNotFound = 4322;
+    public const int CreateShoppingSessionCommandStarted = 4330;
+    public const int CreateShoppingSessionCommandSuccess = 4331;
+    public const int CreateShoppingSessionCommandError = 4332;
+    public const int DeleteShoppingSessionCommandStarted = 4340;
+    public const int DeleteShoppingSessionCommandSuccess = 4341;
+    public const int DeleteShoppingSessionCommandError = 4342;
+    public const int AddCartItemCommandStarted = 4350;
+    public const int AddCartItemCommandSuccess = 4351;
+    public const int AddCartItemCommandError = 4352;
+    public const int UpdateCartItemQuantityCommandStarted = 4360;
+    public const int UpdateCartItemQuantityCommandSuccess = 4361;
+    public const int UpdateCartItemQuantityCommandError = 4362;
+    public const int RemoveCartItemCommandStarted = 4370;
+    public const int RemoveCartItemCommandSuccess = 4371;
+    public const int RemoveCartItemCommandError = 4372;
+    public const int ResolveUserProcessStarted = 4400;
+    public const int ResolveUserProcessSuccess = 4401;
+    public const int ResolveUserProcessFailed = 4402;
+    public const int GetUserByKeycloakIdQueryStarted = 4410;
+    public const int GetUserByKeycloakIdQuerySuccess = 4411;
+    public const int GetUserByKeycloakIdQueryNotFound = 4412;
+    public const int CreateUserCommandStarted = 4420;
+    public const int CreateUserCommandSuccess = 4421;
+    public const int CreateUserCommandError = 4422;
+    public const int UpdateUserAddressCommandStarted = 4430;
+    public const int UpdateUserAddressCommandSuccess = 4431;
+    public const int UpdateUserAddressCommandError = 4432;
+    public const int UpdateUserPhoneCommandStarted = 4440;
+    public const int UpdateUserPhoneCommandSuccess = 4441;
+    public const int UpdateUserPhoneCommandError = 4442;
 
     // Domain events: 5000-5999
-    public static readonly EventId OrderCreatedDomainEvent = new(5100, "OrderCreatedDomainEvent");
-    public static readonly EventId OrderDeletedDomainEvent = new(5101, "OrderDeletedDomainEvent");
-    public static readonly EventId OrderRestoredDomainEvent = new(5102, "OrderRestoredDomainEvent");
-    public static readonly EventId ProductCreatedDomainEvent = new(5200, "ProductCreatedDomainEvent");
-    public static readonly EventId ProductDeletedDomainEvent = new(5201, "ProductDeletedDomainEvent");
-    public static readonly EventId ProductRestoredDomainEvent = new(5202, "ProductRestoredDomainEvent");
-    public static readonly EventId ProductImageCreatedDomainEvent = new(5203, "ProductImageCreatedDomainEvent");
-    public static readonly EventId ProductImageDeletedDomainEvent = new(5204, "ProductImageDeletedDomainEvent");
-    public static readonly EventId ProductImageRestoredDomainEvent = new(5205, "ProductImageRestoredDomainEvent");
-    public static readonly EventId ProductCategoryCreatedDomainEvent = new(5206, "ProductCategoryCreatedDomainEvent");
-    public static readonly EventId ProductCategoryDeletedDomainEvent = new(5207, "ProductCategoryDeletedDomainEvent");
-    public static readonly EventId ProductCategoryRestoredDomainEvent = new(5208, "ProductCategoryRestoredDomainEvent");
-    public static readonly EventId ShoppingSessionCreatedDomainEvent = new(5300, "ShoppingSessionCreatedDomainEvent");
-
-    public static readonly EventId ShoppingSessionConvertedDomainEvent =
-        new(5301, "ShoppingSessionConvertedDomainEvent");
-
-    public static readonly EventId CartItemAddedDomainEvent = new(5302, "CartItemAddedDomainEvent");
-    public static readonly EventId CartItemQuantityChangedDomainEvent = new(5303, "CartItemQuantityChangedDomainEvent");
-    public static readonly EventId CartItemRemovedDomainEvent = new(5304, "CartItemRemovedDomainEvent");
-    public static readonly EventId UserCreatedDomainEvent = new(5400, "UserCreatedDomainEvent");
-    public static readonly EventId UserDeletedDomainEvent = new(5401, "UserDeletedDomainEvent");
-    public static readonly EventId UserRestoredDomainEvent = new(5402, "UserRestoredDomainEvent");
-    public static readonly EventId UserAddressUpdatedDomainEvent = new(5403, "UserAddressUpdatedDomainEvent");
-    public static readonly EventId UserPhoneUpdatedDomainEvent = new(5404, "UserPhoneUpdatedDomainEvent");
+    public const int OrderCreatedDomainEvent = 5100;
+    public const int OrderDeletedDomainEvent = 5101;
+    public const int OrderRestoredDomainEvent = 5102;
+    public const int ProductCreatedDomainEvent = 5200;
+    public const int ProductDeletedDomainEvent = 5201;
+    public const int ProductRestoredDomainEvent = 5202;
+    public const int ProductImageCreatedDomainEvent = 5203;
+    public const int ProductImageDeletedDomainEvent = 5204;
+    public const int ProductImageRestoredDomainEvent = 5205;
+    public const int ProductCategoryCreatedDomainEvent = 5206;
+    public const int ProductCategoryDeletedDomainEvent = 5207;
+    public const int ProductCategoryRestoredDomainEvent = 5208;
+    public const int ShoppingSessionCreatedDomainEvent = 5300;
+    public const int ShoppingSessionConvertedDomainEvent = 5301;
+    public const int CartItemAddedDomainEvent = 5302;
+    public const int CartItemQuantityChangedDomainEvent = 5303;
+    public const int CartItemRemovedDomainEvent = 5304;
+    public const int UserCreatedDomainEvent = 5400;
+    public const int UserDeletedDomainEvent = 5401;
+    public const int UserRestoredDomainEvent = 5402;
+    public const int UserAddressUpdatedDomainEvent = 5403;
+    public const int UserPhoneUpdatedDomainEvent = 5404;
 
     // Domain exceptions: 6000-6999
-    public static readonly EventId UnhandledException = new(6000, "UnhandledException");
-    public static readonly EventId UnhandledDomainException = new(6001, "UnhandledDomainException");
-    public static readonly EventId UnhandledValidationException = new(6002, "UnhandledValidationException");
-    public static readonly EventId UnhandledAuthException = new(6003, "UnhandledAuthException");
-    public static readonly EventId UnhandledDbException = new(6004, "UnhandledDbException");
-    public static readonly EventId ValidationStarted = new(6010, "ValidationStarted");
-    public static readonly EventId ValidationSuccess = new(6011, "ValidationSuccess");
-    public static readonly EventId ValidationFailed = new(6012, "ValidationFailed");
-    public static readonly EventId GetOrderByIdDomainException = new(6100, "GetProductByIdDomainException");
-    public static readonly EventId GetAllOrdersOfUserDomainException = new(6101, "GetAllOrdersOfUserDomainException");
-    public static readonly EventId CreateOrderDomainException = new(6102, "CreateOrderDomainException");
-    public static readonly EventId GetAllProductsDomainException = new(6200, "GetAllProductsDomainException");
-    public static readonly EventId GetProductByIdDomainException = new(6201, "GetProductByIdDomainException");
-
-    public static readonly EventId GetShoppingSessionByUserIdDomainException =
-        new(6300, "GetShoppingSessionByUserIdDomainException");
-
-    public static readonly EventId CreateShoppingSessionDomainException =
-        new(6301, "CreateShoppingSessionDomainException");
-
-    public static readonly EventId UpdateShoppingSessionDomainException =
-        new(6302, "UpdateShoppingSessionDomainException");
-
-    public static readonly EventId DeleteShoppingSessionDomainException =
-        new(6303, "DeleteShoppingSessionDomainException");
-
-    public static readonly EventId GetUserByKeycloakIdDomainException = new(6400, "GetUserByKeycloakIdDomainException");
-    public static readonly EventId CreateUserDomainException = new(6401, "CreateUserDomainException");
-    public static readonly EventId UpdateUserDomainException = new(6402, "UpdateUserDomainException");
+    public const int UnhandledException = 6000;
+    public const int UnhandledDomainException = 6001;
+    public const int UnhandledValidationException = 6002;
+    public const int UnhandledAuthException = 6003;
+    public const int UnhandledDbException = 6004;
+    public const int ValidationStarted = 6010;
+    public const int ValidationSuccess = 6011;
+    public const int ValidationFailed = 6012;
+    public const int GetOrderByIdDomainException = 6100;
+    public const int GetAllOrdersOfUserDomainException = 6101;
+    public const int CreateOrderDomainException = 6102;
+    public const int GetAllProductsDomainException = 6200;
+    public const int GetProductByIdDomainException = 6201;
+    public const int GetShoppingSessionByUserIdDomainException = 6300;
+    public const int CreateShoppingSessionDomainException = 6301;
+    public const int UpdateShoppingSessionDomainException = 6302;
+    public const int DeleteShoppingSessionDomainException = 6303;
+    public const int GetUserByKeycloakIdDomainException = 6400;
+    public const int CreateUserDomainException = 6401;
+    public const int UpdateUserDomainException = 6402;
 
     // Data access: 7000-7999
-    public static readonly EventId CacheWrite = new(7000, "CacheHit");
-    public static readonly EventId CacheHit = new(7001, "CacheHit");
-    public static readonly EventId CacheMiss = new(7002, "CacheMiss");
-    public static readonly EventId CacheInvalidate = new(7003, "CacheInvalidate");
-    public static readonly EventId TransactionStarted = new(7010, "TransactionStarted");
-    public static readonly EventId TransactionSuccess = new(7011, "TransactionSuccess");
-    public static readonly EventId TransactionRollback = new(7012, "TransactionRollback");
-    public static readonly EventId TransactionDisposed = new(7014, "TransactionDisposed");
-    public static readonly EventId GetOrdersByUserIdStarted = new(7100, "GetOrdersByUserIdStarted");
-    public static readonly EventId GetOrdersByUserIdSuccess = new(7101, "GetOrdersByUserIdCompleted");
-    public static readonly EventId GetOrdersByUserIdDatabaseException = new(7102, "GetOrdersByUserIdDatabaseException");
-    public static readonly EventId GetOrderByIdStarted = new(7210, "GetOrderByIdStarted");
-    public static readonly EventId GetOrderByIdSuccess = new(7211, "GetOrderByIdSuccess");
-    public static readonly EventId GetOrderByIdDatabaseException = new(7212, "GetOrderByIdDatabaseException");
-    public static readonly EventId GetOrderByIdNotFound = new(7113, "GetOrderByIdNotFound");
-    public static readonly EventId CreateOrderStarted = new(7220, "CreateOrderStarted");
-    public static readonly EventId CreateOrderSuccess = new(7221, "CreateOrderSuccess");
-    public static readonly EventId CreateOrderDatabaseException = new(7222, "CreateOrderDatabaseException");
-    public static readonly EventId GetAllProductsStarted = new(7200, "GetAllProductsStarted");
-    public static readonly EventId GetAllProductsSuccess = new(7201, "GetAllProductsCompleted");
-    public static readonly EventId GetAllProductsDatabaseException = new(7202, "GetAllProductsDatabaseException");
-    public static readonly EventId GetProductByIdStarted = new(7210, "GetProductByIdStarted");
-    public static readonly EventId GetProductByIdSuccess = new(7211, "GetProductByIdSuccess");
-    public static readonly EventId GetProductByIdDatabaseException = new(7212, "GetProductByIdDatabaseException");
-    public static readonly EventId GetProductByIdNotFound = new(7213, "GetProductByIdNotFound");
-
-    public static readonly EventId CurrentShoppingSessionAccessorStarted =
-        new(7300, "CurrentShoppingSessionAccessorStarted");
-
-    public static readonly EventId CurrentShoppingSessionAccessorSuccess =
-        new(7301, "CurrentShoppingSessionAccessorSuccess");
-
-    public static readonly EventId CurrentShoppingSessionAccessorNotFound =
-        new(7302, "CurrentShoppingSessionAccessorNotFound");
-
-    public static readonly EventId GetShoppingSessionByUserIdStarted = new(7310, "GetShoppingSessionByUserIdStarted");
-    public static readonly EventId GetShoppingSessionByUserIdSuccess = new(7311, "GetShoppingSessionByUserIdSuccess");
-
-    public static readonly EventId GetShoppingSessionByUserIdDatabaseException =
-        new(7312, "GetShoppingSessionByUserIdDatabaseException");
-
-    public static readonly EventId GetShoppingSessionByUserIdNotFound = new(7313, "GetShoppingSessionByUserIdNotFound");
-    public static readonly EventId CreateShoppingSessionStarted = new(7320, "CreateShoppingSessionStarted");
-    public static readonly EventId CreateShoppingSessionSuccess = new(7321, "CreateShoppingSessionSuccess");
-
-    public static readonly EventId CreateShoppingSessionDatabaseException =
-        new(7322, "CreateShoppingSessionDatabaseException");
-
-    public static readonly EventId UpdateShoppingSessionStarted = new(7330, "UpdateShoppingSessionStarted");
-    public static readonly EventId UpdateShoppingSessionSuccess = new(7331, "UpdateShoppingSessionSuccess");
-
-    public static readonly EventId UpdateShoppingSessionDatabaseException =
-        new(7332, "UpdateShoppingSessionDatabaseException");
-
-    public static readonly EventId DeleteShoppingSessionStarted = new(7340, "DeleteShoppingSessionStarted");
-    public static readonly EventId DeleteShoppingSessionSuccess = new(7341, "DeleteShoppingSessionSuccess");
-    public static readonly EventId DeleteShoppingSessionFailed = new(7342, "DeleteShoppingSessionFailed");
-
-    public static readonly EventId DeleteShoppingSessionDatabaseException =
-        new(7343, "DeleteShoppingSessionDatabaseException");
-
-    public static readonly EventId CurrentUserAccessorStarted = new(7400, "CurrentUserAccessorStarted");
-    public static readonly EventId CurrentUserAccessorSuccess = new(7401, "CurrentUserAccessorSuccess");
-    public static readonly EventId CurrentUserAccessorNotFound = new(7402, "CurrentUserAccessorNotFound");
-    public static readonly EventId GetUserByKeycloakUserIdStarted = new(7410, "GetUserByKeycloakUserIdStarted");
-    public static readonly EventId GetUserByKeycloakUserIdSuccess = new(7411, "GetUserByKeycloakUserIdSuccess");
-
-    public static readonly EventId GetUserByKeycloakIdDatabaseException =
-        new(7412, "GetUserByKeycloakIdDatabaseException");
-
-    public static readonly EventId GetUserByKeycloakUserIdNotFound = new(7413, "GetUserByKeycloakUserIdNotFound");
-    public static readonly EventId CreateUserStarted = new(7420, "CreateUserStarted");
-    public static readonly EventId CreateUserSuccess = new(7421, "CreateUserSuccess");
-    public static readonly EventId CreateUserDatabaseException = new(7422, "CreateUserDatabaseException");
-    public static readonly EventId UpdateUserStarted = new(7430, "UpdateUserStarted");
-    public static readonly EventId UpdateUserSuccess = new(7431, "UpdateUserSuccess");
-    public static readonly EventId UpdateUserDatabaseException = new(7432, "UpdateUserDatabaseException");
+    public const int CacheWrite = 7000;
+    public const int CacheHit = 7001;
+    public const int CacheMiss = 7002;
+    public const int CacheInvalidate = 7003;
+    public const int TransactionStarted = 7010;
+    public const int TransactionSuccess = 7011;
+    public const int TransactionRollback = 7012;
+    public const int TransactionDisposed = 7014;
+    public const int GetOrdersByUserIdStarted = 7100;
+    public const int GetOrdersByUserIdSuccess = 7101;
+    public const int GetOrdersByUserIdDatabaseException = 7102;
+    public const int GetOrderByIdStarted = 7110;
+    public const int GetOrderByIdSuccess = 7111;
+    public const int GetOrderByIdDatabaseException = 7112;
+    public const int GetOrderByIdNotFound = 7113;
+    public const int CreateOrderStarted = 7220;
+    public const int CreateOrderSuccess = 7221;
+    public const int CreateOrderDatabaseException = 7222;
+    public const int GetAllProductsStarted = 7200;
+    public const int GetAllProductsSuccess = 7201;
+    public const int GetAllProductsDatabaseException = 7202;
+    public const int GetProductByIdStarted = 7210;
+    public const int GetProductByIdSuccess = 7211;
+    public const int GetProductByIdDatabaseException = 7212;
+    public const int GetProductByIdNotFound = 7213;
+    public const int CurrentShoppingSessionAccessorStarted = 7300;
+    public const int CurrentShoppingSessionAccessorSuccess = 7301;
+    public const int CurrentShoppingSessionAccessorNotFound = 7302;
+    public const int GetShoppingSessionByUserIdStarted = 7310;
+    public const int GetShoppingSessionByUserIdSuccess = 7311;
+    public const int GetShoppingSessionByUserIdDatabaseException = 7312;
+    public const int GetShoppingSessionByUserIdNotFound = 7313;
+    public const int CreateShoppingSessionStarted = 7320;
+    public const int CreateShoppingSessionSuccess = 7321;
+    public const int CreateShoppingSessionDatabaseException = 7322;
+    public const int UpdateShoppingSessionStarted = 7330;
+    public const int UpdateShoppingSessionSuccess = 7331;
+    public const int UpdateShoppingSessionDatabaseException = 7332;
+    public const int DeleteShoppingSessionStarted = 7340;
+    public const int DeleteShoppingSessionSuccess = 7341;
+    public const int DeleteShoppingSessionFailed = 7342;
+    public const int DeleteShoppingSessionDatabaseException = 7343;
+    public const int CurrentUserAccessorStarted = 7400;
+    public const int CurrentUserAccessorSuccess = 7401;
+    public const int CurrentUserAccessorNotFound = 7402;
+    public const int GetUserByKeycloakUserIdStarted = 7410;
+    public const int GetUserByKeycloakUserIdSuccess = 7411;
+    public const int GetUserByKeycloakIdDatabaseException = 7412;
+    public const int GetUserByKeycloakUserIdNotFound = 7413;
+    public const int CreateUserStarted = 7420;
+    public const int CreateUserSuccess = 7421;
+    public const int CreateUserDatabaseException = 7422;
+    public const int UpdateUserStarted = 7430;
+    public const int UpdateUserSuccess = 7431;
+    public const int UpdateUserDatabaseException = 7432;
 }

@@ -34,6 +34,7 @@ public class ProductImageDeletedHandler(ILogger logger, ICacheService cacheServi
         cacheService.InvalidateCache(cacheKeyProduct);
     }
 
-    private static void LogProductImageDeleted(ILogger logger, int id) => logger.Information(
-        "Product image deleted: {Id} {@EventId}", id, LoggerEventIds.ProductImageDeletedDomainEvent);
+    private static void LogProductImageDeleted(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.ProductImageDeletedDomainEvent)
+        .Information("Product image deleted: {Id}", id);
 }

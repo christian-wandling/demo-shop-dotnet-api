@@ -42,27 +42,27 @@ public class ResolveCurrentShoppingSessionEndpoint(IMediator mediator, ILogger l
         stopwatch.Stop();
 
         if (result.IsSuccess)
-            LogRequestSuccess(logger, result.Value.Id, stopwatch.Elapsed);
+            LogRequestSuccess(logger, result.Value.Id, stopwatch.Elapsed.Milliseconds);
         else
-            LogRequestFailed(logger, stopwatch.Elapsed);
+            LogRequestFailed(logger, stopwatch.Elapsed.Milliseconds);
 
         return result;
     }
 
     private static void LogRequestStarting(ILogger logger, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.ResolveCurrentShoppingSessionRequestStarted)
-            .Information("Starting POST request for resolving current shopping session at {Endpoint}", endpoint);
+            .ForContext("EventId", LoggerEventId.ResolveCurrentShoppingSessionRequestStarted)
+            .Debug("Starting POST request for resolving current shopping session at {Endpoint}", endpoint);
 
-    private static void LogRequestSuccess(ILogger logger, int id, TimeSpan elapsedMs) =>
+    private static void LogRequestSuccess(ILogger logger, int id, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.ResolveCurrentShoppingSessionRequestSuccess)
+            .ForContext("EventId", LoggerEventId.ResolveCurrentShoppingSessionRequestSuccess)
             .Information(
                 "Completed POST request for resolving current shopping session {Id} in {ElapsedMs}ms",
                 id, elapsedMs);
 
-    private static void LogRequestFailed(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestFailed(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.ResolveCurrentShoppingSessionRequestFailed)
+            .ForContext("EventId", LoggerEventId.ResolveCurrentShoppingSessionRequestFailed)
             .Error("Failed POST request to resolving current shopping session in {ElapsedMs}ms", elapsedMs);
 }

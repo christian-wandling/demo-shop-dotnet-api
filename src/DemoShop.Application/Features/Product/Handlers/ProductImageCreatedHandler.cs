@@ -21,6 +21,7 @@ public class ProductImageCreatedHandler(ILogger logger)
         return Task.CompletedTask;
     }
 
-    private static void LogProductImageCreated(ILogger logger, int id) => logger.Information(
-        "Product image created: {Id} {@EventId}", id, LoggerEventIds.ProductImageCreatedDomainEvent);
+    private static void LogProductImageCreated(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.ProductImageCreatedDomainEvent)
+        .Information("Product image created: {Id}", id);
 }

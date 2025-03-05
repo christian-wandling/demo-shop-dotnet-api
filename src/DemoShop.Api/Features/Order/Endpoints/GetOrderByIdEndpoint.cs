@@ -47,27 +47,27 @@ public class GetOrderByIdEndpoint(IMediator mediator, ILogger logger)
         stopwatch.Stop();
 
         if (result.IsSuccess)
-            LogRequestSuccess(logger, request.Id, stopwatch.Elapsed);
+            LogRequestSuccess(logger, request.Id, stopwatch.Elapsed.Milliseconds);
         else
-            LogRequestFailed(logger, request.Id, stopwatch.Elapsed);
+            LogRequestFailed(logger, request.Id, stopwatch.Elapsed.Milliseconds);
 
         return result;
     }
 
     private static void LogRequestStarting(ILogger logger, int id, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetOrderByIdRequestStarted)
-            .Information("Starting GET request for order with id {Id} at {Endpoint}", id, endpoint);
+            .ForContext("EventId", LoggerEventId.GetOrderByIdRequestStarted)
+            .Debug("Starting GET request for order with id {Id} at {Endpoint}", id, endpoint);
 
-    private static void LogRequestSuccess(ILogger logger, int id, TimeSpan elapsedMs) =>
+    private static void LogRequestSuccess(ILogger logger, int id, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetOrderByIdRequestSuccess)
+            .ForContext("EventId", LoggerEventId.GetOrderByIdRequestSuccess)
             .Information(
                 "Completed GET request for order {Id} in {ElapsedMs}ms",
                 id, elapsedMs);
 
-    private static void LogRequestFailed(ILogger logger, int id, TimeSpan elapsedMs) =>
+    private static void LogRequestFailed(ILogger logger, int id, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetOrderByIdRequestFailed)
-            .Error("Failed to retrieve order with id {Id} in {ElapsedMs}ms", id, elapsedMs);
+            .ForContext("EventId", LoggerEventId.GetOrderByIdRequestFailed)
+            .Warning("Failed to retrieve order with id {Id} in {ElapsedMs}ms", id, elapsedMs);
 }

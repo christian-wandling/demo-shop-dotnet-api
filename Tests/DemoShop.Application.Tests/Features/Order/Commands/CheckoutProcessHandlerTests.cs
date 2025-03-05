@@ -151,7 +151,7 @@ public class CheckoutProcessHandlerTests : Test
     }
 
     [Fact]
-    public async Task Handle_WhenDbUpdateExceptionOccurs_LogsAndReturnsError()
+    public async Task Handle_WhenDbUpdateExceptionOccurs_ReturnsError()
     {
         // Arrange
         var command = Create<CheckoutProcess>();
@@ -172,16 +172,10 @@ public class CheckoutProcessHandlerTests : Test
         result.Status.Should().Be(ResultStatus.CriticalError);
 
         await _unitOfWork.Received(1).RollbackTransactionAsync(CancellationToken.None);
-        // Verify the error is logged with the new logging pattern
-        _logger.Received(1).Error(
-            Arg.Is<Exception>(e => e == exception),
-            Arg.Is<string>(s => s.Contains("Unhandled exception")),
-            Arg.Any<string>(),
-            Arg.Any<object>());
     }
 
     [Fact]
-    public async Task Handle_WhenInvalidOperationExceptionOccurs_LogsAndReturnsError()
+    public async Task Handle_WhenInvalidOperationExceptionOccurs_ReturnsError()
     {
         // Arrange
         var command = Create<CheckoutProcess>();
@@ -203,10 +197,5 @@ public class CheckoutProcessHandlerTests : Test
         result.Status.Should().Be(ResultStatus.CriticalError);
 
         await _unitOfWork.Received(1).RollbackTransactionAsync(CancellationToken.None);
-        _logger.Received(1).Error(
-            Arg.Is<Exception>(e => e == exception),
-            Arg.Is<string>(s => s.Contains("Unhandled exception")),
-            Arg.Any<string>(),
-            Arg.Any<object>());
     }
 }

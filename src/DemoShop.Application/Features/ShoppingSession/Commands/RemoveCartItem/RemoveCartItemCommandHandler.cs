@@ -87,27 +87,27 @@ public sealed class RemoveCartItemCommandHandler(
         return Result.Success(savedSession);
     }
 
-    private static void LogCommandStarted(ILogger logger, int carItemId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.RemoveCartItemCommandStarted)
-            .Information("Starting to remove cart item with Id {CartItemId} from shopping session {SessionId}",
-                carItemId, sessionId);
+    private static void LogCommandStarted(ILogger logger, int carItemId, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.RemoveCartItemCommandStarted)
+        .Debug("Starting to remove cart item with Id {CartItemId} from shopping session {SessionId}",
+            carItemId, sessionId);
 
-    private static void LogCommandSuccess(ILogger logger, int carItemId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.RemoveCartItemCommandSuccess)
-            .Information(
-                "Successfully removed cart item with Id {CartItemId} from shopping session with Id {SessionId}",
-                carItemId, sessionId);
+    private static void LogCommandSuccess(ILogger logger, int carItemId, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.RemoveCartItemCommandSuccess)
+        .Information(
+            "Successfully removed cart item with Id {CartItemId} from shopping session with Id {SessionId}",
+            carItemId, sessionId);
 
-    private static void LogCommandError(ILogger logger, int carItemId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.RemoveCartItemCommandError)
-            .Information("Error removing cart item with id {CartItemId} from shopping session {SessionId}",
-                carItemId, sessionId);
+    private static void LogCommandError(ILogger logger, int carItemId, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.RemoveCartItemCommandError)
+        .Error("Error removing cart item with id {CartItemId} from shopping session {SessionId}",
+            carItemId, sessionId);
 
-    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while updating shopping session. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.UpdateShoppingSessionDatabaseException);
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.UpdateShoppingSessionDatabaseException)
+        .Error(ex, "Database error occurred while updating shopping session. Error: {ErrorMessage}", errorMessage);
 
-    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while updating shopping session. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.UpdateShoppingSessionDomainException);
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.UpdateShoppingSessionDomainException)
+        .Error(ex, "Invalid operation while updating shopping session. Error: {ErrorMessage}", errorMessage);
 }

@@ -24,7 +24,6 @@ public class UpdateUserAddressCommandHandlerTests : Test
     private readonly IDomainEventDispatcher _eventDispatcher;
     private readonly UpdateUserAddressCommandHandler _handler;
     private readonly IUserIdentityAccessor _identity;
-    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IUserRepository _repository;
     private readonly IValidationService _validationService;
@@ -35,7 +34,7 @@ public class UpdateUserAddressCommandHandlerTests : Test
         _mapper = Substitute.For<IMapper>();
         _identity = Mock<IUserIdentityAccessor>();
         _repository = Mock<IUserRepository>();
-        _logger = Mock<ILogger>();
+        var logger = Mock<ILogger>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
         _validator = Mock<IValidator<UpdateUserAddressCommand>>();
         _validationService = Mock<IValidationService>();
@@ -44,7 +43,7 @@ public class UpdateUserAddressCommandHandlerTests : Test
             _mapper,
             _identity,
             _repository,
-            _logger,
+            logger,
             _eventDispatcher,
             _validator,
             _validationService

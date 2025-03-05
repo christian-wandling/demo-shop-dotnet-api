@@ -23,6 +23,7 @@ public class ShoppingSessionCreatedHandler(ILogger logger)
         return Task.CompletedTask;
     }
 
-    private static void LogShoppingSessionCreated(ILogger logger, int id) => logger.Information(
-        "ShoppingSession Created: {Id} {@EventId}", id, LoggerEventIds.ShoppingSessionCreatedDomainEvent);
+    private static void LogShoppingSessionCreated(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.ShoppingSessionCreatedDomainEvent)
+        .Information("ShoppingSession Created: {Id}", id);
 }

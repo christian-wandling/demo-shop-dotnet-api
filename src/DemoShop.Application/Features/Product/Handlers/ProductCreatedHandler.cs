@@ -30,6 +30,7 @@ public class ProductCreatedHandler(ILogger logger, ICacheService cacheService)
         cacheService.InvalidateCache(cacheKeyAllProducts);
     }
 
-    private static void LogProductCreated(ILogger logger, int id) => logger.Information(
-        "Product created: {Id} {@EventId}", id, LoggerEventIds.ProductCreatedDomainEvent);
+    private static void LogProductCreated(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.ProductCreatedDomainEvent)
+        .Information("Product created: {Id}", id);
 }

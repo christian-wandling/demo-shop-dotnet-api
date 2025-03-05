@@ -52,29 +52,29 @@ public class RemoveCartItemEndpoint(IMediator mediator, ILogger logger)
         stopwatch.Stop();
 
         if (result.IsSuccess)
-            LogRequestSuccess(logger, request.Id, stopwatch.Elapsed);
+            LogRequestSuccess(logger, request.Id, stopwatch.Elapsed.Milliseconds);
         else
-            LogRequestFailed(logger, stopwatch.Elapsed);
+            LogRequestFailed(logger, stopwatch.Elapsed.Milliseconds);
 
         return result;
     }
 
     private static void LogRequestStarting(ILogger logger, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.RemoveCartItemRequestStarted)
-            .Information("Starting POST request for removing cart item from current shopping session at {Endpoint}",
+            .ForContext("EventId", LoggerEventId.RemoveCartItemRequestStarted)
+            .Debug("Starting POST request for removing cart item from current shopping session at {Endpoint}",
                 endpoint);
 
-    private static void LogRequestSuccess(ILogger logger, int id, TimeSpan elapsedMs) =>
+    private static void LogRequestSuccess(ILogger logger, int id, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.RemoveCartItemRequestSuccess)
+            .ForContext("EventId", LoggerEventId.RemoveCartItemRequestSuccess)
             .Information(
                 "Completed POST request for removing cart item from current shopping session {Id} in {ElapsedMs}ms",
                 id, elapsedMs);
 
-    private static void LogRequestFailed(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestFailed(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.RemoveCartItemRequestFailed)
+            .ForContext("EventId", LoggerEventId.RemoveCartItemRequestFailed)
             .Error("Failed POST request to removing cart item from current shopping session in {ElapsedMs}ms",
                 elapsedMs);
 }

@@ -8,9 +8,7 @@ using DemoShop.Application.Features.User.Processes.ResolveUser;
 using DemoShop.Application.Features.User.Queries.GetUserByKeycloakId;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.TestUtils.Common.Base;
-using DemoShop.TestUtils.Common.Exceptions;
 using MediatR;
-using NSubstitute.ExceptionExtensions;
 using Serilog;
 
 #endregion

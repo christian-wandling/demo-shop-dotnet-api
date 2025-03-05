@@ -37,6 +37,8 @@ public class CartItemQuantityChangedHandler(ILogger logger, ICacheService cacheS
         cacheKeys.ForEach(cacheService.InvalidateCache);
     }
 
-    private static void LogCartItemQuantityChanged(ILogger logger, int id) => logger.Information(
-        "CartItem quantity changed: {Id} {@EventId}", id, LoggerEventIds.CartItemQuantityChangedDomainEvent);
+    private static void LogCartItemQuantityChanged(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.CartItemQuantityChangedDomainEvent)
+        .Information(
+        "CartItem quantity changed: {Id}", id);
 }

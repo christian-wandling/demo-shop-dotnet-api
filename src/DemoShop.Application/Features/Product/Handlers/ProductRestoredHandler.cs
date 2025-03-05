@@ -35,6 +35,7 @@ public class ProductRestoredHandler(ILogger logger, ICacheService cacheService)
         cacheService.InvalidateCache(cacheKeyAllProducts);
     }
 
-    private static void LogProductRestored(ILogger logger, int id) => logger.Information(
-        "Product restored: {Id} {@EventId}", id, LoggerEventIds.ProductRestoredDomainEvent);
+    private static void LogProductRestored(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.ProductRestoredDomainEvent)
+        .Information("Product restored: {Id}", id);
 }

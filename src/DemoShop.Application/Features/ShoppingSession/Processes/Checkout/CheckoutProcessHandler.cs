@@ -109,23 +109,23 @@ public sealed class CheckoutProcessHandler(
         return Result.Success(savedOrder);
     }
 
-    private static void LogProcessStarted(ILogger logger, int userId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.CheckoutProcessStarted)
-            .Information("Starting checkout user {UserId} for shopping session {SessionId}",
-                sessionId, userId);
+    private static void LogProcessStarted(ILogger logger, int userId, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.CheckoutProcessStarted)
+        .Debug("Starting checkout user {UserId} for shopping session {SessionId}",
+            sessionId, userId);
 
-    private static void LogProcessSuccess(ILogger logger, int userId, int orderId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.CheckoutProcessSuccess)
-            .Information(
-                "Successfully completed checkout for {UserId} - Order {OrderId} was created from shopping session {SessionId}",
-                userId, orderId, sessionId);
+    private static void LogProcessSuccess(ILogger logger, int userId, int orderId, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.CheckoutProcessSuccess)
+        .Information(
+            "Successfully completed checkout for {UserId} - Order {OrderId} was created from shopping session {SessionId}",
+            userId, orderId, sessionId);
 
-    private static void LogProcessFailed(ILogger logger, int userId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.CheckoutProcessFailed)
-            .Information("Error while checkout user {UserId} for shopping session {SessionId}",
-                userId, sessionId);
+    private static void LogProcessFailed(ILogger logger, int userId, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.CheckoutProcessFailed)
+        .Error("Error while checkout user {UserId} for shopping session {SessionId}",
+            userId, sessionId);
 
-    private static void LogUnhandledException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Unhandled exception while checkout user. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.UnhandledException);
+    private static void LogUnhandledException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.UnhandledException)
+        .Error(ex, "Unhandled exception while checkout user. Error: {ErrorMessage}", errorMessage);
 }

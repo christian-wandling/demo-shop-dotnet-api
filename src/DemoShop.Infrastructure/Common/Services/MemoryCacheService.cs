@@ -50,14 +50,14 @@ public class MemoryCacheService(IMemoryCache cache, ILogger logger) : ICacheServ
     }
 
     private static void LogCacheWrite(ILogger logger, string key) =>
-        logger.Information("[{EventId}] Cache write for {Key}", LoggerEventIds.CacheWrite, key);
+        logger.Debug("Cache write for {Key}", LoggerEventId.CacheWrite, key);
 
     private static void LogCacheHit(ILogger logger, string key) =>
-        logger.Information("[{EventId}] Cache hit for {Key}", LoggerEventIds.CacheHit, key);
+        logger.Debug("Cache hit for {Key}", LoggerEventId.CacheHit, key);
 
     private static void LogCacheMiss(ILogger logger, string key) =>
-        logger.Information("[{EventId}] Cache miss for {Key}", LoggerEventIds.CacheMiss, key);
+        logger.Debug("Cache miss for {Key}", LoggerEventId.CacheMiss, key);
 
     private static void LogCacheInvalidate(ILogger logger, string key) =>
-        logger.Information("[{EventId}] Cache invalidate for {Key}", LoggerEventIds.CacheInvalidate, key);
+        logger.Debug("Cache invalidate for {Key}", LoggerEventId.CacheInvalidate, key);
 }

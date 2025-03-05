@@ -65,39 +65,39 @@ public class OrderRepository(ApplicationDbContext context, ILogger logger) : IOr
 
     private static void LogGetOrdersByUserIdStarted(ILogger logger, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetOrdersByUserIdStarted)
+            .ForContext("EventId", LoggerEventId.GetOrdersByUserIdStarted)
             .Debug("Getting all orders for user {UserId} started", userId);
 
     private static void LogGetOrdersByUserIdSuccess(ILogger logger, int userId, int count) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetOrdersByUserIdSuccess)
+            .ForContext("EventId", LoggerEventId.GetOrdersByUserIdSuccess)
             .Debug("Getting all orders for user {UserId} completed. Retrieved {Count} products successfully", userId,
                 count);
 
     private static void LogGetOrderByIdStarted(ILogger logger, int orderId, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetOrderByIdStarted)
+            .ForContext("EventId", LoggerEventId.GetOrderByIdStarted)
             .Debug("Attempting to get order with Id {OrderId} for user {UserId}", orderId, userId);
 
     private static void LogGetOrderByIdSuccess(ILogger logger, int orderId, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetOrderByIdSuccess)
+            .ForContext("EventId", LoggerEventId.GetOrderByIdSuccess)
             .Debug("Attempting to get order with ID {OrderId} for user {UserId} completed successfully", orderId,
                 userId);
 
     private static void LogGetOrderByIdNotFound(ILogger logger, int orderId, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetOrderByIdNotFound)
-            .Debug("Order with ID {OderId} for user {UserId} not found in database", orderId, userId);
+            .ForContext("EventId", LoggerEventId.GetOrderByIdNotFound)
+            .Warning("Order with ID {OderId} for user {UserId} not found in database", orderId, userId);
 
     private static void LogCreateOrderStarted(ILogger logger, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.CreateOrderStarted)
+            .ForContext("EventId", LoggerEventId.CreateOrderStarted)
             .Debug("Attempting to create order for user {UserId}", userId);
 
     private static void LogCreateOrderSuccess(ILogger logger, int orderId, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.CreateOrderSuccess)
+            .ForContext("EventId", LoggerEventId.CreateOrderSuccess)
             .Debug("Attempting to create order with ID {OrderId} for user {UserId} completed successfully", orderId,
                 userId);
 }

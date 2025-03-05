@@ -60,16 +60,16 @@ public sealed class ResolveShoppingSessionProcessHandler(
     }
 
     private static void LogProcessStarted(ILogger logger, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.ResolveShoppingSessionProcessStarted)
-            .Information("Resolving shopping session for UserId {UserId}", userId);
+        logger.ForContext("EventId", LoggerEventId.ResolveShoppingSessionProcessStarted)
+            .Debug("Resolving shopping session for UserId {UserId}", userId);
 
     private static void LogProcessSuccess(ILogger logger, int sessionId, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.ResolveShoppingSessionProcessSuccess)
+        logger.ForContext("EventId", LoggerEventId.ResolveShoppingSessionProcessSuccess)
             .Information(
                 "Successfully resolved shopping session with Id {UserId} for UserId {UserId}",
                 sessionId, userId);
 
     private static void LogProcessFailed(ILogger logger, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.ResolveShoppingSessionProcessFailed)
-            .Information("Error while resolving shopping session for UserId {UserId}", userId);
+        logger.ForContext("EventId", LoggerEventId.ResolveShoppingSessionProcessFailed)
+            .Error("Error while resolving shopping session for UserId {UserId}", userId);
 }

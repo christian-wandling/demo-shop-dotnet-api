@@ -25,6 +25,7 @@ public class OrderCreatedHandler(ILogger logger, ICacheService cacheService)
         return Task.CompletedTask;
     }
 
-    private static void LogOrderCreated(ILogger logger, int id) => logger.Information(
-        "Order created: {Id} {@EventId}", id, LoggerEventIds.OrderCreatedDomainEvent);
+    private static void LogOrderCreated(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.OrderCreatedDomainEvent)
+        .Information("Order created: {Id}", id);
 }

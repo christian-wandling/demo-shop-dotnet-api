@@ -90,17 +90,17 @@ public class GlobalExceptionHandler(ILogger logger) : IExceptionHandler
     }
 
     private static void LogUnhandledDomainException(ILogger logger, string message) =>
-        logger.Error("[{EventId}] {Message}", LoggerEventIds.UnhandledDomainException, message);
+        logger.Error("{Message}", LoggerEventId.UnhandledDomainException, message);
 
     private static void LogUnhandledValidationException(ILogger logger, string message) =>
-        logger.Error("[{EventId}] {Message}", LoggerEventIds.UnhandledValidationException, message);
+        logger.Error("{Message}", LoggerEventId.UnhandledValidationException, message);
 
     private static void LogUnhandledAuthException(ILogger logger, string message) =>
-        logger.Error("[{EventId}] {Message}", LoggerEventIds.UnhandledAuthException, message);
+        logger.Error("{Message}", LoggerEventId.UnhandledAuthException, message);
 
     private static void LogUnhandledDbException(ILogger logger, string message) =>
-        logger.Error("[{EventId}] {Message}", LoggerEventIds.UnhandledDbException, message);
+        logger.Error("{Message}", LoggerEventId.UnhandledDbException, message);
 
     private static void LogUnhandledException(ILogger logger, string message) =>
-        logger.Error("[{EventId}] {Message}", LoggerEventIds.UnhandledException, message);
+        logger.Error("{Message}", LoggerEventId.UnhandledException, message);
 }

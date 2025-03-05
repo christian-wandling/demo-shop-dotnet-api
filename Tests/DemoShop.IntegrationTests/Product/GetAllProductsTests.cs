@@ -1,6 +1,7 @@
 #region
 
 using System.Text.Json;
+using DemoShop.Api;
 using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.TestUtils.Common.Services;
 using FluentAssertions;
@@ -10,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace DemoShop.IntegrationTests.Product;
 
-public class GetAllProductsTests(CustomWebApplicationFactory<Program> factory, ITestOutputHelper output)
+public class GetAllProductsTests(CustomWebApplicationFactory<Program> factory)
     : IClassFixture<CustomWebApplicationFactory<Program>>
 {
     private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };

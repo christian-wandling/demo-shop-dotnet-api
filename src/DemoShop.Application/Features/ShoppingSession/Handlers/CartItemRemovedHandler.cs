@@ -35,6 +35,7 @@ public class CartItemRemovedHandler(ILogger logger, ICacheService cacheService)
         cacheKeys.ForEach(cacheService.InvalidateCache);
     }
 
-    private static void LogCartItemRemoved(ILogger logger, int id) => logger.Information(
-        "CartItem Removed: {Id} {@EventId}", id, LoggerEventIds.CartItemRemovedDomainEvent);
+    private static void LogCartItemRemoved(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.CartItemRemovedDomainEvent)
+        .Information("CartItem Removed: {Id}", id);
 }

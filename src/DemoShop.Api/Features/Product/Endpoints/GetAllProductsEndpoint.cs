@@ -39,27 +39,27 @@ public class GetAllProductsEndpoint(IMediator mediator, ILogger logger)
         stopwatch.Stop();
 
         if (result.IsSuccess)
-            LogRequestSuccess(logger, result.Value.Items.Count, stopwatch.Elapsed);
+            LogRequestSuccess(logger, result.Value.Items.Count, stopwatch.Elapsed.Milliseconds);
         else
-            LogRequestFailed(logger, stopwatch.Elapsed);
+            LogRequestFailed(logger, stopwatch.Elapsed.Milliseconds);
 
         return result;
     }
 
     private static void LogRequestStarting(ILogger logger, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetAllProductsRequestStarted)
-            .Information("Starting GET request for all products at {Endpoint}", endpoint);
+            .ForContext("EventId", LoggerEventId.GetAllProductsRequestStarted)
+            .Debug("Starting GET request for all products at {Endpoint}", endpoint);
 
-    private static void LogRequestSuccess(ILogger logger, int productCount, TimeSpan elapsedMs) =>
+    private static void LogRequestSuccess(ILogger logger, int productCount, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetAllProductsRequestSuccess)
+            .ForContext("EventId", LoggerEventId.GetAllProductsRequestSuccess)
             .Information(
                 "Completed GET request for all products. Retrieved {ProductCount} products in {ElapsedMs}ms",
                 productCount, elapsedMs);
 
-    private static void LogRequestFailed(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestFailed(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetAllProductsRequestFailed)
-            .Error("Failed to retrieve all products in {ElapsedMs}ms", elapsedMs);
+            .ForContext("EventId", LoggerEventId.GetAllProductsRequestFailed)
+            .Warning("Failed to retrieve all products in {ElapsedMs}ms", elapsedMs);
 }

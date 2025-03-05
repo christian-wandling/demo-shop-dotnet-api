@@ -74,25 +74,25 @@ public sealed class GetProductByIdQueryHandler(
     }
 
     private static void LogQueryStarted(ILogger logger, int productId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetProductByIdQueryStarted)
-            .Information("Starting query to retrieve product with ID {ProductId}", productId);
+        logger.ForContext("EventId", LoggerEventId.GetProductByIdQueryStarted)
+            .Debug("Starting query to retrieve product with ID {ProductId}", productId);
 
     private static void LogQuerySuccess(ILogger logger, int productId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetProductByIdQuerySuccess)
+        logger.ForContext("EventId", LoggerEventId.GetProductByIdQuerySuccess)
             .Information("Successfully retrieved product with ID {ProductId}", productId);
 
     private static void LogNotFound(ILogger logger, int productId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetProductByIdQueryNotFound)
+        logger.ForContext("EventId", LoggerEventId.GetProductByIdQueryNotFound)
             .Information("Product with ID {ProductId} was not found", productId);
 
     private static void LogDatabaseException(ILogger logger, int productId, string errorMessage, Exception ex) =>
-        logger.ForContext("EventId", LoggerEventIds.GetProductByIdDatabaseException)
+        logger.ForContext("EventId", LoggerEventId.GetProductByIdDatabaseException)
             .Error(ex, "Database error occurred while retrieving product with ID {ProductId}. Error: {ErrorMessage}",
                 productId, errorMessage);
 
     private static void
         LogInvalidOperationException(ILogger logger, int productId, string errorMessage, Exception ex) =>
-        logger.ForContext("EventId", LoggerEventIds.GetProductByIdDomainException)
+        logger.ForContext("EventId", LoggerEventId.GetProductByIdDomainException)
             .Error(ex, "Invalid operation while retrieving product with ID {ProductId}. Error: {ErrorMessage}",
                 productId, errorMessage);
 }

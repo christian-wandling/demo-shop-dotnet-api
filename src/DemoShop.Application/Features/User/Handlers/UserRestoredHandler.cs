@@ -22,6 +22,7 @@ public class UserRestoredHandler(ILogger logger)
         return Task.CompletedTask;
     }
 
-    private static void LogUserRestored(ILogger logger, int id) => logger.Information(
-        "User Restored: {Id} {@EventId}", id, LoggerEventIds.UserRestoredDomainEvent);
+    private static void LogUserRestored(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.UserRestoredDomainEvent)
+        .Information("User Restored: {Id}", id);
 }

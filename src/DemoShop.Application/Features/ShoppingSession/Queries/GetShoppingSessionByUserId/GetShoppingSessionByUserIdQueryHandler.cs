@@ -72,27 +72,27 @@ public sealed class GetShoppingSessionByUserIdQueryHandler(
     }
 
     private static void LogQueryStarted(ILogger logger, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetShoppingSessionByUserIdQueryStarted)
-            .Information("Starting query to retrieve shopping session with UserId {UserId}", userId);
+        logger.ForContext("EventId", LoggerEventId.GetShoppingSessionByUserIdQueryStarted)
+            .Debug("Starting query to retrieve shopping session with UserId {UserId}", userId);
 
     private static void LogQuerySuccess(ILogger logger, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetShoppingSessionByUserIdQuerySuccess)
+        logger.ForContext("EventId", LoggerEventId.GetShoppingSessionByUserIdQuerySuccess)
             .Information("Successfully retrieved shopping session with ID {SessionId}", sessionId);
 
     private static void LogNotFound(ILogger logger, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetShoppingSessionByUserIdQueryNotFound)
+        logger.ForContext("EventId", LoggerEventId.GetShoppingSessionByUserIdQueryNotFound)
             .Information("ShoppingSession with UserId {UserId} was not found", userId);
 
     private static void
         LogDatabaseException(ILogger logger, int userId, string errorMessage, Exception ex) =>
-        logger.ForContext("EventId", LoggerEventIds.GetShoppingSessionByUserIdDatabaseException)
+        logger.ForContext("EventId", LoggerEventId.GetShoppingSessionByUserIdDatabaseException)
             .Error(ex,
                 "Database error occurred while retrieving shopping session with ID {UserId}. Error: {ErrorMessage}",
                 userId, errorMessage);
 
     private static void
         LogInvalidOperationException(ILogger logger, int userId, string errorMessage, Exception ex) =>
-        logger.ForContext("EventId", LoggerEventIds.GetShoppingSessionByUserIdDomainException)
+        logger.ForContext("EventId", LoggerEventId.GetShoppingSessionByUserIdDomainException)
             .Error(ex, "Invalid operation while retrieving shopping session with ID {UserId}. Error: {ErrorMessage}",
                 userId, errorMessage);
 }

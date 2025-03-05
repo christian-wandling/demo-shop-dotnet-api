@@ -65,38 +65,38 @@ public class UserRepository(ApplicationDbContext context, ILogger logger) : IUse
 
     private static void LogGetUserByKeycloakUserIdStarted(ILogger logger, string keycloakUserId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetUserByKeycloakUserIdStarted)
+            .ForContext("EventId", LoggerEventId.GetUserByKeycloakUserIdStarted)
             .Debug("Attempting to get user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
     private static void LogGetUserByKeycloakUserIdSuccess(ILogger logger, string keycloakUserId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetUserByKeycloakUserIdSuccess)
+            .ForContext("EventId", LoggerEventId.GetUserByKeycloakUserIdSuccess)
             .Debug("Attempting to get user with KeycloakUserId {KeycloakUserId} completed successfully",
                 keycloakUserId);
 
     private static void LogGetUserByKeycloakUserIdNotFound(ILogger logger, string keycloakUserId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetUserByKeycloakUserIdNotFound)
-            .Debug("User with KeycloakUserId {KeycloakUserId} not found in database", keycloakUserId);
+            .ForContext("EventId", LoggerEventId.GetUserByKeycloakUserIdNotFound)
+            .Warning("User with KeycloakUserId {KeycloakUserId} not found in database", keycloakUserId);
 
     private static void LogCreateUserStarted(ILogger logger, string keycloakUserId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.CreateUserStarted)
+            .ForContext("EventId", LoggerEventId.CreateUserStarted)
             .Debug("Attempting to create user for KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
     private static void LogCreateUserSuccess(ILogger logger, int userId, string keycloakUserId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.CreateUserSuccess)
+            .ForContext("EventId", LoggerEventId.CreateUserSuccess)
             .Debug("Successfully created user with Id {UserId} for KeycloakUserId {KeycloakUserId}",
                 userId, keycloakUserId);
 
     private static void LogUpdateUserStarted(ILogger logger, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateUserStarted)
+            .ForContext("EventId", LoggerEventId.UpdateUserStarted)
             .Debug("Attempting to update user with userId {UserId}", userId);
 
     private static void LogUpdateUserSuccess(ILogger logger, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateUserSuccess)
+            .ForContext("EventId", LoggerEventId.UpdateUserSuccess)
             .Debug("Successfully updated user with Id {UserId}", userId);
 }

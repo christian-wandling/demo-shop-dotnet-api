@@ -20,7 +20,6 @@ namespace DemoShop.Application.Tests.Features.Order.Commands;
 public class CreateOrderCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly ILogger _logger;
     private readonly IOrderRepository _repository;
     private readonly CreateOrderCommandHandler _sut;
 
@@ -28,8 +27,8 @@ public class CreateOrderCommandHandlerTests : Test
     {
         _repository = Mock<IOrderRepository>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
-        _logger = Mock<ILogger>();
-        _sut = new CreateOrderCommandHandler(_repository, _eventDispatcher, _logger);
+        var logger = Mock<ILogger>();
+        _sut = new CreateOrderCommandHandler(_repository, _eventDispatcher, logger);
     }
 
     [Fact]

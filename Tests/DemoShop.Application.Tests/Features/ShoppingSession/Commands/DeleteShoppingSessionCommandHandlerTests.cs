@@ -17,7 +17,6 @@ namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 public class DeleteShoppingSessionCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly ILogger _logger;
     private readonly IShoppingSessionRepository _repository;
     private readonly DeleteShoppingSessionCommandHandler _sut;
 
@@ -25,8 +24,8 @@ public class DeleteShoppingSessionCommandHandlerTests : Test
     {
         _repository = Mock<IShoppingSessionRepository>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
-        _logger = Mock<ILogger>();
-        _sut = new DeleteShoppingSessionCommandHandler(_repository, _eventDispatcher, _logger);
+        var logger = Mock<ILogger>();
+        _sut = new DeleteShoppingSessionCommandHandler(_repository, _eventDispatcher, logger);
     }
 
     [Fact]
@@ -69,7 +68,7 @@ public class DeleteShoppingSessionCommandHandlerTests : Test
     }
 
     [Fact]
-    public async Task Handle_WhenInvalidOperationExceptionOccurs_ShouldLogAndReturnError()
+    public async Task Handle_WhenInvalidOperationExceptionOccurs_ShouldReturnError()
     {
         // Arrange
         var session = Create<ShoppingSessionEntity>();
@@ -89,7 +88,7 @@ public class DeleteShoppingSessionCommandHandlerTests : Test
     }
 
     [Fact]
-    public async Task Handle_WhenDbUpdateExceptionOccurs_ShouldLogAndReturnError()
+    public async Task Handle_WhenDbUpdateExceptionOccurs_ShouldReturnError()
     {
         // Arrange
         var session = Create<ShoppingSessionEntity>();
