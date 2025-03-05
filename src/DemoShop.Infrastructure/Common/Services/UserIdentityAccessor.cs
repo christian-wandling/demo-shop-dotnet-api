@@ -5,13 +5,13 @@ using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Common.Models;
 using DemoShop.Domain.Common.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
 namespace DemoShop.Infrastructure.Common.Services;
 
-public sealed class UserIdentityAccessor(IHttpContextAccessor httpContextAccessor, ILogger<UserIdentity> logger)
+public sealed class UserIdentityAccessor(IHttpContextAccessor httpContextAccessor, ILogger logger)
     : IUserIdentityAccessor
 {
     public Result<IUserIdentity> GetCurrentIdentity() =>

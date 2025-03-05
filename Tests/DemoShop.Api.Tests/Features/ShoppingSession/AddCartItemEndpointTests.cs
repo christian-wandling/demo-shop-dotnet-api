@@ -8,6 +8,7 @@ using DemoShop.Application.Features.ShoppingSession.DTOs;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -24,7 +25,8 @@ public class AddCartItemEndpointTests : Test
     public AddCartItemEndpointTests()
     {
         _mediator = Mock<IMediator>();
-        _sut = new AddCartItemEndpoint(_mediator);
+        var logger = Mock<ILogger>();
+        _sut = new AddCartItemEndpoint(_mediator, logger);
     }
 
     [Fact]

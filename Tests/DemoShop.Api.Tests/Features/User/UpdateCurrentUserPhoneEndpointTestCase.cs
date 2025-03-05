@@ -8,6 +8,7 @@ using DemoShop.Application.Features.User.DTOs;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -24,7 +25,8 @@ public class UpdateCurrentUserPhoneEndpointTests : Test
     public UpdateCurrentUserPhoneEndpointTests()
     {
         _mediator = Mock<IMediator>();
-        _sut = new UpdateCurrentUserPhoneEndpoint(_mediator);
+        var logger = Mock<ILogger>();
+        _sut = new UpdateCurrentUserPhoneEndpoint(_mediator, logger);
     }
 
     [Fact]

@@ -4,13 +4,13 @@ using Ardalis.GuardClauses;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Events;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
 namespace DemoShop.Application.Features.Order.Handlers;
 
-public class OrderRestoredHandler(ILogger<OrderRestoredHandler> logger)
+public class OrderRestoredHandler(ILogger logger)
     : INotificationHandler<OrderRestoredDomainEvent>
 {
     public Task Handle(OrderRestoredDomainEvent notification, CancellationToken cancellationToken)
@@ -18,7 +18,10 @@ public class OrderRestoredHandler(ILogger<OrderRestoredHandler> logger)
         Guard.Against.Null(notification, nameof(notification));
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
 
-        logger.LogOperationSuccess("Delete Order", "id", $"{notification.Id}");
+        LogOrderRestored(logger, notification.Id);
         return Task.CompletedTask;
     }
+
+    private static void LogOrderRestored(ILogger logger, int id) => logger.Information(
+        "Order restored: {Id} {@EventId}", id, LoggerEventIds.OrderRestoredDomainEvent);
 }

@@ -5,13 +5,12 @@ using AutoMapper;
 using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.Application.Features.Product.Queries.GetAllProducts;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Product.Entities;
 using DemoShop.Domain.Product.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
-using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -19,18 +18,18 @@ namespace DemoShop.Application.Tests.Features.Product.Queries;
 
 public class GetAllProductsQueryHandlerTests : Test
 {
-    private readonly ILogger<GetAllProductsQueryHandler> _logger;
+    private const string CacheKey = "all-products";
+    private readonly ICacheService _cacheService;
+    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IProductRepository _repository;
-    private readonly ICacheService _cacheService;
     private readonly GetAllProductsQueryHandler _sut;
-    private const string CacheKey = "all-products";
 
     public GetAllProductsQueryHandlerTests()
     {
         _mapper = Mock<IMapper>();
         _repository = Mock<IProductRepository>();
-        _logger = Mock<ILogger<GetAllProductsQueryHandler>>();
+        _logger = Mock<ILogger>();
         _cacheService = Mock<ICacheService>();
         _sut = new GetAllProductsQueryHandler(_mapper, _repository, _logger, _cacheService);
     }
@@ -88,8 +87,6 @@ public class GetAllProductsQueryHandlerTests : Test
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-
-        _logger.Received(1).LogDomainException(errorMessage);
     }
 
     [Fact]
@@ -114,16 +111,9 @@ public class GetAllProductsQueryHandlerTests : Test
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-
-        _logger.Received(1).LogOperationFailed(
-            "Get all products",
-            "",
-            "",
-            null
-        );
     }
 
-     [Fact]
+    [Fact]
     public async Task Handle_WhenExistsInCache_ReturnsSuccessResultFromCache()
     {
         // Arrange
@@ -160,7 +150,7 @@ public class GetAllProductsQueryHandlerTests : Test
             .Returns(CacheKey);
         _cacheService.GetFromCache<ProductListResponse>(CacheKey)
             .Returns((ProductListResponse?)null);
-        _repository.GetAllProductsAsync( Arg.Any<CancellationToken>())
+        _repository.GetAllProductsAsync(Arg.Any<CancellationToken>())
             .Returns(products);
         _mapper.Map<ProductListResponse>(products)
             .Returns(mappedResponse);

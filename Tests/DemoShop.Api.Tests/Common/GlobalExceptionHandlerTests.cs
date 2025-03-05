@@ -7,7 +7,7 @@ using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -21,7 +21,7 @@ public class GlobalExceptionHandlerTests : Test
 
     public GlobalExceptionHandlerTests()
     {
-        var logger = Mock<ILogger<GlobalExceptionHandler>>();
+        var logger = Mock<ILogger>();
         _sut = new GlobalExceptionHandler(logger);
 
         // Setup HTTP context mock

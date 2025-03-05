@@ -3,6 +3,7 @@
 using DemoShop.Domain.Order.Entities;
 using DemoShop.Infrastructure.Features.Orders;
 using DemoShop.Infrastructure.Tests.Common.Base;
+using Serilog;
 
 #endregion
 
@@ -15,7 +16,8 @@ public class GetOrderByIdAsyncTests : RepositoryTest
 
     public GetOrderByIdAsyncTests()
     {
-        _sut = new OrderRepository(Context);
+        var logger = Mock<ILogger>();
+        _sut = new OrderRepository(Context, logger);
     }
 
     [Fact]

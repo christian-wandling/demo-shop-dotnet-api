@@ -7,7 +7,7 @@ using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Models;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -15,12 +15,12 @@ namespace DemoShop.Application.Tests.Common.Models;
 
 public class ValidationServiceTests : Test
 {
-    private readonly ILogger<ValidationService> _logger;
+    private readonly ILogger _logger;
     private readonly ValidationService _sut;
 
     public ValidationServiceTests()
     {
-        _logger = Mock<ILogger<ValidationService>>();
+        _logger = Mock<ILogger>();
         _sut = new ValidationService(_logger);
     }
 
@@ -84,7 +84,12 @@ public class ValidationServiceTests : Test
         await _sut.ValidateAsync(request, validator, CancellationToken.None);
 
         // Assert
-        _logger.Received(1).LogValidationFailed("", "");
+        _logger.Received(1).ForContext("EventId", LoggerEventIds.ValidationFailed);
+        _logger.Received(1).Information(
+            Arg.Is<string>(s => s == "Error validating {Request}: {Errors}"),
+            Arg.Is<string>(s => s == request.GetType().Name),
+            Arg.Is<string>(s => s == "Name is required")
+        );
     }
 
     [Theory]

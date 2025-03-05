@@ -1,11 +1,10 @@
 #region
 
 using System.Security.Claims;
-using DemoShop.Application.Common.Models;
 using DemoShop.Infrastructure.Common.Services;
 using DemoShop.TestUtils.Common.Base;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -22,7 +21,7 @@ public class UserIdentityAccessorTests : Test
     public UserIdentityAccessorTests()
     {
         _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
-        var logger = Substitute.For<ILogger<UserIdentity>>();
+        var logger = Substitute.For<ILogger>();
         _sut = new UserIdentityAccessor(_httpContextAccessor, logger);
     }
 

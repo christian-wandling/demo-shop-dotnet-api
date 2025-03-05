@@ -1,12 +1,13 @@
 #region
 
 using Ardalis.Result;
-using DemoShop.Api.Features.Order.Endpoints;
-using DemoShop.Application.Features.Order.Commands.CreateOrder;
+using DemoShop.Api.Features.ShoppingSession.Endpoints;
 using DemoShop.Application.Features.Order.DTOs;
+using DemoShop.Application.Features.ShoppingSession.Processes.Checkout;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -15,15 +16,16 @@ namespace DemoShop.Api.Tests.Features.Order;
 [Trait("Category", "Unit")]
 [Trait("Layer", "Api")]
 [Trait("Feature", "Order")]
-public class CreateOrderEndpointTests : Test
+public class CheckoutEndpointTests : Test
 {
     private readonly IMediator _mediator;
-    private readonly CreateOrderEndpoint _sut;
+    private readonly CheckoutEndpoint _sut;
 
-    public CreateOrderEndpointTests()
+    public CheckoutEndpointTests()
     {
         _mediator = Mock<IMediator>();
-        _sut = new CreateOrderEndpoint(_mediator);
+        var logger = Mock<ILogger>();
+        _sut = new CheckoutEndpoint(_mediator, logger);
     }
 
     [Fact]
@@ -31,7 +33,7 @@ public class CreateOrderEndpointTests : Test
     {
         // Arrange
         var expectedResponse = Create<Result<OrderResponse>>();
-        _mediator.Send(Arg.Any<CreateOrderCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<CheckoutProcess>(), Arg.Any<CancellationToken>())
             .Returns(expectedResponse);
 
         // Act
@@ -40,7 +42,7 @@ public class CreateOrderEndpointTests : Test
         // Assert
         result.Should().BeEquivalentTo(expectedResponse);
         await _mediator.Received(1)
-            .Send(Arg.Is<CreateOrderCommand>(q => q != null), Arg.Any<CancellationToken>());
+            .Send(Arg.Is<CheckoutProcess>(q => q != null), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -48,7 +50,7 @@ public class CreateOrderEndpointTests : Test
     {
         // Arrange
         var expectedException = new Exception("Mediator error");
-        _mediator.Send(Arg.Any<CreateOrderCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<CheckoutProcess>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(expectedException);
 
         // Act
@@ -63,7 +65,7 @@ public class CreateOrderEndpointTests : Test
     public async Task HandleAsync_ShouldReturnExpectedFailureStatus_WhenMediatorReturnsFailure()
     {
         // Arrange
-        _mediator.Send(Arg.Any<CreateOrderCommand>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<CheckoutProcess>(), Arg.Any<CancellationToken>())
             .Returns(Result.Error("Error message"));
 
         // Act

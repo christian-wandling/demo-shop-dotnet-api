@@ -40,7 +40,7 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
         SoftDelete = SoftDelete.Create();
     }
 
-    public KeycloakUserId KeycloakUserId { get; private init; }
+    public KeycloakUserId KeycloakUserId { get; }
     public Email Email { get; private init; }
     public PersonName PersonName { get; private set; }
     public Phone Phone { get; private set; }
@@ -67,7 +67,7 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
         var oldPhone = Phone;
         Phone = Phone.Create(phone);
         Audit.UpdateModified();
-        this.AddDomainEvent(new UserPhoneUpdatedDomainEvent(Id, Phone, oldPhone));
+        this.AddDomainEvent(new UserPhoneUpdatedDomainEvent(Id, KeycloakUserId.Value, Phone, oldPhone));
 
         return Result.Success();
     }
@@ -85,7 +85,7 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
         Address = result.Value;
         Audit.UpdateModified();
 
-        this.AddDomainEvent(new UserAddressUpdatedDomainEvent(Id, Address, null));
+        this.AddDomainEvent(new UserAddressUpdatedDomainEvent(Id, KeycloakUserId.Value, Address, null));
 
         return Result.Success();
     }
@@ -103,7 +103,7 @@ public sealed class UserEntity : IEntity, IAuditable, ISoftDeletable, IAggregate
         if (!result.IsSuccess) return result.Map();
 
         Audit.UpdateModified();
-        this.AddDomainEvent(new UserAddressUpdatedDomainEvent(Id, Address, oldAddress));
+        this.AddDomainEvent(new UserAddressUpdatedDomainEvent(Id, KeycloakUserId.Value, Address, oldAddress));
 
         return Result.Success();
     }

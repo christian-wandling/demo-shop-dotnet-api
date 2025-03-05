@@ -8,13 +8,16 @@
   <ItemGroup>
     <ProjectReference Include="..\DemoShop.TestUtils\DemoShop.TestUtils.csproj"/>
     <ProjectReference Include="..\..\src\DemoShop.Api\DemoShop.Api.csproj"/>
-    <ProjectReference Include="..\..\src\DemoShop.Application\DemoShop.Application.csproj"/>
-    <ProjectReference Include="..\..\src\DemoShop.Domain\DemoShop.Domain.csproj"/>
-    <ProjectReference Include="..\..\src\DemoShop.Infrastructure\DemoShop.Infrastructure.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.13"/>
+    <PackageReference Include="Sentry.Serilog" Version="5.0.1"/>
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0"/>
+    <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1"/>
+    <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0"/>
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0"/>
   </ItemGroup>
 
 </Project>

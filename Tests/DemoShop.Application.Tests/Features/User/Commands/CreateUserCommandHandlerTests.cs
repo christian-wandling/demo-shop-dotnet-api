@@ -6,14 +6,13 @@ using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.User.Commands.CreateUser;
 using DemoShop.Application.Features.User.DTOs;
 using DemoShop.Domain.Common.Interfaces;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.User.Entities;
 using DemoShop.Domain.User.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -23,7 +22,7 @@ public class CreateUserCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;
     private readonly CreateUserCommandHandler _handler;
-    private readonly ILogger<CreateUserCommandHandler> _logger;
+    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IUserRepository _repository;
     private readonly IValidationService _validationService;
@@ -33,7 +32,7 @@ public class CreateUserCommandHandlerTests : Test
     {
         _mapper = Mock<IMapper>();
         _repository = Mock<IUserRepository>();
-        _logger = Mock<ILogger<CreateUserCommandHandler>>();
+        _logger = Mock<ILogger>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
         _validator = Mock<IValidator<CreateUserCommand>>();
         _validationService = Mock<IValidationService>();
@@ -132,11 +131,6 @@ public class CreateUserCommandHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-        _logger.Received(1).LogOperationFailed(
-            "Create user",
-            "KeycloakUserId",
-            command.UserIdentity.KeycloakUserId,
-            null);
     }
 
     [Theory]

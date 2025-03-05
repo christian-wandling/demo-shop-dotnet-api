@@ -12,7 +12,7 @@ using DemoShop.Domain.ShoppingSession.Interfaces;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -21,7 +21,7 @@ namespace DemoShop.Application.Features.ShoppingSession.Commands.CreateShoppingS
 public sealed class CreateShoppingSessionCommandHandler(
     IMapper mapper,
     IShoppingSessionRepository repository,
-    ILogger<CreateShoppingSessionCommandHandler> logger,
+    ILogger logger,
     IDomainEventDispatcher eventDispatcher,
     IValidator<CreateShoppingSessionCommand> validator,
     IValidationService validationService
@@ -34,32 +34,43 @@ public sealed class CreateShoppingSessionCommandHandler(
         Guard.Against.Null(request, nameof(request));
         Guard.Against.NegativeOrZero(request.UserId, nameof(request.UserId));
 
-        var validationResult = await validationService.ValidateAsync(request, validator, cancellationToken);
-
-        if (!validationResult.IsSuccess)
-            return validationResult.Map();
-
         try
         {
+            LogCommandStarted(logger, request.UserId);
+
+            var validationResult = await validationService.ValidateAsync(request, validator, cancellationToken);
+            if (!validationResult.IsSuccess)
+            {
+                LogCommandError(logger, request.UserId);
+                return validationResult.Map();
+            }
+
             var unsavedResult = ShoppingSessionEntity.Create(request.UserId);
 
             if (!unsavedResult.IsSuccess)
+            {
+                LogCommandError(logger, request.UserId);
                 return Result.Error("Failed to create shopping session");
+            }
 
             var savedResult = await SaveChanges(unsavedResult, cancellationToken);
+            if (!savedResult.IsSuccess)
+            {
+                LogCommandError(logger, request.UserId);
+                return savedResult.Map();
+            }
 
-            return savedResult.IsSuccess
-                ? Result.Success(mapper.Map<ShoppingSessionResponse>(savedResult.Value))
-                : savedResult.Map();
+            LogCommandSuccess(logger, savedResult.Value.Id, savedResult.Value.UserId);
+            return Result.Success(mapper.Map<ShoppingSessionResponse>(savedResult.Value));
         }
         catch (InvalidOperationException ex)
         {
-            logger.LogDomainException(ex.Message);
+            LogInvalidOperationException(logger, ex.Message, ex);
             return Result.Error(ex.Message);
         }
         catch (DbUpdateException ex)
         {
-            logger.LogOperationFailed("Create shopping session", "UserId", $"{request.UserId}", ex);
+            LogDatabaseException(logger, ex.Message, ex);
             return Result.Error(ex.Message);
         }
     }
@@ -75,4 +86,25 @@ public sealed class CreateShoppingSessionCommandHandler(
         await eventDispatcher.DispatchEventsAsync(unsavedSession, cancellationToken);
         return Result.Success(savedSession);
     }
+
+    private static void LogCommandStarted(ILogger logger, int userId) =>
+        logger.ForContext("EventId", LoggerEventIds.CreateShoppingSessionCommandStarted)
+            .Information("Starting to create shopping session with UserId {UserId}", userId);
+
+    private static void LogCommandSuccess(ILogger logger, int sessionId, int userId) =>
+        logger.ForContext("EventId", LoggerEventIds.CreateShoppingSessionCommandSuccess)
+            .Information("Successfully created shopping session with Id {SessionId} for UserId {UserId}",
+                sessionId, userId);
+
+    private static void LogCommandError(ILogger logger, int userId) =>
+        logger.ForContext("EventId", LoggerEventIds.CreateShoppingSessionCommandError)
+            .Information("Error creating shopping session with UserId {UserId}", userId);
+
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Database error occurred while creating shopping session. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.CreateShoppingSessionDatabaseException);
+
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
+        logger.Error(ex, "Invalid operation while creating shopping session. Error: {ErrorMessage} {@EventId}",
+            errorMessage, LoggerEventIds.CreateShoppingSessionDomainException);
 }

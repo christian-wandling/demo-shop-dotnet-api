@@ -1,3 +1,5 @@
+#region
+
 using System.Net;
 using System.Text.Json;
 using DemoShop.Application.Features.Product.DTOs;
@@ -5,15 +7,14 @@ using DemoShop.TestUtils.Common.Services;
 using FluentAssertions;
 using Xunit.Abstractions;
 
+#endregion
+
 namespace DemoShop.IntegrationTests.Product;
 
 public class GetProductByIdTests(CustomWebApplicationFactory<Program> factory, ITestOutputHelper output)
     : IClassFixture<CustomWebApplicationFactory<Program>>
 {
-    private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     [Fact]
     public async Task GetProductById_ReturnsSuccessStatusCode()
@@ -64,5 +65,3 @@ public class GetProductByIdTests(CustomWebApplicationFactory<Program> factory, I
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }
-
-

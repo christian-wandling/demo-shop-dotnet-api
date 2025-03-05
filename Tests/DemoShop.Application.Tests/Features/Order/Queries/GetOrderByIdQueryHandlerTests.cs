@@ -2,6 +2,7 @@
 
 using Ardalis.Result;
 using AutoMapper;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.Order.DTOs;
 using DemoShop.Application.Features.Order.Queries.GetOrderById;
 using DemoShop.Application.Features.User.Interfaces;
@@ -9,8 +10,8 @@ using DemoShop.Domain.Order.Entities;
 using DemoShop.Domain.Order.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
-using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -18,6 +19,7 @@ namespace DemoShop.Application.Tests.Features.Order.Queries;
 
 public class GetOrderByIdQueryHandlerTests : Test
 {
+    private readonly ICacheService _cacheService;
     private readonly IMapper _mapper;
     private readonly IOrderRepository _repository;
     private readonly GetOrderByIdQueryHandler _sut;
@@ -27,14 +29,16 @@ public class GetOrderByIdQueryHandlerTests : Test
     {
         _userAccessor = Mock<ICurrentUserAccessor>();
         _mapper = Mock<IMapper>();
-        var logger = Mock<ILogger<GetOrderByIdQueryHandler>>();
+        var logger = Mock<ILogger>();
         _repository = Mock<IOrderRepository>();
+        _cacheService = Mock<ICacheService>();
 
         _sut = new GetOrderByIdQueryHandler(
             _userAccessor,
             _mapper,
             logger,
-            _repository
+            _repository,
+            _cacheService
         );
     }
 
@@ -54,15 +58,18 @@ public class GetOrderByIdQueryHandlerTests : Test
     }
 
     [Fact]
-    public async Task Handle_WhenOrderExists_ReturnsSuccessWithMappedResponse()
+    public async Task Handle_WhenOrderNotInCacheButExists_ReturnsSuccessWithMappedResponseFromDatabase()
     {
         // Arrange
         var userId = Create<int>();
         var query = new GetOrderByIdQuery(1);
         var order = Create<OrderEntity>();
         var mappedResponse = Create<OrderResponse>();
+        var cacheKey = Create<string>();
 
         _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
+        _cacheService.GenerateCacheKey("order", query).Returns(cacheKey);
+        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse)null);
         _repository.GetOrderByIdAsync(query.Id, userId, CancellationToken.None).Returns(order);
         _mapper.Map<OrderResponse>(order).Returns(mappedResponse);
 
@@ -72,6 +79,30 @@ public class GetOrderByIdQueryHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(mappedResponse);
+        await _repository.Received(1).GetOrderByIdAsync(query.Id, userId, CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task Handle_WhenOrderExistsInCache_ReturnsSuccessWithMappedResponseFromCache()
+    {
+        // Arrange
+        var userId = Create<int>();
+        var query = new GetOrderByIdQuery(1);
+        var order = Create<OrderEntity>();
+        var mappedResponse = Create<OrderResponse>();
+        var cacheKey = Create<string>();
+
+        _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
+        _cacheService.GenerateCacheKey("order", query).Returns(cacheKey);
+        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns(mappedResponse);
+
+        // Act
+        var result = await _sut.Handle(query, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(mappedResponse);
+        await _repository.DidNotReceive().GetOrderByIdAsync(query.Id, userId, CancellationToken.None);
     }
 
     [Fact]
@@ -80,8 +111,11 @@ public class GetOrderByIdQueryHandlerTests : Test
         // Arrange
         var userId = Create<int>();
         var query = new GetOrderByIdQuery(1);
+        var cacheKey = Create<string>();
 
         _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
+        _cacheService.GenerateCacheKey("order", query).Returns(cacheKey);
+        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse)null);
         _repository.GetOrderByIdAsync(query.Id, userId, CancellationToken.None).Returns((OrderEntity?)null);
 
         // Act
@@ -90,6 +124,7 @@ public class GetOrderByIdQueryHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.NotFound);
+        await _repository.Received(1).GetOrderByIdAsync(query.Id, userId, CancellationToken.None);
     }
 
     [Fact]
@@ -98,9 +133,12 @@ public class GetOrderByIdQueryHandlerTests : Test
         // Arrange
         var userId = Create<int>();
         var query = new GetOrderByIdQuery(1);
+        var cacheKey = Create<string>();
         var exception = new TestDbException("Database error");
 
         _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
+        _cacheService.GenerateCacheKey("order", query).Returns(cacheKey);
+        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse)null);
         _repository.GetOrderByIdAsync(query.Id, userId, CancellationToken.None)
             .ThrowsAsync(exception);
 
@@ -110,6 +148,7 @@ public class GetOrderByIdQueryHandlerTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
+        await _repository.Received(1).GetOrderByIdAsync(query.Id, userId, CancellationToken.None);
     }
 
     [Fact]
@@ -118,9 +157,12 @@ public class GetOrderByIdQueryHandlerTests : Test
         // Arrange
         var userId = Create<int>();
         var query = new GetOrderByIdQuery(1);
+        var cacheKey = Create<string>();
         var exception = new InvalidOperationException("Invalid operation");
 
         _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
+        _cacheService.GenerateCacheKey("order", query).Returns(cacheKey);
+        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse)null);
         _repository.GetOrderByIdAsync(query.Id, userId, CancellationToken.None)
             .ThrowsAsync(exception);
 

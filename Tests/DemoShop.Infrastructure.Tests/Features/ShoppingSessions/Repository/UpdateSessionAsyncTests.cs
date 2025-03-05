@@ -3,6 +3,7 @@
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Infrastructure.Features.ShoppingSessions;
 using DemoShop.Infrastructure.Tests.Common.Base;
+using Serilog;
 using Xunit.Abstractions;
 
 #endregion
@@ -16,7 +17,8 @@ public class UpdateSessionAsyncTests : RepositoryTest
 
     public UpdateSessionAsyncTests(ITestOutputHelper output) : base(output)
     {
-        _sut = new ShoppingSessionRepository(Context);
+        var logger = Mock<ILogger>();
+        _sut = new ShoppingSessionRepository(Context, logger);
     }
 
     [Fact]

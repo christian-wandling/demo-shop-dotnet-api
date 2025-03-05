@@ -4,6 +4,7 @@ using DemoShop.Domain.User.DTOs;
 using DemoShop.Domain.User.Entities;
 using DemoShop.Infrastructure.Features.Users;
 using DemoShop.Infrastructure.Tests.Common.Base;
+using Serilog;
 
 #endregion
 
@@ -16,7 +17,8 @@ public class GetUserByKeycloakIdAsyncTests : RepositoryTest
 
     public GetUserByKeycloakIdAsyncTests()
     {
-        _sut = new UserRepository(Context);
+        var logger = Mock<ILogger>();
+        _sut = new UserRepository(Context, logger);
     }
 
     [Fact]

@@ -5,13 +5,12 @@ using AutoMapper;
 using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.Product.DTOs;
 using DemoShop.Application.Features.Product.Queries.GetProductById;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Product.Entities;
 using DemoShop.Domain.Product.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Exceptions;
-using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -19,18 +18,18 @@ namespace DemoShop.Application.Tests.Features.Product.Queries;
 
 public class GetProductByIdQueryHandlerTests : Test
 {
-    private readonly ILogger<GetProductByIdQueryHandler> _logger;
+    private const string CacheKey = "product-1";
+    private readonly ICacheService _cacheService;
+    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IProductRepository _repository;
-    private readonly ICacheService _cacheService;
     private readonly GetProductByIdQueryHandler _sut;
-    private const string CacheKey = "product-1";
 
     public GetProductByIdQueryHandlerTests()
     {
         _mapper = Mock<IMapper>();
         _repository = Mock<IProductRepository>();
-        _logger = Mock<ILogger<GetProductByIdQueryHandler>>();
+        _logger = Mock<ILogger>();
         _cacheService = Mock<ICacheService>();
         _sut = new GetProductByIdQueryHandler(_mapper, _repository, _logger, _cacheService);
     }
@@ -87,12 +86,6 @@ public class GetProductByIdQueryHandlerTests : Test
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.NotFound);
-
-        _logger.Received(1).LogOperationFailed(
-            "Get Product By Id",
-            "Id",
-            $"{query.Id}",
-            null);
     }
 
     [Fact]
@@ -117,8 +110,6 @@ public class GetProductByIdQueryHandlerTests : Test
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-
-        _logger.Received(1).LogDomainException(errorMessage);
     }
 
     [Fact]
@@ -143,12 +134,6 @@ public class GetProductByIdQueryHandlerTests : Test
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-
-        _logger.Received(1).LogOperationFailed(
-            "Get product by Id",
-            "Id",
-            $"{query.Id}",
-            null);
     }
 
     [Theory]

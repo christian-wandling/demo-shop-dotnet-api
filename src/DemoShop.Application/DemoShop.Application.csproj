@@ -11,4 +11,9 @@
   <ItemGroup>
     <ProjectReference Include="..\DemoShop.Domain\DemoShop.Domain.csproj"/>
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\ShoppingSession\Processes\"/>
+    <Folder Include="Features\User\Processes\"/>
+  </ItemGroup>
 </Project>

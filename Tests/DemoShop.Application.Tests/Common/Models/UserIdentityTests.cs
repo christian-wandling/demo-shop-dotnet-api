@@ -4,9 +4,8 @@ using System.Security.Claims;
 using Ardalis.Result;
 using DemoShop.Application.Common.Constants;
 using DemoShop.Application.Common.Models;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.TestUtils.Common.Base;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
@@ -14,7 +13,7 @@ namespace DemoShop.Application.Tests.Common.Models;
 
 public class UserIdentityTests : Test
 {
-    private readonly ILogger<UserIdentity> _logger = Substitute.For<ILogger<UserIdentity>>();
+    private readonly ILogger _logger = Substitute.For<ILogger>();
 
     [Fact]
     public void FromClaimsPrincipal_WhenPrincipalIsNull_ReturnsUnauthorized()
@@ -103,18 +102,5 @@ public class UserIdentityTests : Test
         // Assert
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Forbidden);
-    }
-
-    [Fact]
-    public void FromClaimsPrincipal_VerifyLoggerCalls()
-    {
-        // Arrange
-        var principal = new ClaimsPrincipal(new ClaimsIdentity());
-
-        // Act
-        UserIdentity.FromClaimsPrincipal(principal, _logger);
-
-        // Assert
-        _logger.Received(1).LogAuthFailed("Authentication failed: Principal is null or not authenticated");
     }
 }

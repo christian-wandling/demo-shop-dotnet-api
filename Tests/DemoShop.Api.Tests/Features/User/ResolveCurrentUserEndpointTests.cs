@@ -1,37 +1,39 @@
 #region
 
 using Ardalis.Result;
-using DemoShop.Api.Features.ShoppingSession.Endpoints;
-using DemoShop.Application.Features.ShoppingSession.DTOs;
-using DemoShop.Application.Features.ShoppingSession.Queries.GetOrCreateShoppingSession;
+using DemoShop.Api.Features.User.Endpoints;
+using DemoShop.Application.Features.User.DTOs;
+using DemoShop.Application.Features.User.Processes.ResolveUser;
 using DemoShop.TestUtils.Common.Base;
 using MediatR;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
-namespace DemoShop.Api.Tests.Features.ShoppingSession;
+namespace DemoShop.Api.Tests.Features.User;
 
 [Trait("Category", "Unit")]
 [Trait("Layer", "Api")]
-[Trait("Feature", "ShoppingSession")]
-public class GetCurrentShoppingSessionEndpointTests : Test
+[Trait("Feature", "User")]
+public class ResolveCurrentUserEndpointTests : Test
 {
     private readonly IMediator _mediator;
-    private readonly GetCurrentShoppingSessionEndpoint _sut;
+    private readonly ResolveCurrentUserEndpoint _sut;
 
-    public GetCurrentShoppingSessionEndpointTests()
+    public ResolveCurrentUserEndpointTests()
     {
         _mediator = Mock<IMediator>();
-        _sut = new GetCurrentShoppingSessionEndpoint(_mediator);
+        var logger = Mock<ILogger>();
+        _sut = new ResolveCurrentUserEndpoint(_mediator, logger);
     }
 
     [Fact]
-    public async Task HandleAsync_ShouldReturnCartItemResponse_WhenQuerySucceeds()
+    public async Task HandleAsync_ShouldReturnUserResponse_WhenQuerySucceeds()
     {
         // Arrange
-        var expectedResponse = Create<Result<ShoppingSessionResponse>>();
-        _mediator.Send(Arg.Any<GetOrCreateShoppingSessionQuery>(), Arg.Any<CancellationToken>())
+        var expectedResponse = Create<Result<UserResponse>>();
+        _mediator.Send(Arg.Any<ResolveUserProcess>(), Arg.Any<CancellationToken>())
             .Returns(expectedResponse);
 
         // Act
@@ -40,7 +42,7 @@ public class GetCurrentShoppingSessionEndpointTests : Test
         // Assert
         result.Should().BeEquivalentTo(expectedResponse);
         await _mediator.Received(1)
-            .Send(Arg.Is<GetOrCreateShoppingSessionQuery>(q => q != null), Arg.Any<CancellationToken>());
+            .Send(Arg.Is<ResolveUserProcess>(q => q != null), Arg.Any<CancellationToken>());
     }
 
     [Fact]
@@ -48,7 +50,7 @@ public class GetCurrentShoppingSessionEndpointTests : Test
     {
         // Arrange
         var expectedException = new Exception("Mediator error");
-        _mediator.Send(Arg.Any<GetOrCreateShoppingSessionQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<ResolveUserProcess>(), Arg.Any<CancellationToken>())
             .ThrowsAsync(expectedException);
 
         // Act
@@ -63,7 +65,7 @@ public class GetCurrentShoppingSessionEndpointTests : Test
     public async Task HandleAsync_ShouldReturnExpectedFailureStatus_WhenMediatorReturnsFailure()
     {
         // Arrange
-        _mediator.Send(Arg.Any<GetOrCreateShoppingSessionQuery>(), Arg.Any<CancellationToken>())
+        _mediator.Send(Arg.Any<ResolveUserProcess>(), Arg.Any<CancellationToken>())
             .Returns(Result.Error("Error message"));
 
         // Act

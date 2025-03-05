@@ -15,8 +15,8 @@ using DemoShop.Domain.ShoppingSession.Interfaces;
 using DemoShop.TestUtils.Common.Base;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -37,7 +37,7 @@ public class AddCartItemCommandHandlerTests : Test
         _mapper = Substitute.For<IMapper>();
         _sessionAccessor = Mock<ICurrentShoppingSessionAccessor>();
         _repository = Mock<IShoppingSessionRepository>();
-        var logger = Mock<ILogger<AddCartItemCommandHandler>>();
+        var logger = Mock<ILogger>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
         _validator = Mock<IValidator<AddCartItemCommand>>();
         _validationService = Mock<IValidationService>();

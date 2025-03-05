@@ -1,16 +1,19 @@
 #region
 
 using Ardalis.GuardClauses;
+using DemoShop.Application.Common.Interfaces;
+using DemoShop.Application.Features.Product.Queries.GetAllProducts;
+using DemoShop.Application.Features.Product.Queries.GetProductById;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Product.Events;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
 namespace DemoShop.Application.Features.Product.Handlers;
 
-public class ProductImageDeletedHandler(ILogger<ProductImageDeletedHandler> logger)
+public class ProductImageDeletedHandler(ILogger logger, ICacheService cacheService)
     : INotificationHandler<ImageDeletedDomainEvent>
 {
     public Task Handle(ImageDeletedDomainEvent notification, CancellationToken cancellationToken)
@@ -18,8 +21,19 @@ public class ProductImageDeletedHandler(ILogger<ProductImageDeletedHandler> logg
         Guard.Against.Null(notification, nameof(notification));
         Guard.Against.NegativeOrZero(notification.Id, nameof(notification.Id));
 
-        logger.LogOperationSuccess("Delete Image", "id", $"{notification.Id}");
-
+        InvalidateCache(notification.ProductId);
+        LogProductImageDeleted(logger, notification.Id);
         return Task.CompletedTask;
     }
+
+    private void InvalidateCache(int productId)
+    {
+        var cacheKeyAllProducts = cacheService.GenerateCacheKey("product", new GetAllProductsQuery());
+        cacheService.InvalidateCache(cacheKeyAllProducts);
+        var cacheKeyProduct = cacheService.GenerateCacheKey("product", new GetProductByIdQuery(productId));
+        cacheService.InvalidateCache(cacheKeyProduct);
+    }
+
+    private static void LogProductImageDeleted(ILogger logger, int id) => logger.Information(
+        "Product image deleted: {Id} {@EventId}", id, LoggerEventIds.ProductImageDeletedDomainEvent);
 }

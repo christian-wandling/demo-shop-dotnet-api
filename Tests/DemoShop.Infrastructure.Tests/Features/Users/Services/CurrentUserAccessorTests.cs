@@ -7,6 +7,7 @@ using DemoShop.Domain.User.Entities;
 using DemoShop.Domain.User.Interfaces;
 using DemoShop.Infrastructure.Features.Users.Services;
 using DemoShop.TestUtils.Common.Base;
+using Serilog;
 
 #endregion
 
@@ -17,6 +18,7 @@ namespace DemoShop.Infrastructure.Tests.Features.Users.Services;
 [Trait("Feature", "User")]
 public class CurrentUserAccessorTests : Test
 {
+    private readonly ICacheService _cacheService;
     private readonly IUserRepository _repository;
     private readonly CurrentUserAccessor _sut;
     private readonly IUserIdentityAccessor _userIdentity;
@@ -25,7 +27,9 @@ public class CurrentUserAccessorTests : Test
     {
         _repository = Mock<IUserRepository>();
         _userIdentity = Mock<IUserIdentityAccessor>();
-        _sut = new CurrentUserAccessor(_repository, _userIdentity);
+        var logger = Mock<ILogger>();
+        _cacheService = Mock<ICacheService>();
+        _sut = new CurrentUserAccessor(_repository, _userIdentity, logger, _cacheService);
     }
 
     [Fact]
@@ -49,6 +53,10 @@ public class CurrentUserAccessorTests : Test
     {
         // Arrange
         var identity = Create<IUserIdentity>();
+        var cacheKey = Create<string>();
+
+        _cacheService.GenerateCacheKey("current-user-accessor", identity.KeycloakUserId).Returns(cacheKey);
+        _cacheService.GetFromCache<UserEntity>(cacheKey).Returns((UserEntity?)null);
         _userIdentity.GetCurrentIdentity().Returns(Result.Success(identity));
         _repository.GetUserByKeycloakIdAsync(identity.KeycloakUserId, Arg.Any<CancellationToken>())
             .Returns((UserEntity?)null);
@@ -62,12 +70,36 @@ public class CurrentUserAccessorTests : Test
     }
 
     [Fact]
-    public async Task GetId_WhenUserFound_ReturnsUserId()
+    public async Task GetId_WhenUserFoundInCache_ReturnsUserIdFromCache()
     {
         // Arrange
         var identity = Create<IUserIdentity>();
         var user = Create<UserEntity>();
+        var cacheKey = Create<string>();
 
+        _cacheService.GenerateCacheKey("current-user-accessor", identity.KeycloakUserId).Returns(cacheKey);
+        _cacheService.GetFromCache<UserEntity>(cacheKey).Returns(user);
+        _userIdentity.GetCurrentIdentity().Returns(Result.Success(identity));
+
+        // Act
+        var result = await _sut.GetId(CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Should().Be(user.Id);
+        await _repository.DidNotReceive().GetUserByKeycloakIdAsync(identity.KeycloakUserId, Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task GetId_WhenUserFoundButNotInCache_ReturnsUserIdFromDatabase()
+    {
+        // Arrange
+        var identity = Create<IUserIdentity>();
+        var user = Create<UserEntity>();
+        var cacheKey = Create<string>();
+
+        _cacheService.GenerateCacheKey("current-user-accessor", identity.KeycloakUserId).Returns(cacheKey);
+        _cacheService.GetFromCache<UserEntity>(cacheKey).Returns((UserEntity?)null);
         _userIdentity.GetCurrentIdentity().Returns(Result.Success(identity));
         _repository.GetUserByKeycloakIdAsync(identity.KeycloakUserId, Arg.Any<CancellationToken>())
             .Returns(user);

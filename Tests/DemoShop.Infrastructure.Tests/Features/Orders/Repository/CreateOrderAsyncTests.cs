@@ -4,6 +4,7 @@ using DemoShop.Domain.Order.Entities;
 using DemoShop.Infrastructure.Features.Orders;
 using DemoShop.Infrastructure.Tests.Common.Base;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Xunit.Abstractions;
 
 #endregion
@@ -17,7 +18,8 @@ public class CreateOrderAsyncTests : RepositoryTest
 
     public CreateOrderAsyncTests(ITestOutputHelper output) : base(output)
     {
-        _sut = new OrderRepository(Context);
+        var logger = Mock<ILogger>();
+        _sut = new OrderRepository(Context, logger);
     }
 
     [Fact]

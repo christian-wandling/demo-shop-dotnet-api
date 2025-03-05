@@ -1,10 +1,11 @@
 #region
 
+using DemoShop.Api.Common.Configurations;
 using Serilog;
 
 #endregion
 
-namespace DemoShop.Api.Common.Configurations;
+namespace DemoShop.Api.Common.Extensions;
 
 public static class BuilderExtensions
 {

@@ -1,22 +1,17 @@
 #region
 
+using System.Reflection;
 using Ardalis.Result;
-using AutoMapper;
-using DemoShop.Application.Common.Interfaces;
-using DemoShop.Application.Features.Order.Commands.ConvertShoppingSessionToOrder;
 using DemoShop.Application.Features.Order.Commands.CreateOrder;
-using DemoShop.Application.Features.Order.DTOs;
-using DemoShop.Application.Features.ShoppingSession.Commands.DeleteShoppingSession;
-using DemoShop.Application.Features.ShoppingSession.Interfaces;
 using DemoShop.Domain.Common.Interfaces;
-using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.Order.Entities;
+using DemoShop.Domain.Order.Interfaces;
+using DemoShop.Domain.Product.Entities;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.TestUtils.Common.Base;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using NSubstitute.ExceptionExtensions;
+using Serilog;
 
 #endregion
 
@@ -24,48 +19,43 @@ namespace DemoShop.Application.Tests.Features.Order.Commands;
 
 public class CreateOrderCommandHandlerTests : Test
 {
-    private readonly ICurrentShoppingSessionAccessor _currentSession;
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly ILogger<CreateOrderCommandHandler> _logger;
-    private readonly IMapper _mapper;
-    private readonly IMediator _mediator;
+    private readonly ILogger _logger;
+    private readonly IOrderRepository _repository;
     private readonly CreateOrderCommandHandler _sut;
-    private readonly IUnitOfWork _unitOfWork;
 
     public CreateOrderCommandHandlerTests()
     {
-        _currentSession = Mock<ICurrentShoppingSessionAccessor>();
-        _mapper = Substitute.For<IMapper>();
-        _mediator = Mock<IMediator>();
-        _logger = Mock<ILogger<CreateOrderCommandHandler>>();
+        _repository = Mock<IOrderRepository>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
-        _unitOfWork = Mock<IUnitOfWork>();
-
-        _sut = new CreateOrderCommandHandler(
-            _currentSession,
-            _mapper,
-            _mediator,
-            _logger,
-            _eventDispatcher,
-            _unitOfWork
-        );
+        _logger = Mock<ILogger>();
+        _sut = new CreateOrderCommandHandler(_repository, _eventDispatcher, _logger);
     }
 
     [Fact]
-    public async Task Handle_WhenSuccessful_ReturnsOrderResponse()
+    public async Task Handle_WhenSessionConversionSucceeds_ShouldReturnSuccessResult()
     {
         // Arrange
-        var command = Create<CreateOrderCommand>();
-        var session = Create<ShoppingSessionEntity>();
-        var order = Create<OrderEntity>();
-        var orderResponse = Create<OrderResponse>();
+        var product = Create<ProductEntity>();
+        var backingField = typeof(ProductEntity)
+            .GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
+        backingField?.SetValue(product, 1);
 
-        _currentSession.GetCurrent(CancellationToken.None).Returns(Result.Success(session));
-        _mediator.Send(Arg.Any<ConvertShoppingSessionToOrderCommand>(), CancellationToken.None)
-            .Returns(Result.Success(order));
-        _mediator.Send(Arg.Any<DeleteShoppingSessionCommand>(), CancellationToken.None).Returns(Result.Success());
-        _unitOfWork.HasActiveTransaction.Returns(false);
-        _mapper.Map<OrderResponse>(order).Returns(orderResponse);
+        var session = Create<ShoppingSessionEntity>();
+        backingField = typeof(ShoppingSessionEntity)
+            .GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
+        backingField?.SetValue(session, 1);
+
+        session.AddCartItem(product.Id);
+        var cartItem = session.CartItems.FirstOrDefault();
+        typeof(CartItemEntity)
+            .GetProperty(nameof(CartItemEntity.Product))!
+            .SetValue(cartItem, product);
+
+        var command = new CreateOrderCommand(session);
+        var unsavedOrder = session.ConvertToOrder().Value;
+
+        _repository.CreateOrderAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>()).Returns(unsavedOrder);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -73,40 +63,17 @@ public class CreateOrderCommandHandlerTests : Test
         // Assert
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeTrue();
-        result.Value.Should().Be(orderResponse);
+        result.Value.Should().Be(unsavedOrder);
 
-        await _unitOfWork.Received(1).BeginTransactionAsync(CancellationToken.None);
-        await _unitOfWork.Received(1).CommitTransactionAsync(CancellationToken.None);
-        await _eventDispatcher.Received(1).DispatchEventsAsync(order, CancellationToken.None);
+        await _repository.Received(1).CreateOrderAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
+        await _eventDispatcher.Received(1).DispatchEventsAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_WhenNoActiveSession_ReturnsNotFound()
+    public async Task Handle_WhenSessionConversionFails_ShouldReturnError()
     {
         // Arrange
         var command = Create<CreateOrderCommand>();
-        _currentSession.GetCurrent(CancellationToken.None).Returns(Result.NotFound("No session found"));
-
-        // Act
-        var result = await _sut.Handle(command, CancellationToken.None);
-
-        // Assert
-        result.Should().NotBeNull();
-        result.IsSuccess.Should().BeFalse();
-        result.Status.Should().Be(ResultStatus.NotFound);
-    }
-
-    [Fact]
-    public async Task Handle_WhenConvertSessionToOrderFails_RollsBackTransaction()
-    {
-        // Arrange
-        var command = Create<CreateOrderCommand>();
-        var session = Create<ShoppingSessionEntity>();
-        const string errorMessage = "Conversion failed";
-
-        _currentSession.GetCurrent(CancellationToken.None).Returns(Result.Success(session));
-        _mediator.Send(Arg.Any<ConvertShoppingSessionToOrderCommand>(), CancellationToken.None)
-            .Returns(Result.Error(errorMessage));
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -116,23 +83,34 @@ public class CreateOrderCommandHandlerTests : Test
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
 
-        await _unitOfWork.Received().RollbackTransactionAsync(CancellationToken.None);
+        await _repository.DidNotReceive().CreateOrderAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
+        await _eventDispatcher.DidNotReceive()
+            .DispatchEventsAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_WhenDeleteSessionFails_RollsBackTransaction()
+    public async Task Handle_WhenOrderCreationFails_ShouldReturnError()
     {
         // Arrange
-        var command = Create<CreateOrderCommand>();
-        var session = Create<ShoppingSessionEntity>();
-        var order = Create<OrderEntity>();
-        const string errorMessage = "Delete failed";
+        var product = Create<ProductEntity>();
+        var backingField = typeof(ProductEntity)
+            .GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
+        backingField?.SetValue(product, 1);
 
-        _currentSession.GetCurrent(CancellationToken.None).Returns(Result.Success(session));
-        _mediator.Send(Arg.Any<ConvertShoppingSessionToOrderCommand>(), CancellationToken.None)
-            .Returns(Result.Success(order));
-        _mediator.Send(Arg.Any<DeleteShoppingSessionCommand>(), CancellationToken.None)
-            .Returns(Result.Error(errorMessage));
+        var session = Create<ShoppingSessionEntity>();
+        backingField = typeof(ShoppingSessionEntity)
+            .GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
+        backingField?.SetValue(session, 1);
+
+        session.AddCartItem(product.Id);
+        var cartItem = session.CartItems.FirstOrDefault();
+        typeof(CartItemEntity)
+            .GetProperty(nameof(CartItemEntity.Product))!
+            .SetValue(cartItem, product);
+
+        var command = new CreateOrderCommand(session);
+
+        _repository.CreateOrderAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>()).Returns((OrderEntity?)null);
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -142,19 +120,36 @@ public class CreateOrderCommandHandlerTests : Test
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
 
-        await _unitOfWork.Received().RollbackTransactionAsync(CancellationToken.None);
+        await _repository.Received(1).CreateOrderAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
+        await _eventDispatcher.DidNotReceive()
+            .DispatchEventsAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>());
     }
 
     [Fact]
-    public async Task Handle_WhenDbUpdateExceptionOccurs_LogsAndReturnsError()
+    public async Task Handle_WhenInvalidOperationExceptionOccurs_ShouldReturnError()
     {
         // Arrange
-        var command = Create<CreateOrderCommand>();
-        var session = Create<ShoppingSessionEntity>();
-        var exception = new DbUpdateException("Database error");
+        var product = Create<ProductEntity>();
+        var backingField = typeof(ProductEntity)
+            .GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
+        backingField?.SetValue(product, 1);
 
-        _currentSession.GetCurrent(CancellationToken.None).Returns(Result.Success(session));
-        _mediator.Send(Arg.Any<ConvertShoppingSessionToOrderCommand>(), CancellationToken.None)
+        var session = Create<ShoppingSessionEntity>();
+        backingField = typeof(ShoppingSessionEntity)
+            .GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
+        backingField?.SetValue(session, 1);
+
+        session.AddCartItem(product.Id);
+        var cartItem = session.CartItems.FirstOrDefault();
+        typeof(CartItemEntity)
+            .GetProperty(nameof(CartItemEntity.Product))!
+            .SetValue(cartItem, product);
+
+        var command = new CreateOrderCommand(session);
+
+        var exception = new InvalidOperationException("Message");
+
+        _repository.CreateOrderAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>())
             .Throws(exception);
 
         // Act
@@ -164,27 +159,32 @@ public class CreateOrderCommandHandlerTests : Test
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
-
-        await _unitOfWork.Received().RollbackTransactionAsync(CancellationToken.None);
-        _logger.Received(1).LogOperationFailed(
-            "Create Order from shopping session",
-            "ShoppingSessionId",
-            $"{session.Id}",
-            exception);
     }
 
     [Fact]
-    public async Task Handle_WhenInvalidOperationExceptionOccurs_LogsAndReturnsError()
+    public async Task Handle_WhenDbUpdateExceptionOccurs_ShouldReturnError()
     {
         // Arrange
-        var command = Create<CreateOrderCommand>();
-        var session = Create<ShoppingSessionEntity>();
-        const string errorMessage = "Invalid operation";
-        var exception = new InvalidOperationException(errorMessage);
+        var product = Create<ProductEntity>();
+        var backingField = typeof(ProductEntity)
+            .GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
+        backingField?.SetValue(product, 1);
 
-        _currentSession.GetCurrent(CancellationToken.None).Returns(Result.Success(session));
-        _mediator.Send(Arg.Any<ConvertShoppingSessionToOrderCommand>(), CancellationToken.None)
-            .Throws(exception);
+        var session = Create<ShoppingSessionEntity>();
+        backingField = typeof(ShoppingSessionEntity)
+            .GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance);
+        backingField?.SetValue(session, 1);
+
+        session.AddCartItem(product.Id);
+        var cartItem = session.CartItems.FirstOrDefault();
+        typeof(CartItemEntity)
+            .GetProperty(nameof(CartItemEntity.Product))!
+            .SetValue(cartItem, product);
+
+        var command = new CreateOrderCommand(session);
+
+        _repository.CreateOrderAsync(Arg.Any<OrderEntity>(), Arg.Any<CancellationToken>())
+            .Throws(new DbUpdateException("Database error"));
 
         // Act
         var result = await _sut.Handle(command, CancellationToken.None);
@@ -193,8 +193,18 @@ public class CreateOrderCommandHandlerTests : Test
         result.Should().NotBeNull();
         result.IsSuccess.Should().BeFalse();
         result.Status.Should().Be(ResultStatus.Error);
+    }
 
-        await _unitOfWork.Received().RollbackTransactionAsync(CancellationToken.None);
-        _logger.Received(1).LogDomainException(errorMessage);
+    [Theory]
+    [InlineData(null)]
+    public async Task Handle_WhenRequestIsNull_ShouldThrowArgumentNullException(
+        CreateOrderCommand request)
+    {
+        // Act
+        var act = () => _sut.Handle(request, CancellationToken.None);
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentNullException>()
+            .WithParameterName(nameof(request));
     }
 }

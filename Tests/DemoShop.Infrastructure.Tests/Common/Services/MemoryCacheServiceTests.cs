@@ -1,27 +1,28 @@
-using DemoShop.Domain.Common.Logging;
+#region
+
+using System.Text.Json;
 using DemoShop.Infrastructure.Common.Services;
 using DemoShop.TestUtils.Common.Base;
 using DemoShop.TestUtils.Common.Models;
+using Microsoft.Extensions.Caching.Memory;
+using Serilog;
+using Xunit.Abstractions;
 using Xunit.Sdk;
+
+#endregion
 
 namespace DemoShop.Infrastructure.Tests.Common.Services;
 
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Text.Json;
-using Xunit.Abstractions;
-
 public class MemoryCacheServiceTests : Test
 {
-    private readonly MemoryCacheService _sut;
     private readonly IMemoryCache _cache;
-    private readonly ILogger<MemoryCacheService> _logger;
+    private readonly ILogger _logger;
+    private readonly MemoryCacheService _sut;
 
     public MemoryCacheServiceTests(ITestOutputHelper? output = null) : base(output)
     {
         _cache = Mock<IMemoryCache>();
-        _logger = Mock<ILogger<MemoryCacheService>>();
+        _logger = Mock<ILogger>();
         _sut = new MemoryCacheService(_cache, _logger);
     }
 
@@ -34,7 +35,8 @@ public class MemoryCacheServiceTests : Test
 
         object objExpectedItem = expectedItem;
         _cache.TryGetValue(key, out _)
-            .Returns(x => {
+            .Returns(x =>
+            {
                 x[1] = objExpectedItem;
                 return true;
             });
@@ -44,7 +46,6 @@ public class MemoryCacheServiceTests : Test
 
         // Assert
         result.Should().Be(expectedItem);
-        _logger.Received(1).LogOperationSuccess("Cache hit", "Cache key", key);
     }
 
     [Fact]
@@ -109,7 +110,7 @@ public class MemoryCacheServiceTests : Test
         // Arrange
         const string prefix = "test";
         var request = new TestRequest { Name = "Test" };
-        var expected = $"prefix--{request.GetType().Name}-{JsonSerializer.Serialize(request)}";
+        var expected = $"{prefix}--{request.GetType().Name}-{JsonSerializer.Serialize(request)}";
 
         // Act
         var result = _sut.GenerateCacheKey(prefix, request);
@@ -128,4 +129,3 @@ public class MemoryCacheServiceTests : Test
         Assert.Throws<ArgumentNullException>(() => _sut.GenerateCacheKey(prefix, null!));
     }
 }
-

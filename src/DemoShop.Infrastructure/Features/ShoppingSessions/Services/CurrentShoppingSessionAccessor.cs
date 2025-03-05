@@ -1,10 +1,13 @@
 #region
 
 using Ardalis.Result;
+using DemoShop.Application.Common.Interfaces;
 using DemoShop.Application.Features.ShoppingSession.Interfaces;
 using DemoShop.Application.Features.User.Interfaces;
+using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.ShoppingSession.Entities;
 using DemoShop.Domain.ShoppingSession.Interfaces;
+using Serilog;
 
 #endregion
 
@@ -12,21 +15,63 @@ namespace DemoShop.Infrastructure.Features.ShoppingSessions.Services;
 
 public sealed class CurrentShoppingSessionAccessor(
     IShoppingSessionRepository repository,
-    ICurrentUserAccessor currentUser
+    ICurrentUserAccessor currentUser,
+    ILogger logger,
+    ICacheService cacheService
 )
     : ICurrentShoppingSessionAccessor
 {
     public async Task<Result<ShoppingSessionEntity>> GetCurrent(CancellationToken cancellationToken)
     {
-        var userResult = await currentUser.GetId(cancellationToken);
+        var userIdResult = await currentUser.GetId(cancellationToken);
 
-        if (!userResult.IsSuccess)
-            return userResult.Map();
+        if (!userIdResult.IsSuccess)
+            return userIdResult.Map();
 
-        var session = await repository.GetSessionByUserIdAsync(userResult.Value, cancellationToken);
+        LogStarted(logger, userIdResult.Value);
 
-        return session is null
-            ? Result.NotFound("Session not found")
-            : Result.Success(session);
+        var cacheKey = cacheService.GenerateCacheKey("current-session-accessor", userIdResult.Value);
+        var entity = cacheService.GetFromCache<ShoppingSessionEntity>(cacheKey)
+                     ?? await GetFromDatabase(userIdResult.Value, cacheKey, cancellationToken);
+
+        if (entity is null)
+        {
+            LogNotFound(logger, userIdResult.Value);
+            return Result.NotFound("No active shopping session session found for current user");
+        }
+
+        LogSuccess(logger, entity);
+        return Result.Success(entity);
     }
+
+    private async Task<ShoppingSessionEntity?> GetFromDatabase(
+        int userId, string cacheKey, CancellationToken cancellationToken)
+    {
+        var entity = await repository.GetSessionByUserIdAsync(userId, cancellationToken);
+
+        if (entity is null)
+            return null;
+
+        cacheService.SetCache(cacheKey, $"{entity.Id}");
+
+        return entity;
+    }
+
+    private static void LogStarted(ILogger logger, int userId) =>
+        logger.Information(
+            "[{EventId}] Attempting to get current shopping session for user {UserId}",
+            LoggerEventIds.CurrentShoppingSessionAccessorStarted,
+            userId);
+
+    private static void LogSuccess(ILogger logger, ShoppingSessionEntity session) =>
+        logger.Information(
+            "[{EventId}] Shopping session with id {Id} found for user {UserId}",
+            LoggerEventIds.CurrentShoppingSessionAccessorSuccess,
+            session.Id, session.UserId);
+
+    private static void LogNotFound(ILogger logger, int userId) =>
+        logger.Error(
+            "[{EventId}] No shopping session found for user {UserId}",
+            LoggerEventIds.CurrentShoppingSessionAccessorNotFound,
+            userId);
 }

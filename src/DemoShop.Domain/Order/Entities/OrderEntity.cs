@@ -52,7 +52,7 @@ public sealed class OrderEntity : IEntity, IAuditable, ISoftDeletable, IAggregat
     {
         var order = new OrderEntity(userId, items);
 
-        order.AddDomainEvent(new OrderCreatedDomainEvent(order));
+        order.AddDomainEvent(new OrderCreatedDomainEvent(order.Id, order.UserId));
         return Result.Success(order);
     }
 

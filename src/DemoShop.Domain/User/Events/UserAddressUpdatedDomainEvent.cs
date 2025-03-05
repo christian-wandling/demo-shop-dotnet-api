@@ -1,5 +1,6 @@
 #region
 
+using DemoShop.Domain.Common.Base;
 using DemoShop.Domain.Common.Interfaces;
 using DemoShop.Domain.User.Entities;
 
@@ -7,10 +8,9 @@ using DemoShop.Domain.User.Entities;
 
 namespace DemoShop.Domain.User.Events;
 
-public class UserAddressUpdatedDomainEvent(int id, AddressEntity newAddress, AddressEntity? oldAddress) : IDomainEvent
-{
-    public int Id { get; } = id;
-    public AddressEntity NewAddress { get; } = newAddress;
-    public AddressEntity? OldAddress { get; } = oldAddress;
-    public DateTime OccurredOn { get; } = DateTime.UtcNow;
-}
+public record UserAddressUpdatedDomainEvent(
+    int Id,
+    string KeycloakUserId,
+    AddressEntity? NewAddress,
+    AddressEntity? OldAddress
+) : DomainEvent, IDomainEvent;

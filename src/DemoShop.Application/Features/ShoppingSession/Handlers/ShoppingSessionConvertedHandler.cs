@@ -1,16 +1,18 @@
 #region
 
 using Ardalis.GuardClauses;
+using DemoShop.Application.Common.Interfaces;
+using DemoShop.Application.Features.ShoppingSession.Queries.GetShoppingSessionByUserId;
 using DemoShop.Domain.Common.Logging;
 using DemoShop.Domain.ShoppingSession.Events;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 #endregion
 
 namespace DemoShop.Application.Features.ShoppingSession.Handlers;
 
-public class ShoppingSessionConvertedHandler(ILogger<ShoppingSessionConvertedHandler> logger)
+public class ShoppingSessionConvertedHandler(ILogger logger, ICacheService cacheService)
     : INotificationHandler<ShoppingSessionConverted>
 {
     public Task Handle(ShoppingSessionConverted notification, CancellationToken cancellationToken)
@@ -19,11 +21,24 @@ public class ShoppingSessionConvertedHandler(ILogger<ShoppingSessionConvertedHan
         Guard.Against.Null(notification.ShoppingSession, nameof(notification.ShoppingSession));
         Guard.Against.NegativeOrZero(notification.OrderId, nameof(notification.OrderId));
 
-        logger.LogDomainEvent(
-            $"Shopping session converted to order - SessionId: {notification.ShoppingSession.Id}, " +
-            $"OrderId: {notification.OrderId}, UserId: {notification.ShoppingSession.UserId}"
-        );
+        InvalidateCache(notification.ShoppingSession.UserId);
+        LogShoppingSessionConverted(logger, notification.ShoppingSession.Id);
 
         return Task.CompletedTask;
     }
+
+    private void InvalidateCache(int userId)
+    {
+        List<string> cacheKeys =
+        [
+            cacheService.GenerateCacheKey("user", new GetShoppingSessionByUserIdQuery(userId)),
+            cacheService.GenerateCacheKey("orders-of-user", userId),
+            cacheService.GenerateCacheKey("current-session-accessor", userId)
+        ];
+
+        cacheKeys.ForEach(cacheService.InvalidateCache);
+    }
+
+    private static void LogShoppingSessionConverted(ILogger logger, int id) => logger.Information(
+        "ShoppingSession Converted: {Id} {@EventId}", id, LoggerEventIds.ShoppingSessionConvertedDomainEvent);
 }

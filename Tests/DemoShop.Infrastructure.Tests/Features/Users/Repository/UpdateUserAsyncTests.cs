@@ -4,6 +4,7 @@ using DemoShop.Domain.User.DTOs;
 using DemoShop.Domain.User.Entities;
 using DemoShop.Infrastructure.Features.Users;
 using DemoShop.Infrastructure.Tests.Common.Base;
+using Serilog;
 using Xunit.Abstractions;
 
 #endregion
@@ -17,7 +18,8 @@ public class UpdateUserAsyncTests : RepositoryTest
 
     public UpdateUserAsyncTests(ITestOutputHelper output) : base(output)
     {
-        _sut = new UserRepository(Context);
+        var logger = Mock<ILogger>();
+        _sut = new UserRepository(Context, logger);
     }
 
     [Fact]
