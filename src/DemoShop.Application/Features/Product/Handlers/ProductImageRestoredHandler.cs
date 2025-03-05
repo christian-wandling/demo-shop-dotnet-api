@@ -22,6 +22,7 @@ public class ProductImageRestoredHandler(ILogger logger)
         return Task.CompletedTask;
     }
 
-    private static void LogProductImageRestored(ILogger logger, int id) => logger.Information(
-        "Product image restored: {Id} {@EventId}", id, LoggerEventIds.ProductImageRestoredDomainEvent);
+    private static void LogProductImageRestored(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.ProductImageRestoredDomainEvent)
+        .Information("Product image restored: {Id}", id);
 }

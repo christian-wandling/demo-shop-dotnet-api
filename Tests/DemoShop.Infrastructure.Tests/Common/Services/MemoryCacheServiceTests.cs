@@ -16,14 +16,13 @@ namespace DemoShop.Infrastructure.Tests.Common.Services;
 public class MemoryCacheServiceTests : Test
 {
     private readonly IMemoryCache _cache;
-    private readonly ILogger _logger;
     private readonly MemoryCacheService _sut;
 
     public MemoryCacheServiceTests(ITestOutputHelper? output = null) : base(output)
     {
         _cache = Mock<IMemoryCache>();
-        _logger = Mock<ILogger>();
-        _sut = new MemoryCacheService(_cache, _logger);
+        var logger = Mock<ILogger>();
+        _sut = new MemoryCacheService(_cache, logger);
     }
 
     [Fact]

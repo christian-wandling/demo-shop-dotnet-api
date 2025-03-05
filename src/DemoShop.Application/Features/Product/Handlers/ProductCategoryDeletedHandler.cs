@@ -38,6 +38,7 @@ public class ProductCategoryDeletedHandler(ILogger logger, ICacheService cacheSe
         }
     }
 
-    private static void LogProductCategoryDeleted(ILogger logger, int id) => logger.Information(
-        "Product category deleted: {Id} {@EventId}", id, LoggerEventIds.ProductCategoryDeletedDomainEvent);
+    private static void LogProductCategoryDeleted(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.ProductCategoryDeletedDomainEvent)
+        .Information("Product category deleted: {Id}", id);
 }

@@ -39,6 +39,7 @@ public class ShoppingSessionConvertedHandler(ILogger logger, ICacheService cache
         cacheKeys.ForEach(cacheService.InvalidateCache);
     }
 
-    private static void LogShoppingSessionConverted(ILogger logger, int id) => logger.Information(
-        "ShoppingSession Converted: {Id} {@EventId}", id, LoggerEventIds.ShoppingSessionConvertedDomainEvent);
+    private static void LogShoppingSessionConverted(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.ShoppingSessionConvertedDomainEvent)
+        .Information("ShoppingSession Converted: {Id}", id);
 }

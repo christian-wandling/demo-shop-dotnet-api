@@ -54,23 +54,23 @@ public sealed class DeleteShoppingSessionCommandHandler(
         }
     }
 
-    private static void LogCommandStarted(ILogger logger, int id) =>
-        logger.ForContext("EventId", LoggerEventIds.DeleteShoppingSessionCommandStarted)
-            .Information("Starting to delete shopping session with Id {Id}", id);
+    private static void LogCommandStarted(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.DeleteShoppingSessionCommandStarted)
+        .Debug("Starting to delete shopping session with Id {Id}", id);
 
-    private static void LogCommandSuccess(ILogger logger, int id) =>
-        logger.ForContext("EventId", LoggerEventIds.DeleteShoppingSessionCommandSuccess)
-            .Information("Successfully deleted shopping session with Id {Id}", id);
+    private static void LogCommandSuccess(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.DeleteShoppingSessionCommandSuccess)
+        .Information("Successfully deleted shopping session with Id {Id}", id);
 
-    private static void LogCommandError(ILogger logger, int id) =>
-        logger.ForContext("EventId", LoggerEventIds.DeleteShoppingSessionCommandError)
-            .Information("Error deleting shopping session with Id {Id}", id);
+    private static void LogCommandError(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.DeleteShoppingSessionCommandError)
+        .Error("Error deleting shopping session with Id {Id}", id);
 
-    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while deleting shopping session. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.DeleteShoppingSessionDatabaseException);
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.DeleteShoppingSessionDatabaseException)
+        .Error(ex, "Database error occurred while deleting shopping session. Error: {ErrorMessage}", errorMessage);
 
-    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while deleting shopping session. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.DeleteShoppingSessionDomainException);
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.DeleteShoppingSessionDomainException)
+        .Error(ex, "Invalid operation while deleting shopping session. Error: {ErrorMessage}", errorMessage);
 }

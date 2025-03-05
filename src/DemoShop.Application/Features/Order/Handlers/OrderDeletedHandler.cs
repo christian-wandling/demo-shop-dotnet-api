@@ -33,6 +33,7 @@ public class OrderDeletedHandler(ILogger logger, ICacheService cacheService)
         cacheService.InvalidateCache(cacheKeyOrdersOfUser);
     }
 
-    private static void LogOrderDeleted(ILogger logger, int id) => logger.Information(
-        "Order deleted: {Id} {@EventId}", id, LoggerEventIds.OrderDeletedDomainEvent);
+    private static void LogOrderDeleted(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.OrderDeletedDomainEvent)
+        .Information("Order deleted: {Id}", id);
 }

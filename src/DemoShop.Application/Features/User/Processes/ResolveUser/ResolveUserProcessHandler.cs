@@ -59,16 +59,16 @@ public sealed class ResolveUserProcessHandler(
     }
 
     private static void LogProcessStarted(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.ResolveUserProcessStarted)
+        logger.ForContext("EventId", LoggerEventId.ResolveUserProcessStarted)
             .Information("Resolving user for keycloakUserId {KeycloakUserId}", keycloakUserId);
 
     private static void LogProcessSuccess(ILogger logger, int userId, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.ResolveUserProcessSuccess)
+        logger.ForContext("EventId", LoggerEventId.ResolveUserProcessSuccess)
             .Information(
                 "Successfully resolved user with Id {UserId} for KeycloakUserId {KeycloakUserId}",
                 userId, keycloakUserId);
 
     private static void LogProcessFailed(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.ResolveUserProcessFailed)
-            .Information("Error while resolving user for keycloakUserId {KeycloakUserId}", keycloakUserId);
+        logger.ForContext("EventId", LoggerEventId.ResolveUserProcessFailed)
+            .Error("Error while resolving user for keycloakUserId {KeycloakUserId}", keycloakUserId);
 }

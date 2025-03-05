@@ -45,26 +45,26 @@ public class UpdateCurrentUserPhoneEndpoint(IMediator mediator, ILogger logger)
         stopwatch.Stop();
 
         if (result.IsSuccess)
-            LogRequestSuccess(logger, stopwatch.Elapsed);
+            LogRequestSuccess(logger, stopwatch.Elapsed.Milliseconds);
         else
-            LogRequestFailed(logger, stopwatch.Elapsed);
+            LogRequestFailed(logger, stopwatch.Elapsed.Milliseconds);
 
         return result;
     }
 
     private static void LogRequestStarting(ILogger logger, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateUserPhoneRequestStarted)
-            .Information("Starting PUT request for updating current user phone at {Endpoint}", endpoint);
+            .ForContext("EventId", LoggerEventId.UpdateUserPhoneRequestStarted)
+            .Debug("Starting PUT request for updating current user phone at {Endpoint}", endpoint);
 
-    private static void LogRequestSuccess(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestSuccess(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateUserPhoneRequestSuccess)
+            .ForContext("EventId", LoggerEventId.UpdateUserPhoneRequestSuccess)
             .Information(
                 "Completed PUT request for updating current user phone in {ElapsedMs}ms", elapsedMs);
 
-    private static void LogRequestFailed(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestFailed(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateUserPhoneRequestFailed)
+            .ForContext("EventId", LoggerEventId.UpdateUserPhoneRequestFailed)
             .Error("Failed PUT request to update current user phone in {ElapsedMs}ms", elapsedMs);
 }

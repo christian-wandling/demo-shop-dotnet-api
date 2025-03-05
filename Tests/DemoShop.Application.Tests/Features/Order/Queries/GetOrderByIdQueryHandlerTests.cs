@@ -69,7 +69,7 @@ public class GetOrderByIdQueryHandlerTests : Test
 
         _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
         _cacheService.GenerateCacheKey("order", query).Returns(cacheKey);
-        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse)null);
+        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse?)null);
         _repository.GetOrderByIdAsync(query.Id, userId, CancellationToken.None).Returns(order);
         _mapper.Map<OrderResponse>(order).Returns(mappedResponse);
 
@@ -88,7 +88,6 @@ public class GetOrderByIdQueryHandlerTests : Test
         // Arrange
         var userId = Create<int>();
         var query = new GetOrderByIdQuery(1);
-        var order = Create<OrderEntity>();
         var mappedResponse = Create<OrderResponse>();
         var cacheKey = Create<string>();
 
@@ -115,7 +114,7 @@ public class GetOrderByIdQueryHandlerTests : Test
 
         _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
         _cacheService.GenerateCacheKey("order", query).Returns(cacheKey);
-        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse)null);
+        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse?)null);
         _repository.GetOrderByIdAsync(query.Id, userId, CancellationToken.None).Returns((OrderEntity?)null);
 
         // Act
@@ -138,7 +137,7 @@ public class GetOrderByIdQueryHandlerTests : Test
 
         _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
         _cacheService.GenerateCacheKey("order", query).Returns(cacheKey);
-        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse)null);
+        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse?)null);
         _repository.GetOrderByIdAsync(query.Id, userId, CancellationToken.None)
             .ThrowsAsync(exception);
 
@@ -162,7 +161,7 @@ public class GetOrderByIdQueryHandlerTests : Test
 
         _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
         _cacheService.GenerateCacheKey("order", query).Returns(cacheKey);
-        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse)null);
+        _cacheService.GetFromCache<OrderResponse>(cacheKey).Returns((OrderResponse?)null);
         _repository.GetOrderByIdAsync(query.Id, userId, CancellationToken.None)
             .ThrowsAsync(exception);
 

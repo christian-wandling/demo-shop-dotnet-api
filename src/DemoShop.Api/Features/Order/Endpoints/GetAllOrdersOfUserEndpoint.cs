@@ -41,26 +41,26 @@ public class GetAllOrdersOfUserEndpoint(IMediator mediator, ILogger logger)
         stopwatch.Stop();
 
         if (result.IsSuccess)
-            LogRequestSuccess(logger, stopwatch.Elapsed);
+            LogRequestSuccess(logger, stopwatch.Elapsed.Milliseconds);
         else
-            LogRequestFailed(logger, stopwatch.Elapsed);
+            LogRequestFailed(logger, stopwatch.Elapsed.Milliseconds);
 
         return result;
     }
 
     private static void LogRequestStarting(ILogger logger, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetAllOrdersOfUserRequestStarted)
-            .Information("Starting GET request for all orders of current user at {Endpoint}", endpoint);
+            .ForContext("EventId", LoggerEventId.GetAllOrdersOfUserRequestStarted)
+            .Debug("Starting GET request for all orders of current user at {Endpoint}", endpoint);
 
-    private static void LogRequestSuccess(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestSuccess(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetAllOrdersOfUserRequestSuccess)
+            .ForContext("EventId", LoggerEventId.GetAllOrdersOfUserRequestSuccess)
             .Information(
                 "Completed GET request for all orders of current user in {ElapsedMs}ms", elapsedMs);
 
-    private static void LogRequestFailed(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestFailed(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetAllOrdersOfUserRequestFailed)
-            .Error("Failed to retrieve orders of current user in {ElapsedMs}ms", elapsedMs);
+            .ForContext("EventId", LoggerEventId.GetAllOrdersOfUserRequestFailed)
+            .Warning("Failed to retrieve orders of current user in {ElapsedMs}ms", elapsedMs);
 }

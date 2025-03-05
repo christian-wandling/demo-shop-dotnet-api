@@ -87,23 +87,25 @@ public sealed class CreateUserCommandHandler(
     }
 
     private static void LogCommandStarted(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.CreateUserCommandStarted)
-            .Information("Starting to create user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
+        logger.ForContext("EventId", LoggerEventId.CreateUserCommandStarted)
+            .Debug("Starting to create user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
     private static void LogCommandSuccess(ILogger logger, int userId, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.CreateUserCommandSuccess)
+        logger.ForContext("EventId", LoggerEventId.CreateUserCommandSuccess)
             .Information("Successfully created user with Id {UserId} for KeycloakUserId {KeycloakUserId}",
                 userId, keycloakUserId);
 
     private static void LogCommandError(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.CreateUserCommandError)
-            .Information("Error creating user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
+        logger.ForContext("EventId", LoggerEventId.CreateUserCommandError)
+            .Error("Error creating user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
-    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while creating user. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.CreateUserDatabaseException);
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.CreateUserDatabaseException)
+        .Error(ex, "Database error occurred while creating user. Error: {ErrorMessage}",
+            errorMessage);
 
-    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while creating user. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.CreateUserDomainException);
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.CreateUserDomainException)
+        .Error(ex, "Invalid operation while creating user. Error: {ErrorMessage}",
+            errorMessage);
 }

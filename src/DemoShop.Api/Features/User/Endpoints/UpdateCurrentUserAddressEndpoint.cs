@@ -45,26 +45,26 @@ public class UpdateCurrentUserAddressEndpoint(IMediator mediator, ILogger logger
         stopwatch.Stop();
 
         if (result.IsSuccess)
-            LogRequestSuccess(logger, stopwatch.Elapsed);
+            LogRequestSuccess(logger, stopwatch.Elapsed.Milliseconds);
         else
-            LogRequestFailed(logger, stopwatch.Elapsed);
+            LogRequestFailed(logger, stopwatch.Elapsed.Milliseconds);
 
         return result;
     }
 
     private static void LogRequestStarting(ILogger logger, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateUserAddressRequestStarted)
-            .Information("Starting PUT request for updating current user address at {Endpoint}", endpoint);
+            .ForContext("EventId", LoggerEventId.UpdateUserAddressRequestStarted)
+            .Debug("Starting PUT request for updating current user address at {Endpoint}", endpoint);
 
-    private static void LogRequestSuccess(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestSuccess(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateUserAddressRequestSuccess)
+            .ForContext("EventId", LoggerEventId.UpdateUserAddressRequestSuccess)
             .Information(
                 "Completed PUT request for updating current user address in {ElapsedMs}ms", elapsedMs);
 
-    private static void LogRequestFailed(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestFailed(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateUserAddressRequestFailed)
+            .ForContext("EventId", LoggerEventId.UpdateUserAddressRequestFailed)
             .Error("Failed PUT request to update current user address in {ElapsedMs}ms", elapsedMs);
 }

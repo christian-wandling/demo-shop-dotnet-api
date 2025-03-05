@@ -98,28 +98,28 @@ public sealed class UpdateCartItemQuantityCommandHandler(
         return Result.Success(savedSession);
     }
 
-    private static void LogCommandStarted(ILogger logger, int cartItemId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.UpdateCartItemQuantityCommandStarted)
-            .Information(
-                "Starting to update quantity of cart item with Id {CartItemId} for shopping session {SessionId}",
-                cartItemId, sessionId);
+    private static void LogCommandStarted(ILogger logger, int cartItemId, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.UpdateCartItemQuantityCommandStarted)
+        .Information(
+            "Starting to update quantity of cart item with Id {CartItemId} for shopping session {SessionId}",
+            cartItemId, sessionId);
 
-    private static void LogCommandSuccess(ILogger logger, int cartItemId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.UpdateCartItemQuantityCommandSuccess)
-            .Information(
-                "Successfully updated quantity of cart item with Id {CartItemId} for shopping session {SessionId}",
-                cartItemId, sessionId);
+    private static void LogCommandSuccess(ILogger logger, int cartItemId, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.UpdateCartItemQuantityCommandSuccess)
+        .Information(
+            "Successfully updated quantity of cart item with Id {CartItemId} for shopping session {SessionId}",
+            cartItemId, sessionId);
 
-    private static void LogCommandError(ILogger logger, int cartItemId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.UpdateCartItemQuantityCommandError)
-            .Information("Error updating quantity of cart item with Id {CartItemId} for shopping session {SessionId}",
-                cartItemId, sessionId);
+    private static void LogCommandError(ILogger logger, int cartItemId, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.UpdateCartItemQuantityCommandError)
+        .Error("Error updating quantity of cart item with Id {CartItemId} for shopping session {SessionId}",
+            cartItemId, sessionId);
 
-    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while updating cart item quantity. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.UpdateShoppingSessionDatabaseException);
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.UpdateShoppingSessionDatabaseException)
+        .Error(ex, "Database error occurred while updating cart item quantity. Error: {ErrorMessage}", errorMessage);
 
-    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while updating cart item quantity. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.UpdateShoppingSessionDomainException);
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.UpdateShoppingSessionDomainException)
+        .Error(ex, "Invalid operation while updating cart item quantity. Error: {ErrorMessage}", errorMessage);
 }

@@ -87,7 +87,8 @@ public class CurrentUserAccessorTests : Test
         // Assert
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(user.Id);
-        await _repository.DidNotReceive().GetUserByKeycloakIdAsync(identity.KeycloakUserId, Arg.Any<CancellationToken>());
+        await _repository.DidNotReceive()
+            .GetUserByKeycloakIdAsync(identity.KeycloakUserId, Arg.Any<CancellationToken>());
     }
 
     [Fact]

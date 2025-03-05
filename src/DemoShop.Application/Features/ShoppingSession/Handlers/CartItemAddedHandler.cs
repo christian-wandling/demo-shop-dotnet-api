@@ -35,6 +35,7 @@ public class CartItemAddedHandler(ILogger logger, ICacheService cacheService)
         cacheKeys.ForEach(cacheService.InvalidateCache);
     }
 
-    private static void LogCartItemAdded(ILogger logger, int id) => logger.Information(
-        "CartItem Added: {Id} {@EventId}", id, LoggerEventIds.CartItemAddedDomainEvent);
+    private static void LogCartItemAdded(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.CartItemAddedDomainEvent)
+        .Information("CartItem Added: {Id}", id);
 }

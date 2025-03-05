@@ -87,24 +87,24 @@ public sealed class CreateShoppingSessionCommandHandler(
         return Result.Success(savedSession);
     }
 
-    private static void LogCommandStarted(ILogger logger, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.CreateShoppingSessionCommandStarted)
-            .Information("Starting to create shopping session with UserId {UserId}", userId);
+    private static void LogCommandStarted(ILogger logger, int userId) => logger
+        .ForContext("EventId", LoggerEventId.CreateShoppingSessionCommandStarted)
+        .Debug("Starting to create shopping session with UserId {UserId}", userId);
 
-    private static void LogCommandSuccess(ILogger logger, int sessionId, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.CreateShoppingSessionCommandSuccess)
-            .Information("Successfully created shopping session with Id {SessionId} for UserId {UserId}",
-                sessionId, userId);
+    private static void LogCommandSuccess(ILogger logger, int sessionId, int userId) => logger
+        .ForContext("EventId", LoggerEventId.CreateShoppingSessionCommandSuccess)
+        .Information("Successfully created shopping session with Id {SessionId} for UserId {UserId}",
+            sessionId, userId);
 
-    private static void LogCommandError(ILogger logger, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.CreateShoppingSessionCommandError)
-            .Information("Error creating shopping session with UserId {UserId}", userId);
+    private static void LogCommandError(ILogger logger, int userId) => logger
+        .ForContext("EventId", LoggerEventId.CreateShoppingSessionCommandError)
+        .Error("Error creating shopping session with UserId {UserId}", userId);
 
-    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while creating shopping session. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.CreateShoppingSessionDatabaseException);
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.CreateShoppingSessionDatabaseException)
+        .Error(ex, "Database error occurred while creating shopping session. Error: {ErrorMessage}", errorMessage);
 
-    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while creating shopping session. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.CreateShoppingSessionDomainException);
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.CreateShoppingSessionDomainException)
+        .Error(ex, "Invalid operation while creating shopping session. Error: {ErrorMessage}", errorMessage);
 }

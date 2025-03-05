@@ -20,7 +20,6 @@ public class GetProductByIdQueryHandlerTests : Test
 {
     private const string CacheKey = "product-1";
     private readonly ICacheService _cacheService;
-    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IProductRepository _repository;
     private readonly GetProductByIdQueryHandler _sut;
@@ -29,9 +28,9 @@ public class GetProductByIdQueryHandlerTests : Test
     {
         _mapper = Mock<IMapper>();
         _repository = Mock<IProductRepository>();
-        _logger = Mock<ILogger>();
+        var logger = Mock<ILogger>();
         _cacheService = Mock<ICacheService>();
-        _sut = new GetProductByIdQueryHandler(_mapper, _repository, _logger, _cacheService);
+        _sut = new GetProductByIdQueryHandler(_mapper, _repository, logger, _cacheService);
     }
 
     [Fact]

@@ -72,26 +72,24 @@ public sealed class CreateOrderCommandHandler(
         return Result.Success(savedOrder);
     }
 
-    private static void LogCommandStarted(ILogger logger, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.CreateOrderCommandStarted)
-            .Information("Starting to create order from shopping session with ID {SessionId}",
-                sessionId);
+    private static void LogCommandStarted(ILogger logger, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.CreateOrderCommandStarted)
+        .Debug("Starting to create order from shopping session with ID {SessionId}", sessionId);
 
-    private static void LogCommandSuccess(ILogger logger, int orderId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.CreateOrderCommandSuccess)
-            .Information("Successfully created order with Id {OrderId} from shopping session {SessionId}",
-                orderId, sessionId);
+    private static void LogCommandSuccess(ILogger logger, int orderId, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.CreateOrderCommandSuccess)
+        .Information("Successfully created order with Id {OrderId} from shopping session {SessionId}", orderId,
+            sessionId);
 
-    private static void LogCommandError(ILogger logger, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.CreateOrderCommandError)
-            .Information("Error creating order from shopping session with ID {SessionId}",
-                sessionId);
+    private static void LogCommandError(ILogger logger, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.CreateOrderCommandError)
+        .Error("Error creating order from shopping session with ID {SessionId}", sessionId);
 
-    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while creating order. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.CreateOrderDatabaseException);
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.CreateOrderDatabaseException)
+        .Error(ex, "Database error occurred while creating order. Error: {ErrorMessage}", errorMessage);
 
-    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while creating order. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.CreateOrderDomainException);
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.CreateOrderDomainException)
+        .Error(ex, "Invalid operation while creating order. Error: {ErrorMessage}", errorMessage);
 }

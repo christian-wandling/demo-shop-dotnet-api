@@ -86,52 +86,52 @@ public class ShoppingSessionRepository(ApplicationDbContext context, ILogger log
 
     private static void LogGetShoppingSessionByUserIdStarted(ILogger logger, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetShoppingSessionByUserIdStarted)
+            .ForContext("EventId", LoggerEventId.GetShoppingSessionByUserIdStarted)
             .Debug("Attempting to get shoppingSession with UserId {UserId}", userId);
 
     private static void LogGetShoppingSessionByUserIdSuccess(ILogger logger, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetShoppingSessionByUserIdSuccess)
+            .ForContext("EventId", LoggerEventId.GetShoppingSessionByUserIdSuccess)
             .Debug("Attempting to get shoppingSession with UserId {UserId} completed successfully", userId);
 
     private static void LogGetShoppingSessionByUserIdNotFound(ILogger logger, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetShoppingSessionByUserIdNotFound)
-            .Debug("ShoppingSession with UserId {UserId} not found in database", userId);
+            .ForContext("EventId", LoggerEventId.GetShoppingSessionByUserIdNotFound)
+            .Warning("ShoppingSession with UserId {UserId} not found in database", userId);
 
     private static void LogCreateShoppingSessionStarted(ILogger logger, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.CreateShoppingSessionStarted)
+            .ForContext("EventId", LoggerEventId.CreateShoppingSessionStarted)
             .Debug("Attempting to create shoppingSession for user {UserId}", userId);
 
     private static void LogCreateShoppingSessionSuccess(ILogger logger, int sessionId, int userId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.CreateShoppingSessionSuccess)
+            .ForContext("EventId", LoggerEventId.CreateShoppingSessionSuccess)
             .Debug("Successfully created shoppingSession with Id {SessionId} for user {UserId}",
                 sessionId, userId);
 
     private static void LogUpdateShoppingSessionStarted(ILogger logger, int sessionId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateShoppingSessionStarted)
+            .ForContext("EventId", LoggerEventId.UpdateShoppingSessionStarted)
             .Debug("Attempting to update shoppingSession with Id {SessionId}", sessionId);
 
     private static void LogUpdateShoppingSessionSuccess(ILogger logger, int sessionId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateShoppingSessionSuccess)
+            .ForContext("EventId", LoggerEventId.UpdateShoppingSessionSuccess)
             .Debug("Successfully updated shoppingSession with Id {SessionId}", sessionId);
 
     private static void LogDeleteShoppingSessionStarted(ILogger logger, int sessionId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.DeleteShoppingSessionStarted)
+            .ForContext("EventId", LoggerEventId.DeleteShoppingSessionStarted)
             .Debug("Attempting to delete shoppingSession with Id {SessionId}", sessionId);
 
     private static void LogDeleteShoppingSessionSuccess(ILogger logger, int sessionId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.DeleteShoppingSessionSuccess)
+            .ForContext("EventId", LoggerEventId.DeleteShoppingSessionSuccess)
             .Debug("Successfully deleted shoppingSession with Id {SessionId}", sessionId);
 
     private static void LogDeleteShoppingSessionFailed(ILogger logger, int sessionId) =>
         logger
-            .ForContext("EventId", LoggerEventIds.DeleteShoppingSessionFailed)
-            .Debug("Failed to delete shoppingSession with Id {SessionId}", sessionId);
+            .ForContext("EventId", LoggerEventId.DeleteShoppingSessionFailed)
+            .Error("Failed to delete shoppingSession with Id {SessionId}", sessionId);
 }

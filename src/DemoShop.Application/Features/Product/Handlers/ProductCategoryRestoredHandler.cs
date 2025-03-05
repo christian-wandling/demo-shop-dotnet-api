@@ -22,6 +22,7 @@ public class ProductCategoryRestoredHandler(ILogger logger)
         return Task.CompletedTask;
     }
 
-    private static void LogProductCategoryRestored(ILogger logger, int id) => logger.Information(
-        "Product category restored: {Id} {@EventId}", id, LoggerEventIds.ProductCategoryRestoredDomainEvent);
+    private static void LogProductCategoryRestored(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.ProductCategoryRestoredDomainEvent)
+        .Information("Product category restored: {Id}", id);
 }

@@ -84,18 +84,18 @@ public sealed class UnitOfWork(IApplicationDbContext context, ILogger logger) : 
     }
 
     private static void LogTransactionStarted(ILogger logger) =>
-        logger.ForContext("EventId", LoggerEventIds.TransactionStarted)
-            .Information("Starting transaction");
+        logger.ForContext("EventId", LoggerEventId.TransactionStarted)
+            .Debug("Starting transaction");
 
     private static void LogTransactionSucceeded(ILogger logger) =>
-        logger.ForContext("EventId", LoggerEventIds.TransactionSuccess)
+        logger.ForContext("EventId", LoggerEventId.TransactionSuccess)
             .Information("Transaction completed successfully");
 
     private static void LogTransactionRollback(ILogger logger) =>
-        logger.ForContext("EventId", LoggerEventIds.TransactionRollback)
+        logger.ForContext("EventId", LoggerEventId.TransactionRollback)
             .Error("Transaction rolled back");
 
     private static void LogTransactionDisposed(ILogger logger) =>
-        logger.ForContext("EventId", LoggerEventIds.TransactionDisposed)
+        logger.ForContext("EventId", LoggerEventId.TransactionDisposed)
             .Debug("Transaction disposed");
 }

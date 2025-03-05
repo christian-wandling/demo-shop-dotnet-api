@@ -42,27 +42,27 @@ public class CheckoutEndpoint(IMediator mediator, ILogger logger)
         stopwatch.Stop();
 
         if (result.IsSuccess)
-            LogRequestSuccess(logger, result.Value.Id, stopwatch.Elapsed);
+            LogRequestSuccess(logger, result.Value.Id, stopwatch.Elapsed.Milliseconds);
         else
-            LogRequestFailed(logger, stopwatch.Elapsed);
+            LogRequestFailed(logger, stopwatch.Elapsed.Milliseconds);
 
         return result;
     }
 
     private static void LogRequestStarting(ILogger logger, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.CheckoutRequestStarted)
-            .Information("Starting POST request for checkout current shopping session at {Endpoint}", endpoint);
+            .ForContext("EventId", LoggerEventId.CheckoutRequestStarted)
+            .Debug("Starting POST request for checkout current shopping session at {Endpoint}", endpoint);
 
-    private static void LogRequestSuccess(ILogger logger, int id, TimeSpan elapsedMs) =>
+    private static void LogRequestSuccess(ILogger logger, int id, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.CheckoutRequestSuccess)
+            .ForContext("EventId", LoggerEventId.CheckoutRequestSuccess)
             .Information(
                 "Completed POST request for checkout current shopping session {Id} in {ElapsedMs}ms",
                 id, elapsedMs);
 
-    private static void LogRequestFailed(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestFailed(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.CheckoutRequestFailed)
+            .ForContext("EventId", LoggerEventId.CheckoutRequestFailed)
             .Error("Failed POST request to checkout current shopping session in {ElapsedMs}ms", elapsedMs);
 }

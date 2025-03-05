@@ -64,18 +64,21 @@ public sealed class GetAllProductsQueryHandler(
         return response;
     }
 
-    private static void LogQueryStarted(ILogger logger) => logger.Information(
-        "Starting query to retrieve all products {@EventId}", LoggerEventIds.GetAllProductsQueryStarted);
+    private static void LogQueryStarted(ILogger logger) => logger
+        .ForContext("EventId", LoggerEventId.GetAllProductsQueryStarted)
+        .Debug("Starting query to retrieve all products");
 
-    private static void LogQuerySuccess(ILogger logger, int productCount) =>
-        logger.Information("Successfully retrieved {ProductCount} products {@EventId}",
-            productCount, LoggerEventIds.GetAllProductsQuerySuccess);
+    private static void LogQuerySuccess(ILogger logger, int productCount) => logger
+            .ForContext("EventId", LoggerEventId.GetAllProductsQuerySuccess)
+            .Information("Successfully retrieved {ProductCount} products", productCount);
 
-    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while retrieving all products. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.GetAllProductsDatabaseException);
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) => logger
+            .ForContext("EventId", LoggerEventId.GetAllProductsDatabaseException)
+            .Error(ex, "Database error occurred while retrieving all products. Error: {ErrorMessage}",
+            errorMessage);
 
-    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while retrieving all products. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.GetAllProductsDomainException);
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.GetAllProductsDomainException)
+        .Error(ex, "Invalid operation while retrieving all products. Error: {ErrorMessage}",
+            errorMessage);
 }

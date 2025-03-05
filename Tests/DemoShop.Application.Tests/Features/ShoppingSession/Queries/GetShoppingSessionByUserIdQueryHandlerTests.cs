@@ -19,7 +19,6 @@ namespace DemoShop.Application.Tests.Features.ShoppingSession.Queries;
 public class GetShoppingSessionByUserIdQueryHandlerTests : Test
 {
     private readonly ICacheService _cacheService;
-    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IShoppingSessionRepository _repository;
     private readonly GetShoppingSessionByUserIdQueryHandler _sut;
@@ -28,9 +27,9 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
     {
         _mapper = Substitute.For<IMapper>();
         _repository = Substitute.For<IShoppingSessionRepository>();
-        _logger = Substitute.For<ILogger>();
+        var logger = Substitute.For<ILogger>();
         _cacheService = Substitute.For<ICacheService>();
-        _sut = new GetShoppingSessionByUserIdQueryHandler(_mapper, _repository, _logger, _cacheService);
+        _sut = new GetShoppingSessionByUserIdQueryHandler(_mapper, _repository, logger, _cacheService);
     }
 
     [Fact]
@@ -65,7 +64,6 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(expectedResponse);
         await _repository.DidNotReceive().GetSessionByUserIdAsync(request.UserId, Arg.Any<CancellationToken>());
-
     }
 
     [Fact]
@@ -78,7 +76,7 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         var cacheKey = Create<string>();
 
         _cacheService.GenerateCacheKey("shoppingSession", request).Returns(cacheKey);
-        _cacheService.GetFromCache<ShoppingSessionResponse>(cacheKey).Returns((ShoppingSessionResponse)null);
+        _cacheService.GetFromCache<ShoppingSessionResponse>(cacheKey).Returns((ShoppingSessionResponse?)null);
 
         _repository.GetSessionByUserIdAsync(request.UserId, Arg.Any<CancellationToken>())
             .Returns(shoppingSession);
@@ -92,7 +90,6 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         result.IsSuccess.Should().BeTrue();
         result.Value.Should().Be(expectedResponse);
         await _repository.Received(1).GetSessionByUserIdAsync(request.UserId, Arg.Any<CancellationToken>());
-
     }
 
     [Fact]
@@ -120,7 +117,7 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         var cacheKey = Create<string>();
 
         _cacheService.GenerateCacheKey("shoppingSession", request).Returns(cacheKey);
-        _cacheService.GetFromCache<ShoppingSessionResponse>(cacheKey).Returns((ShoppingSessionResponse)null);
+        _cacheService.GetFromCache<ShoppingSessionResponse>(cacheKey).Returns((ShoppingSessionResponse?)null);
         _repository.GetSessionByUserIdAsync(request.UserId, Arg.Any<CancellationToken>())
             .Throws(exception);
 
@@ -141,7 +138,7 @@ public class GetShoppingSessionByUserIdQueryHandlerTests : Test
         var cacheKey = Create<string>();
 
         _cacheService.GenerateCacheKey("shoppingSession", request).Returns(cacheKey);
-        _cacheService.GetFromCache<ShoppingSessionResponse>(cacheKey).Returns((ShoppingSessionResponse)null);
+        _cacheService.GetFromCache<ShoppingSessionResponse>(cacheKey).Returns((ShoppingSessionResponse?)null);
         _repository.GetSessionByUserIdAsync(request.UserId, Arg.Any<CancellationToken>())
             .Throws(exception);
 

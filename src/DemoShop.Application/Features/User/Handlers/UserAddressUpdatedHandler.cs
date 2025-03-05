@@ -34,6 +34,7 @@ public class UserAddressUpdatedHandler(ILogger logger, ICacheService cacheServic
         cacheService.InvalidateCache(cacheKeyordersOfUser);
     }
 
-    private static void LogUserAddressUpdated(ILogger logger, int id) => logger.Information(
-        "User Address Updated: {Id} {@EventId}", id, LoggerEventIds.UserAddressUpdatedDomainEvent);
+    private static void LogUserAddressUpdated(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.UserAddressUpdatedDomainEvent)
+        .Information("User Address Updated: {Id}", id);
 }

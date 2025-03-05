@@ -72,26 +72,26 @@ public sealed class GetUserByKeycloakIdQueryHandler(
     }
 
     private static void LogQueryStarted(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetUserByKeycloakIdQueryStarted)
-            .Information("Starting query to retrieve user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
+        logger.ForContext("EventId", LoggerEventId.GetUserByKeycloakIdQueryStarted)
+            .Debug("Starting query to retrieve user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
     private static void LogQuerySuccess(ILogger logger, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetUserByKeycloakIdQuerySuccess)
+        logger.ForContext("EventId", LoggerEventId.GetUserByKeycloakIdQuerySuccess)
             .Information("Successfully retrieved user with ID {UserId}", userId);
 
     private static void LogNotFound(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetUserByKeycloakIdQueryNotFound)
-            .Information("User with KeycloakUserId {KeycloakUserId} was not found", keycloakUserId);
+        logger.ForContext("EventId", LoggerEventId.GetUserByKeycloakIdQueryNotFound)
+            .Warning("User with KeycloakUserId {KeycloakUserId} was not found", keycloakUserId);
 
     private static void
         LogDatabaseException(ILogger logger, string keycloakUserId, string errorMessage, Exception ex) =>
-        logger.ForContext("EventId", LoggerEventIds.GetUserByKeycloakIdDatabaseException)
+        logger.ForContext("EventId", LoggerEventId.GetUserByKeycloakIdDatabaseException)
             .Error(ex, "Database error occurred while retrieving user with ID {KeycloakUserId}. Error: {ErrorMessage}",
                 keycloakUserId, errorMessage);
 
     private static void
         LogInvalidOperationException(ILogger logger, string keycloakUserId, string errorMessage, Exception ex) =>
-        logger.ForContext("EventId", LoggerEventIds.GetUserByKeycloakIdDomainException)
+        logger.ForContext("EventId", LoggerEventId.GetUserByKeycloakIdDomainException)
             .Error(ex, "Invalid operation while retrieving user with ID {KeycloakUserId}. Error: {ErrorMessage}",
                 keycloakUserId, errorMessage);
 }

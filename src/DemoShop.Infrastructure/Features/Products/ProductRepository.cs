@@ -48,26 +48,26 @@ public class ProductRepository(ApplicationDbContext context, ILogger logger) : I
 
     private static void LogGetAllProductsStarted(ILogger logger) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetAllProductsStarted)
+            .ForContext("EventId", LoggerEventId.GetAllProductsStarted)
             .Debug("Getting all products started");
 
     private static void LogGetAllProductsSuccess(ILogger logger, int count) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetAllProductsSuccess)
+            .ForContext("EventId", LoggerEventId.GetAllProductsSuccess)
             .Debug("Getting all products completed. Retrieved {Count} products successfully", count);
 
     private static void LogGetProductByIdStarted(ILogger logger, int id) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetProductByIdStarted)
+            .ForContext("EventId", LoggerEventId.GetProductByIdStarted)
             .Debug("Attempting to get Product with ID {Id}", id);
 
     private static void LogGetProductByIdSuccess(ILogger logger, int id) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetProductByIdSuccess)
+            .ForContext("EventId", LoggerEventId.GetProductByIdSuccess)
             .Debug("Attempting to get product with ID {Id} completed successfully", id);
 
     private static void LogGetProductByIdNotFound(ILogger logger, int id) =>
         logger
-            .ForContext("EventId", LoggerEventIds.GetProductByIdNotFound)
-            .Debug("Product with ID {Id} not found in database", id);
+            .ForContext("EventId", LoggerEventId.GetProductByIdNotFound)
+            .Warning("Product with ID {Id} not found in database", id);
 }

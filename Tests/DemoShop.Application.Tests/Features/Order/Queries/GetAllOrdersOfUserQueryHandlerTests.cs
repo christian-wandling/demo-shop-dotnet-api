@@ -20,7 +20,6 @@ namespace DemoShop.Application.Tests.Features.Order.Queries;
 public class GetAllOrdersOfUserQueryHandlerTests : Test
 {
     private readonly ICacheService _cacheService;
-    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IOrderRepository _repository;
     private readonly GetAllOrdersOfUserQueryHandler _sut;
@@ -31,14 +30,14 @@ public class GetAllOrdersOfUserQueryHandlerTests : Test
         _userAccessor = Mock<ICurrentUserAccessor>();
         _mapper = Mock<IMapper>();
         _repository = Mock<IOrderRepository>();
-        _logger = Mock<ILogger>();
+        var logger = Mock<ILogger>();
         _cacheService = Mock<ICacheService>();
 
         _sut = new GetAllOrdersOfUserQueryHandler(
             _userAccessor,
             _mapper,
             _repository,
-            _logger,
+            logger,
             _cacheService
         );
     }
@@ -64,7 +63,6 @@ public class GetAllOrdersOfUserQueryHandlerTests : Test
         // Arrange
         var query = Create<GetAllOrdersOfUserQuery>();
         var userId = Create<int>();
-        var orders = Create<List<OrderEntity>>();
         var mappedResponse = Create<OrderListResponse>();
         var cacheKey = Create<string>();
 
@@ -93,7 +91,7 @@ public class GetAllOrdersOfUserQueryHandlerTests : Test
 
         _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
         _cacheService.GenerateCacheKey("orders-of-user", userId).Returns(cacheKey);
-        _cacheService.GetFromCache<OrderListResponse>(cacheKey).Returns((OrderListResponse)null);
+        _cacheService.GetFromCache<OrderListResponse>(cacheKey).Returns((OrderListResponse?)null);
         _repository.GetOrdersByUserIdAsync(userId, CancellationToken.None).Returns(orders);
         _mapper.Map<OrderListResponse>(orders).Returns(mappedResponse);
 
@@ -117,7 +115,7 @@ public class GetAllOrdersOfUserQueryHandlerTests : Test
 
         _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
         _cacheService.GenerateCacheKey("orders-of-user", userId).Returns(cacheKey);
-        _cacheService.GetFromCache<OrderListResponse>(cacheKey).Returns((OrderListResponse)null);
+        _cacheService.GetFromCache<OrderListResponse>(cacheKey).Returns((OrderListResponse?)null);
         _repository.GetOrdersByUserIdAsync(userId, CancellationToken.None)
             .Throws(new InvalidOperationException(errorMessage));
 
@@ -140,7 +138,7 @@ public class GetAllOrdersOfUserQueryHandlerTests : Test
 
         _userAccessor.GetId(CancellationToken.None).Returns(Result.Success(userId));
         _cacheService.GenerateCacheKey("orders-of-user", userId).Returns(cacheKey);
-        _cacheService.GetFromCache<OrderListResponse>(cacheKey).Returns((OrderListResponse)null);
+        _cacheService.GetFromCache<OrderListResponse>(cacheKey).Returns((OrderListResponse?)null);
         _repository.GetOrdersByUserIdAsync(userId, CancellationToken.None)
             .Throws(new TestDbException(errorMessage));
 

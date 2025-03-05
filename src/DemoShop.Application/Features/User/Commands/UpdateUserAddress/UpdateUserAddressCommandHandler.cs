@@ -133,23 +133,23 @@ public sealed class UpdateUserAddressCommandHandler(
         return Result.Success(savedUser);
     }
 
-    private static void LogCommandStarted(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.UpdateUserAddressCommandStarted)
-            .Information("Starting to update address for user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
+    private static void LogCommandStarted(ILogger logger, string keycloakUserId) => logger
+        .ForContext("EventId", LoggerEventId.UpdateUserAddressCommandStarted)
+        .Debug("Starting to update address for user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
-    private static void LogCommandSuccess(ILogger logger, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.UpdateUserAddressCommandSuccess)
-            .Information("Successfully updated address for user with Id {UserId}", userId);
+    private static void LogCommandSuccess(ILogger logger, int userId) => logger
+        .ForContext("EventId", LoggerEventId.UpdateUserAddressCommandSuccess)
+        .Information("Successfully updated address for user with Id {UserId}", userId);
 
-    private static void LogCommandError(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.UpdateUserAddressCommandError)
-            .Information("Error updating address for user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
+    private static void LogCommandError(ILogger logger, string keycloakUserId) => logger
+        .ForContext("EventId", LoggerEventId.UpdateUserAddressCommandError)
+        .Error("Error updating address for user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
-    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while updating user address. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.UpdateUserDatabaseException);
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.UpdateUserDatabaseException)
+        .Error(ex, "Database error occurred while updating user address. Error: {ErrorMessage}", errorMessage);
 
-    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while updating user address. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.UpdateUserDomainException);
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.UpdateUserDomainException)
+        .Error(ex, "Invalid operation while updating user address. Error: {ErrorMessage}", errorMessage);
 }

@@ -24,7 +24,6 @@ namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 public class UpdateCartItemQuantityCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IShoppingSessionRepository _repository;
     private readonly ICurrentShoppingSessionAccessor _sessionAccessor;
@@ -37,7 +36,7 @@ public class UpdateCartItemQuantityCommandHandlerTests : Test
         _mapper = Substitute.For<IMapper>();
         _sessionAccessor = Mock<ICurrentShoppingSessionAccessor>();
         _repository = Mock<IShoppingSessionRepository>();
-        _logger = Mock<ILogger>();
+        var logger = Mock<ILogger>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
         _validator = Mock<IValidator<UpdateCartItemQuantityCommand>>();
         _validationService = Mock<IValidationService>();
@@ -46,7 +45,7 @@ public class UpdateCartItemQuantityCommandHandlerTests : Test
             _mapper,
             _sessionAccessor,
             _repository,
-            _logger,
+            logger,
             _eventDispatcher,
             _validator,
             _validationService

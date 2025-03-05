@@ -39,14 +39,14 @@ public class ValidationService(ILogger logger) : IValidationService
     }
 
     private static void LogValidationStarted(ILogger logger, string request) =>
-        logger.ForContext("EventId", LoggerEventIds.ValidationStarted)
-            .Information("Starting to validate {Request}", request);
+        logger.ForContext("EventId", LoggerEventId.ValidationStarted)
+            .Debug("Starting to validate {Request}", request);
 
     private static void LogValidationSuccess(ILogger logger, string request) =>
-        logger.ForContext("EventId", LoggerEventIds.ValidationSuccess)
+        logger.ForContext("EventId", LoggerEventId.ValidationSuccess)
             .Information("Successfully validated {Request}", request);
 
     private static void LogValidationFailed(ILogger logger, string request, string errors) =>
-        logger.ForContext("EventId", LoggerEventIds.ValidationFailed)
-            .Information("Error validating {Request}: {Errors}", request, errors);
+        logger.ForContext("EventId", LoggerEventId.ValidationFailed)
+            .Error("Error validating {Request}: {Errors}", request, errors);
 }

@@ -22,6 +22,7 @@ public class ProductCategoryCreatedHandler(ILogger logger)
         return Task.CompletedTask;
     }
 
-    private static void LogCategoryCreated(ILogger logger, int id) => logger.Information(
-        "Product category created: {Id} {@EventId}", id, LoggerEventIds.ProductCategoryCreatedDomainEvent);
+    private static void LogCategoryCreated(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.ProductCategoryCreatedDomainEvent)
+        .Information("Product category created: {Id}", id);
 }

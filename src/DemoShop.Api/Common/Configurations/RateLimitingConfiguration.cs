@@ -54,6 +54,6 @@ public static class RateLimitingConfiguration
 
     private static void LogRateLimitExceeded(ILogger logger, string ip, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.ApiRateLimited)
+            .ForContext("EventId", LoggerEventId.ApiRateLimited)
             .Warning("Rate limit exceeded for IP: {IpAddress}. Request: {Endpoint}", ip, endpoint);
 }

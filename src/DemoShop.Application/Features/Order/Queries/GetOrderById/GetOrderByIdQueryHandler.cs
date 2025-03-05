@@ -84,25 +84,25 @@ public sealed class GetOrderByIdQueryHandler(
     }
 
     private static void LogQueryStarted(ILogger logger, int orderId, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetOrderByIdQueryStarted)
-            .Information("Starting query to retrieve order with ID {OrderId} for user {UserId}", orderId, userId);
+        logger.ForContext("EventId", LoggerEventId.GetOrderByIdQueryStarted)
+            .Debug("Starting query to retrieve order with ID {OrderId} for user {UserId}", orderId, userId);
 
     private static void LogQuerySuccess(ILogger logger, int orderId, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetOrderByIdQuerySuccess)
+        logger.ForContext("EventId", LoggerEventId.GetOrderByIdQuerySuccess)
             .Information("Successfully retrieved order with ID {OrderId} for user {UserId}", orderId, userId);
 
     private static void LogNotFound(ILogger logger, int orderId, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.GetOrderByIdQueryNotFound)
+        logger.ForContext("EventId", LoggerEventId.GetOrderByIdQueryNotFound)
             .Information("Order with ID {OrderId} for user {UserId} was not found", orderId, userId);
 
     private static void LogDatabaseException(ILogger logger, int orderId, string errorMessage, Exception ex) =>
-        logger.ForContext("EventId", LoggerEventIds.GetOrderByIdDatabaseException)
+        logger.ForContext("EventId", LoggerEventId.GetOrderByIdDatabaseException)
             .Error(ex, "Database error occurred while retrieving order with ID {OrderId}. Error: {ErrorMessage}",
                 orderId, errorMessage);
 
     private static void
         LogInvalidOperationException(ILogger logger, int orderId, string errorMessage, Exception ex) =>
-        logger.ForContext("EventId", LoggerEventIds.GetOrderByIdDomainException)
+        logger.ForContext("EventId", LoggerEventId.GetOrderByIdDomainException)
             .Error(ex, "Invalid operation while retrieving order with ID {OrderId}. Error: {ErrorMessage}",
                 orderId, errorMessage);
 }

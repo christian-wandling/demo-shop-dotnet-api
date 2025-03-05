@@ -22,6 +22,7 @@ public class OrderRestoredHandler(ILogger logger)
         return Task.CompletedTask;
     }
 
-    private static void LogOrderRestored(ILogger logger, int id) => logger.Information(
-        "Order restored: {Id} {@EventId}", id, LoggerEventIds.OrderRestoredDomainEvent);
+    private static void LogOrderRestored(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.OrderRestoredDomainEvent)
+        .Information("Order restored: {Id}", id);
 }

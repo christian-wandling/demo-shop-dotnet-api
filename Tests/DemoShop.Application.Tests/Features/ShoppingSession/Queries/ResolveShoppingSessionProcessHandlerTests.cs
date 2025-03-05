@@ -7,9 +7,7 @@ using DemoShop.Application.Features.ShoppingSession.Processes.ResolveShoppingSes
 using DemoShop.Application.Features.ShoppingSession.Queries.GetShoppingSessionByUserId;
 using DemoShop.Application.Features.User.Interfaces;
 using DemoShop.TestUtils.Common.Base;
-using DemoShop.TestUtils.Common.Exceptions;
 using MediatR;
-using NSubstitute.ExceptionExtensions;
 using Serilog;
 
 #endregion
@@ -19,7 +17,6 @@ namespace DemoShop.Application.Tests.Features.ShoppingSession.Queries;
 public class ResolveShoppingSessionProcessHandlerTests : Test
 {
     private readonly CancellationToken _cancellationToken;
-    private readonly ILogger _logger;
     private readonly IMediator _mediator;
     private readonly ResolveShoppingSessionProcessHandler _sut;
     private readonly ICurrentUserAccessor _userAccessor;
@@ -28,13 +25,13 @@ public class ResolveShoppingSessionProcessHandlerTests : Test
     {
         _userAccessor = Substitute.For<ICurrentUserAccessor>();
         _mediator = Substitute.For<IMediator>();
-        _logger = Substitute.For<ILogger>();
+        var logger = Substitute.For<ILogger>();
         _cancellationToken = CancellationToken.None;
 
         _sut = new ResolveShoppingSessionProcessHandler(
             _userAccessor,
             _mediator,
-            _logger
+            logger
         );
     }
 

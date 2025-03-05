@@ -22,6 +22,7 @@ public class UserCreatedHandler(ILogger logger)
         return Task.CompletedTask;
     }
 
-    private static void LogUserCreated(ILogger logger, int id) => logger.Information(
-        "User Created: {Id} {@EventId}", id, LoggerEventIds.UserCreatedDomainEvent);
+    private static void LogUserCreated(ILogger logger, int id) => logger
+        .ForContext("EventId", LoggerEventId.UserCreatedDomainEvent)
+        .Information("User Created: {Id}", id);
 }

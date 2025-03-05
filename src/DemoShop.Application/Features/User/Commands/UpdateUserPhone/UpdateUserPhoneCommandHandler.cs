@@ -98,24 +98,24 @@ public sealed class UpdateUserPhoneCommandHandler(
         return Result.Success(savedUser);
     }
 
-    private static void LogCommandStarted(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.UpdateUserPhoneCommandStarted)
-            .Information("Starting to update phone for user with KeycloakUserId {KeycloakUserId}",
-                keycloakUserId);
+    private static void LogCommandStarted(ILogger logger, string keycloakUserId) => logger
+        .ForContext("EventId", LoggerEventId.UpdateUserPhoneCommandStarted)
+        .Debug("Starting to update phone for user with KeycloakUserId {KeycloakUserId}",
+            keycloakUserId);
 
-    private static void LogCommandSuccess(ILogger logger, int userId) =>
-        logger.ForContext("EventId", LoggerEventIds.UpdateUserPhoneCommandSuccess)
-            .Information("Successfully updated phone for user with Id {UserId}", userId);
+    private static void LogCommandSuccess(ILogger logger, int userId) => logger
+        .ForContext("EventId", LoggerEventId.UpdateUserPhoneCommandSuccess)
+        .Information("Successfully updated phone for user with Id {UserId}", userId);
 
-    private static void LogCommandError(ILogger logger, string keycloakUserId) =>
-        logger.ForContext("EventId", LoggerEventIds.UpdateUserPhoneCommandError)
-            .Information("Error updating phone for user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
+    private static void LogCommandError(ILogger logger, string keycloakUserId) => logger
+        .ForContext("EventId", LoggerEventId.UpdateUserPhoneCommandError)
+        .Error("Error updating phone for user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
-    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while updating user phone. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.UpdateUserDatabaseException);
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.UpdateUserDatabaseException)
+        .Error(ex, "Database error occurred while updating user phone. Error: {ErrorMessage}", errorMessage);
 
-    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while updating user phone. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.UpdateUserDomainException);
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.UpdateUserDomainException)
+        .Error(ex, "Invalid operation while updating user phone. Error: {ErrorMessage}", errorMessage);
 }

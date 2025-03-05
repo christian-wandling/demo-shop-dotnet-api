@@ -56,19 +56,19 @@ public sealed class CurrentUserAccessor(
 
     private static void LogStarted(ILogger logger, string keycloakUserId) =>
         logger.Information(
-            "[{EventId}] Attempting to get user for KeycloakUserId {KeycloakUserId}",
-            LoggerEventIds.CurrentUserAccessorStarted,
+            "Attempting to get user for KeycloakUserId {KeycloakUserId}",
+            LoggerEventId.CurrentUserAccessorStarted,
             keycloakUserId);
 
     private static void LogSuccess(ILogger logger, int userId, string keycloakUserId) =>
         logger.Information(
-            "[{EventId}] User with id {Id} found for KeycloakUserId {KeycloakUserId}",
-            LoggerEventIds.CurrentUserAccessorSuccess,
+            "User with id {Id} found for KeycloakUserId {KeycloakUserId}",
+            LoggerEventId.CurrentUserAccessorSuccess,
             userId, keycloakUserId);
 
     private static void LogNotFound(ILogger logger, string keycloakUserId) =>
         logger.Error(
-            "[{EventId}] No user found for KeycloakUserId {KeycloakUserId}",
-            LoggerEventIds.CurrentUserAccessorNotFound,
+            "No user found for KeycloakUserId {KeycloakUserId}",
+            LoggerEventId.CurrentUserAccessorNotFound,
             keycloakUserId);
 }

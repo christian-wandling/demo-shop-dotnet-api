@@ -12,13 +12,19 @@ try
     var builder = WebApplication.CreateBuilder(args);
     builder.ConfigureBuilder();
     LoggingConfiguration.ConfigureLogging(builder);
-    Log.Information("Configuration loaded {@EventId}", LoggerEventIds.ConfigurationLoaded);
+    Log.ForContext("EventId", LoggerEventId.ConfigurationLoaded)
+        .Debug("Configuration loaded");
+
     builder.ConfigureServices();
+
     var app = builder.Build();
     app.ConfigureMiddleware();
-    app.Lifetime.ApplicationStopping.Register(() =>
-        Log.Information("Application shutting down {@EventId}", LoggerEventIds.ApplicationShutdown));
-    Log.Information("Application starting {@EventId}", LoggerEventIds.ApplicationStartup);
+    Log.ForContext("EventId", LoggerEventId.ApplicationStartup)
+        .Information("Application starting");
+
+    app.Lifetime.ApplicationStopping.Register(() => Log
+        .ForContext("EventId", LoggerEventId.ApplicationShutdown)
+        .Information("Application shutting down"));
 
     app.Run();
 }
@@ -26,13 +32,17 @@ try
 catch (Exception ex)
 #pragma warning restore CA1031
 {
-    Log.Fatal(ex, "Application startup failed");
+    Log.ForContext("EventId", LoggerEventId.ApplicationStartupFailed)
+        .Fatal(ex, "Application startup failed. Reason: {Message}", ex.Message);
 }
 finally
 {
     Log.CloseAndFlush();
 }
 
-public partial class Program
+namespace DemoShop.Api
 {
+    public partial class Program
+    {
+    }
 }

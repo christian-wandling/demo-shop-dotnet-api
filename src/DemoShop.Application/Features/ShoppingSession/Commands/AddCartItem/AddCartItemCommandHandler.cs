@@ -100,24 +100,24 @@ public sealed class AddCartItemCommandHandler(
     }
 
     private static void LogCommandStarted(ILogger logger, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.AddCartItemCommandStarted)
-            .Information("Starting to add cart item to shopping session {SessionId}", sessionId);
+        logger.ForContext("EventId", LoggerEventId.AddCartItemCommandStarted)
+            .Debug("Starting to add cart item to shopping session {SessionId}", sessionId);
 
-    private static void LogCommandSuccess(ILogger logger, int carItemId, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.AddCartItemCommandSuccess)
-            .Information(
-                "Successfully added cart item with Id {CartItemId} to shopping session with Id {SessionId}",
-                carItemId, sessionId);
+    private static void LogCommandSuccess(ILogger logger, int carItemId, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.AddCartItemCommandSuccess)
+        .Information(
+            "Successfully added cart item with Id {CartItemId} to shopping session with Id {SessionId}",
+            carItemId, sessionId);
 
-    private static void LogCommandError(ILogger logger, int sessionId) =>
-        logger.ForContext("EventId", LoggerEventIds.AddCartItemCommandError)
-            .Information("Error adding cart item with to shopping session {SessionId}", sessionId);
+    private static void LogCommandError(ILogger logger, int sessionId) => logger
+        .ForContext("EventId", LoggerEventId.AddCartItemCommandError)
+        .Error("Error adding cart item with to shopping session {SessionId}", sessionId);
 
-    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while updating shopping session. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.UpdateShoppingSessionDatabaseException);
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.UpdateShoppingSessionDatabaseException)
+        .Error(ex, "Database error occurred while updating shopping session. Error: {ErrorMessage}", errorMessage);
 
-    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while updating shopping session. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.UpdateShoppingSessionDomainException);
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) => logger
+        .ForContext("EventId", LoggerEventId.UpdateShoppingSessionDomainException)
+        .Error(ex, "Invalid operation while updating shopping session. Error: {ErrorMessage}", errorMessage);
 }

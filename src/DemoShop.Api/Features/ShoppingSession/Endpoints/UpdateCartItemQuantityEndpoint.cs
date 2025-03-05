@@ -57,30 +57,30 @@ public class UpdateCartItemQuantityEndpoint(IMediator mediator, ILogger logger)
         stopwatch.Stop();
 
         if (result.IsSuccess)
-            LogRequestSuccess(logger, request.Id, stopwatch.Elapsed);
+            LogRequestSuccess(logger, request.Id, stopwatch.Elapsed.Milliseconds);
         else
-            LogRequestFailed(logger, stopwatch.Elapsed);
+            LogRequestFailed(logger, stopwatch.Elapsed.Milliseconds);
 
         return result;
     }
 
     private static void LogRequestStarting(ILogger logger, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateCartItemQuantityRequestStarted)
+            .ForContext("EventId", LoggerEventId.UpdateCartItemQuantityRequestStarted)
             .Information(
                 "Starting PATCH request for updating quantity of cart item in current shopping session at {Endpoint}",
                 endpoint);
 
-    private static void LogRequestSuccess(ILogger logger, int id, TimeSpan elapsedMs) =>
+    private static void LogRequestSuccess(ILogger logger, int id, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateCartItemQuantityRequestSuccess)
+            .ForContext("EventId", LoggerEventId.UpdateCartItemQuantityRequestSuccess)
             .Information(
                 "Completed PATCH request for updating quantity of cart item in current shopping session {Id} in {ElapsedMs}ms",
                 id, elapsedMs);
 
-    private static void LogRequestFailed(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestFailed(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.UpdateCartItemQuantityRequestFailed)
+            .ForContext("EventId", LoggerEventId.UpdateCartItemQuantityRequestFailed)
             .Error(
                 "Failed PATCH request to updating quantity of cart item in current shopping session in {ElapsedMs}ms",
                 elapsedMs);

@@ -66,19 +66,20 @@ public sealed class GetAllOrdersOfUserQueryHandler(
         return response;
     }
 
-    private static void LogQueryStarted(ILogger logger, int userId) => logger.Information(
-        "Starting query to retrieve all orders for user {UserId} {@EventId}",
-        userId, LoggerEventIds.GetAllOrdersOfUserQueryStarted);
+    private static void LogQueryStarted(ILogger logger, int userId) => logger
+        .ForContext("EventId", LoggerEventId.GetAllOrdersOfUserQueryStarted)
+        .Information(
+            "Starting query to retrieve all orders for user {UserId}", userId);
 
-    private static void LogQuerySuccess(ILogger logger, int userId, int count) =>
-        logger.Information("Successfully retrieved {Count} orders for user {UserId} {@EventId}",
-            userId, count, LoggerEventIds.GetAllOrdersOfUserQuerySuccess);
+    private static void LogQuerySuccess(ILogger logger, int userId, int count) => logger
+            .ForContext("EventId", LoggerEventId.GetAllOrdersOfUserQuerySuccess)
+            .Information("Successfully retrieved {Count} orders for user {UserId}", userId, count);
 
-    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Database error occurred while retrieving all products. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.GetOrdersByUserIdDatabaseException);
+    private static void LogDatabaseException(ILogger logger, string errorMessage, Exception ex) => logger
+            .ForContext("EventId", LoggerEventId.GetOrdersByUserIdDatabaseException)
+            .Error(ex, "Database error occurred while retrieving all products. Error: {ErrorMessage}", errorMessage);
 
-    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) =>
-        logger.Error(ex, "Invalid operation while retrieving all products. Error: {ErrorMessage} {@EventId}",
-            errorMessage, LoggerEventIds.GetAllOrdersOfUserDomainException);
+    private static void LogInvalidOperationException(ILogger logger, string errorMessage, Exception ex) => logger
+            .ForContext("EventId", LoggerEventId.GetAllOrdersOfUserDomainException)
+            .Error(ex, "Invalid operation while retrieving all products. Error: {ErrorMessage}", errorMessage);
 }

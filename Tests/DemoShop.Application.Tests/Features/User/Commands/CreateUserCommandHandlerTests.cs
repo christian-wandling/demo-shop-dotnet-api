@@ -22,7 +22,6 @@ public class CreateUserCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;
     private readonly CreateUserCommandHandler _handler;
-    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IUserRepository _repository;
     private readonly IValidationService _validationService;
@@ -32,7 +31,7 @@ public class CreateUserCommandHandlerTests : Test
     {
         _mapper = Mock<IMapper>();
         _repository = Mock<IUserRepository>();
-        _logger = Mock<ILogger>();
+        var logger = Mock<ILogger>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
         _validator = Mock<IValidator<CreateUserCommand>>();
         _validationService = Mock<IValidationService>();
@@ -40,7 +39,7 @@ public class CreateUserCommandHandlerTests : Test
         _handler = new CreateUserCommandHandler(
             _mapper,
             _repository,
-            _logger,
+            logger,
             _eventDispatcher,
             _validator,
             _validationService

@@ -41,27 +41,27 @@ public class ResolveCurrentUserEndpoint(IMediator mediator, ILogger logger)
         stopwatch.Stop();
 
         if (result.IsSuccess)
-            LogRequestSuccess(logger, result.Value.Id, stopwatch.Elapsed);
+            LogRequestSuccess(logger, result.Value.Id, stopwatch.Elapsed.Milliseconds);
         else
-            LogRequestFailed(logger, stopwatch.Elapsed);
+            LogRequestFailed(logger, stopwatch.Elapsed.Milliseconds);
 
         return result;
     }
 
     private static void LogRequestStarting(ILogger logger, string endpoint) =>
         logger
-            .ForContext("EventId", LoggerEventIds.ResolveCurrentUserRequestStarted)
-            .Information("Starting POST request for resolving current user at {Endpoint}", endpoint);
+            .ForContext("EventId", LoggerEventId.ResolveCurrentUserRequestStarted)
+            .Debug("Starting POST request for resolving current user at {Endpoint}", endpoint);
 
-    private static void LogRequestSuccess(ILogger logger, int id, TimeSpan elapsedMs) =>
+    private static void LogRequestSuccess(ILogger logger, int id, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.ResolveCurrentUserRequestSuccess)
+            .ForContext("EventId", LoggerEventId.ResolveCurrentUserRequestSuccess)
             .Information(
                 "Completed POST request for resolving user {Id} in {ElapsedMs}ms",
                 id, elapsedMs);
 
-    private static void LogRequestFailed(ILogger logger, TimeSpan elapsedMs) =>
+    private static void LogRequestFailed(ILogger logger, int elapsedMs) =>
         logger
-            .ForContext("EventId", LoggerEventIds.ResolveCurrentUserRequestFailed)
+            .ForContext("EventId", LoggerEventId.ResolveCurrentUserRequestFailed)
             .Error("Failed POST request to resolving current user in {ElapsedMs}ms", elapsedMs);
 }
