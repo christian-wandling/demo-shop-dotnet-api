@@ -54,6 +54,6 @@ public static class ServiceRegistration
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        services.AddScoped<ICacheService, MemoryCacheService>();
+        services.AddSingleton<ICacheService, MemoryCacheService>();
     }
 }
