@@ -18,6 +18,7 @@
 
   <PropertyGroup>
     <NoWarn>$(NoWarn);CA2007</NoWarn>
+    <NoWarn>$(NoWarn);CA1062;CA1861</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

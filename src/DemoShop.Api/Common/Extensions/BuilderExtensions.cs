@@ -16,7 +16,6 @@ public static class BuilderExtensions
         builder.Configuration
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json")
-            .AddUserSecrets<Program>()
             .AddEnvironmentVariables();
 
         builder.Host.UseSerilog();

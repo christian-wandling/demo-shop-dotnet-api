@@ -2,6 +2,7 @@
 
 using Ardalis.GuardClauses;
 using DemoShop.Application.Common.Interfaces;
+using DemoShop.Domain.Order.Enums;
 using Microsoft.EntityFrameworkCore;
 
 #endregion
@@ -31,6 +32,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         Guard.Against.Null(modelBuilder, nameof(modelBuilder));
 
+        modelBuilder.HasPostgresEnum<OrderStatus>("order_status");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
         base.OnModelCreating(modelBuilder);
