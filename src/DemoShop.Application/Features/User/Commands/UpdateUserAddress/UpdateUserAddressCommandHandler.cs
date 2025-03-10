@@ -57,6 +57,7 @@ public sealed class UpdateUserAddressCommandHandler(
 
             var user = await repository.GetUserByKeycloakIdAsync(
                 identityResult.Value.KeycloakUserId,
+                true,
                 cancellationToken);
             if (user is null)
             {

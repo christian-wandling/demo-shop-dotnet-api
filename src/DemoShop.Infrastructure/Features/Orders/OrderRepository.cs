@@ -22,6 +22,7 @@ public class OrderRepository(ApplicationDbContext context, ILogger logger) : IOr
         LogGetOrderByIdStarted(logger, orderId, userId);
 
         var result = await context.Query<OrderEntity>()
+            .AsNoTracking()
             .Include(o => o.OrderItems)
             .FirstOrDefaultAsync(o => o.Id == orderId && o.UserId == userId, cancellationToken);
 
@@ -40,6 +41,7 @@ public class OrderRepository(ApplicationDbContext context, ILogger logger) : IOr
         LogGetOrdersByUserIdStarted(logger, userId);
 
         var result = await context.Query<OrderEntity>()
+            .AsNoTracking()
             .Include(o => o.OrderItems)
             .Where(o => o.UserId == userId)
             .ToListAsync(cancellationToken);

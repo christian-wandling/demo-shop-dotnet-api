@@ -97,7 +97,7 @@ public class UpdateUserPhoneCommandHandlerTests : Test
             .Returns(Result.Success());
         _identity.GetCurrentIdentity()
             .Returns(Result.Success(identity));
-        _repository.GetUserByKeycloakIdAsync(identity.KeycloakUserId, CancellationToken.None)
+        _repository.GetUserByKeycloakIdAsync(identity.KeycloakUserId, true, CancellationToken.None)
             .Returns((UserEntity)null!);
 
         // Act
@@ -122,7 +122,7 @@ public class UpdateUserPhoneCommandHandlerTests : Test
             .Returns(Result.Success());
         _identity.GetCurrentIdentity()
             .Returns(Result.Success(identity));
-        _repository.GetUserByKeycloakIdAsync(identity.KeycloakUserId, CancellationToken.None)
+        _repository.GetUserByKeycloakIdAsync(identity.KeycloakUserId, true, CancellationToken.None)
             .Returns(user);
         _repository.UpdateUserAsync(user, CancellationToken.None)
             .Returns(updatedUser);
@@ -150,7 +150,7 @@ public class UpdateUserPhoneCommandHandlerTests : Test
             .Returns(Result.Success());
         _identity.GetCurrentIdentity()
             .Returns(Result.Success(identity));
-        _repository.GetUserByKeycloakIdAsync(identity.KeycloakUserId, CancellationToken.None)
+        _repository.GetUserByKeycloakIdAsync(identity.KeycloakUserId, true, CancellationToken.None)
             .Throws(exception);
 
         // Act
@@ -174,7 +174,7 @@ public class UpdateUserPhoneCommandHandlerTests : Test
             .Returns(Result.Success());
         _identity.GetCurrentIdentity()
             .Returns(Result.Success(identity));
-        _repository.GetUserByKeycloakIdAsync(identity.KeycloakUserId, CancellationToken.None)
+        _repository.GetUserByKeycloakIdAsync(identity.KeycloakUserId, true, CancellationToken.None)
             .Returns(user);
         _repository.UpdateUserAsync(user, CancellationToken.None)
             .Throws(exception);

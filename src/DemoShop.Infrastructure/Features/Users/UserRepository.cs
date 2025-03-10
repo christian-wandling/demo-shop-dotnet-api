@@ -15,7 +15,14 @@ namespace DemoShop.Infrastructure.Features.Users;
 
 public class UserRepository(ApplicationDbContext context, ILogger logger) : IUserRepository
 {
-    public async Task<UserEntity?> GetUserByKeycloakIdAsync(string value, CancellationToken cancellationToken)
+    public Task<UserEntity?> GetUserByKeycloakIdAsync(string value, CancellationToken cancellationToken) =>
+        GetUserByKeycloakIdAsync(value, false, cancellationToken);
+
+    public async Task<UserEntity?> GetUserByKeycloakIdAsync(
+        string value,
+        bool trackChanges,
+        CancellationToken cancellationToken
+    )
     {
         Guard.Against.NullOrWhiteSpace(value, nameof(value));
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
@@ -23,7 +30,12 @@ public class UserRepository(ApplicationDbContext context, ILogger logger) : IUse
 
         var keycloakUserId = KeycloakUserId.Create(value);
 
-        var result = await context.Query<UserEntity>()
+        var query = context.Query<UserEntity>();
+
+        if (trackChanges)
+            query = query.AsNoTracking();
+
+        var result = await query
             .Include(u => u.Address)
             .FirstOrDefaultAsync(u => u.KeycloakUserId.Equals(keycloakUserId), cancellationToken);
 

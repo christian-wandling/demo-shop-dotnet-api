@@ -20,6 +20,7 @@ public class ProductRepository(ApplicationDbContext context, ILogger logger) : I
         LogGetProductByIdStarted(logger, id);
 
         var result = await context.Query<ProductEntity>()
+            .AsNoTracking()
             .Include(p => p.Categories)
             .Include(p => p.Images)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
@@ -37,6 +38,7 @@ public class ProductRepository(ApplicationDbContext context, ILogger logger) : I
         LogGetAllProductsStarted(logger);
 
         var result = await context.Query<ProductEntity>()
+            .AsNoTracking()
             .Include(p => p.Categories)
             .Include(p => p.Images)
             .ToListAsync(cancellationToken);
