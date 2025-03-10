@@ -11,6 +11,10 @@ up:
 	@echo "$(GREEN)Starting containers...$(NC)"
 	docker compose up -d
 
+api:
+	@echo "$(GREEN)Starting api container...$(NC)"
+	docker compose up -d api
+
 down:
 	@echo "$(GREEN)Stopping containers...$(NC)"
 	docker compose down
@@ -30,3 +34,11 @@ clean:
 test:
 	@echo "$(GREEN)Running tests...$(NC)"
 	docker compose run --rm api dotnet test
+
+migrate_db:
+	@echo "$(GREEN)Creating migration...$(NC)"
+	dotnet ef migrations add --project src/DemoShop.Infrastructure
+
+update_db:
+	@echo "$(GREEN)Updating db...$(NC)"
+	dotnet ef database update --project src/DemoShop.Infrastructure

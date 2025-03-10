@@ -1,4 +1,17 @@
 ﻿services:
+    db:
+        image: postgres
+        environment:
+            - POSTGRES_PASSWORD
+            - POSTGRES_USER
+            - POSTGRES_DB
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        networks:
+            - backend
+            - shared
+        ports:
+            - '127.0.0.1:5432:5432'
     api:
         build:
             context: .
@@ -14,8 +27,8 @@
             - KEYCLOAK__REALM=${KEYCLOAK_REALM}
             - KEYCLOAK__RESOURCE=${KEYCLOAK_CLIENT}
             - KEYCLOAK__AUTHSERVERURL=${KEYCLOAK_URL}
-            - CONNECTIONSTRINGS__DEFAULTCONNECTION=${DB_CONNECTION}
         networks:
+            - backend
             - shared
         volumes:
             - ./:/app
@@ -30,8 +43,11 @@
             - nuget-packages:/root/.nuget/packages
 
 networks:
+    backend:
     shared:
         external: true
 
 volumes:
+    postgres_data:
     nuget-packages:
+
