@@ -68,7 +68,7 @@ public class UpdateUserAddressCommandHandlerTests : Test
         _identity.GetCurrentIdentity()
             .Returns(Result.Success(userIdentity));
 
-        _repository.GetUserByKeycloakIdAsync(userIdentity.KeycloakUserId, Arg.Any<CancellationToken>())
+        _repository.GetUserByKeycloakIdAsync(userIdentity.KeycloakUserId, true, Arg.Any<CancellationToken>())
             .Returns(user);
 
         _repository.UpdateUserAsync(user, Arg.Any<CancellationToken>())
@@ -104,7 +104,7 @@ public class UpdateUserAddressCommandHandlerTests : Test
         _identity.GetCurrentIdentity()
             .Returns(Result.Success(userIdentity));
 
-        _repository.GetUserByKeycloakIdAsync(userIdentity.KeycloakUserId, Arg.Any<CancellationToken>())
+        _repository.GetUserByKeycloakIdAsync(userIdentity.KeycloakUserId, true, Arg.Any<CancellationToken>())
             .Returns(user);
 
         _repository.UpdateUserAsync(user, Arg.Any<CancellationToken>())
@@ -154,7 +154,7 @@ public class UpdateUserAddressCommandHandlerTests : Test
         _identity.GetCurrentIdentity()
             .Returns(Result.Success(userIdentity));
 
-        _repository.GetUserByKeycloakIdAsync(userIdentity.KeycloakUserId, Arg.Any<CancellationToken>())
+        _repository.GetUserByKeycloakIdAsync(userIdentity.KeycloakUserId, true, Arg.Any<CancellationToken>())
             .Returns((UserEntity)null!);
 
         // Act
@@ -205,7 +205,7 @@ public class UpdateUserAddressCommandHandlerTests : Test
         _identity.GetCurrentIdentity()
             .Returns(Result.Success(userIdentity));
 
-        _repository.GetUserByKeycloakIdAsync(userIdentity.KeycloakUserId, Arg.Any<CancellationToken>())
+        _repository.GetUserByKeycloakIdAsync(userIdentity.KeycloakUserId, true, Arg.Any<CancellationToken>())
             .Returns(user);
 
         _repository.UpdateUserAsync(user, Arg.Any<CancellationToken>())
