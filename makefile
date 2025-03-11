@@ -47,6 +47,6 @@ test-coverage:
 	@echo "$(GREEN)Generating coverage report...$(NC)"
 	reportgenerator -reports:"**/TestResults/coverage.cobertura.xml" -targetdir:"Tests/coveragereport" -reporttypes:Html
 
-integration-test-report:
+integration-test-coverage:
 	@echo "$(GREEN)Generating coverage report...$(NC)"
 	reportgenerator -reports:"Tests/DemoShop.IntegrationTests/TestResults/coverage.cobertura.xml" -targetdir:"Tests/integrationtest-coveragereport" -reporttypes:Html

@@ -4,7 +4,10 @@ A learning project for ASP.NET Core that implements an e-commerce API using mode
 
 The project is a refactoring of a NestJS API found in this repository:
 
->http://github.com/christian-wandling/demo-shop-public
+```
+http://github.com/christian-wandling/demo-shop-public
+```
+
 
 
 ## Overview
@@ -34,11 +37,22 @@ This project serves as a practical exploration of ASP.NET Core, demonstrating ho
 - **MediatR**: Implementing mediator pattern for CQRS
 - **Scrutor**: Assembly scanning and decoration extensions for DI
 
+### Containerization & Deployment
+
+- **Docker**: Platform for developing, shipping, and running applications in containers
+- **Docker Compose**: Tool for defining and running multi-container Docker applications
+
+### Authentication & Authorization
+
+- **Keycloak**: Open source Identity and Access Management solution
+
 ### Testing
 - **xUnit**: Testing framework
 - **AutoFixture**: Auto-generation of test data
 - **FluentAssertions**: Fluent assertion syntax
 - **NSubstitute**: Mocking framework
+- **Coverlet**: Cross-platform code coverage library for .NET
+- **ReportGenerator**: Tool for creating code coverage reports from Coverlet data
 
 ### Prerequisites
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) or later
@@ -50,66 +64,95 @@ This project serves as a practical exploration of ASP.NET Core, demonstrating ho
 
 ### Installation
 1. Clone the repository
-> git clone https://github.com/christian-wandling/demo-shop-dotnet-api.git
+```
+git clone https://github.com/christian-wandling/demo-shop-dotnet-api.git
+```
 
 2. Add an .env at the root of the repository
 > see [.env.example](.env.example) for required variables
 
-3. Add the default connection string to user secrets (to connect to the database container from the outside)
-> dotnet user-secrets set "ConnectionStrings:LocalConnection" "Host=localhost; Port=5432; Database=***your_postgres_db***; Username=***your_postgres_user***; Password=***your_postgres_password***" --project src/DemoShop.Api
 
-4. Create shared docker network to use the api with the frontend (or remove network from compose file)
-> docker network create shared
+3. Add the database connection string to user secrets (used by EF Core and integration tests)
+```
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost; Port=5432; Database=your_postgres_db; Username=your_postgres_user; Password=your_postgres_password" --project src/DemoShop.Api
+```
+
+4. Create shared docker network to use the api from another docker compose stack (or remove network from compose file)
+```
+docker network create shared
+```
 
 4. Create the containers
-> make up
+```
+make up
+```
 
 5. Initialize database
-> make db-update
+```
+make db-update
+```
 
 ### Usage
 
 Browse the Swagger documentation
-> http://localhost:3000/api
+```
+http://localhost:3000/api
+```
 
 Or query the api from the command line 
-> curl http://localhost:3000/api/v1/products
+```
+curl http://localhost:3000/api/v1/products
+```
 
 ### Frontend Integration
 
 The API can be consumed by the frontend application available in the following repository:
->http://github.com/christian-wandling/demo-shop-public
+```
+http://github.com/christian-wandling/demo-shop-public
+```
 
 To use the frontend with this API, ensure both applications are running and connected via the shared Docker network.
 
 ### Authentication
 
 1. Access the Keycloak admin console
-> http://localhost:8080/admin/
+```
+http://localhost:8080/admin/
+```
 
-2. Log in with the credentials defined in <our> [.env](.env) file.
+3. Log in with the credentials defined in your [.env](.env) file.
 
-3. Select the `demo_shop` realm, create a user and add credentials
+4. Select the `demo_shop` realm, create a user and add credentials
 
-4. Request an auth token from the Keycloak API
-> curl -X POST \
-> 'http://localhost:8080/realms/demo_shop/protocol/openid-connect/token' \
-> -H 'Content-Type: application/x-www-form-urlencoded' \
-> -d 'username=***your_username***&password=***your_password***&grant_type=password&client_id=demo_shop_ui'
+5. Request an auth token from the Keycloak API
+```
+curl -X POST \
+'http://localhost:8080/realms/demo_shop/protocol/openid-connect/token' \
+-H 'Content-Type: application/x-www-form-urlencoded' \
+-d 'username=your_username&password=your_password&grant_type=password&client_id=demo_shop_ui'
+```
 
 ### Testing
 
 Run unit tests
-> make test
+```
+make test
+```
 
 Run integration tests
-> make integrations-test
+```
+make integration-test
+```
 
 Create unit test coverage report
-> make test-coverage
+```
+make test-coverage
+```
 
 Create integration test coverage report
-> make integration-test-report
+```
+make integration-test-coverage
+```
 
 ## License
 
