@@ -7,11 +7,37 @@
             - POSTGRES_DB
         volumes:
             - postgres_data:/var/lib/postgresql/data
+            - ./.ops/db/init-scripts:/docker-entrypoint-initdb.d
         networks:
             - backend
             - shared
         ports:
             - '127.0.0.1:5432:5432'
+    keycloak:
+        image: quay.io/keycloak/keycloak:23.0.6
+        command: start-dev --import-realm
+        environment:
+            - KC_DB=postgres
+            - KC_DB_URL=jdbc:postgresql://host.docker.internal/keycloak
+            - KC_HOSTNAME=localhost
+            - KC_HOSTNAME_STRICT=false
+            - KC_HOSTNAME_STRICT_HTTPS=false
+            - KC_LOG_LEVEL=info
+            - KC_METRICS_ENABLED=true
+            - KC_HEALTH_ENABLED=true
+            - KC_DB_USERNAME=${POSTGRES_USER}
+            - KC_DB_PASSWORD=${POSTGRES_PASSWORD}
+            - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+            - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+        depends_on:
+            - db
+        volumes:
+            - ./.ops/keycloak/imports:/opt/keycloak/data/import
+        ports:
+            - '8080:8080'
+        networks:
+            - backend
+            - shared
     api:
         build:
             context: .
@@ -24,9 +50,10 @@
             - ASPNETCORE_ENVIRONMENT=Development
             - ASPNETCORE_URLS=http://+:3000
             - SENTRY__DSN=${SENTRY_DSN}
-            - KEYCLOAK__REALM=${KEYCLOAK_REALM}
-            - KEYCLOAK__RESOURCE=${KEYCLOAK_CLIENT}
-            - KEYCLOAK__AUTHSERVERURL=${KEYCLOAK_URL}
+            - KEYCLOAK__REALM=demo_shop
+            - KEYCLOAK__RESOURCE=demo_shop_api
+            - KEYCLOAK__AUTHSERVERURL=http://keycloak:8080
+            - CONNECTIONSTRINGS__DEFAULTCONNECTION=${DB_CONNECTION}
         networks:
             - backend
             - shared

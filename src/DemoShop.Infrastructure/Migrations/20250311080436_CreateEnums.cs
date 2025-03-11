@@ -11,7 +11,7 @@ namespace DemoShop.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:order_status.order_status", "created,completed");
+                .Annotation("Npgsql:Enum:order_status", "created,completed");
         }
 
         /// <inheritdoc />

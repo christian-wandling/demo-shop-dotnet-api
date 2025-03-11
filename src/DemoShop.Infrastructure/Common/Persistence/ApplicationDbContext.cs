@@ -32,7 +32,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         Guard.Against.Null(modelBuilder, nameof(modelBuilder));
 
-        modelBuilder.HasPostgresEnum<OrderStatus>("order_status");
+        modelBuilder.HasPostgresEnum<OrderStatus>();
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
         base.OnModelCreating(modelBuilder);
