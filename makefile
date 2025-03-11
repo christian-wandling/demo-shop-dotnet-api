@@ -31,14 +31,22 @@ clean:
 	@echo "$(GREEN)Cleaning up...$(NC)"
 	docker compose down -v --remove-orphans
 
-test:
-	@echo "$(GREEN)Running tests...$(NC)"
-	docker compose run --rm api dotnet test
-
-migrate_db:
-	@echo "$(GREEN)Creating migration...$(NC)"
-	dotnet ef migrations add --project src/DemoShop.Infrastructure
-
-update_db:
+db-update:
 	@echo "$(GREEN)Updating db...$(NC)"
 	dotnet ef database update --project src/DemoShop.Infrastructure
+
+test:
+	@echo "$(GREEN)Running unit tests...$(NC)"
+	dotnet test --filter "Category=Unit"
+
+integration-test:
+	@echo "$(GREEN)Running Integration tests...$(NC)"
+	dotnet test Tests/DemoShop.IntegrationTests/DemoShop.IntegrationTests.csproj
+
+test-coverage:
+	@echo "$(GREEN)Generating coverage report...$(NC)"
+	reportgenerator -reports:"**/TestResults/coverage.cobertura.xml" -targetdir:"Tests/coveragereport" -reporttypes:Html
+
+integration-test-report:
+	@echo "$(GREEN)Generating coverage report...$(NC)"
+	reportgenerator -reports:"Tests/DemoShop.IntegrationTests/TestResults/coverage.cobertura.xml" -targetdir:"Tests/integrationtest-coveragereport" -reporttypes:Html

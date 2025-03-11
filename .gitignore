@@ -98,6 +98,7 @@ appsettings.Staging.json
 *.pem
 *.env
 .env.*
+!.env.example
 
 # Test Results
 [Tt]est[Rr]esult*/
