@@ -14,8 +14,6 @@ using Serilog;
 
 namespace DemoShop.Api.Tests.Features.Order;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Api")]
 [Trait("Feature", "Order")]
 public class GetOrderByIdEndpointTests : Test
 {

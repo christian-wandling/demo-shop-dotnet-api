@@ -16,6 +16,7 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Features.Product.Queries;
 
+[Trait("Feature", "Product")]
 public class GetProductByIdQueryHandlerTests : Test
 {
     private const string CacheKey = "product-1";

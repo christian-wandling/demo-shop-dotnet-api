@@ -8,6 +8,7 @@ using DemoShop.TestUtils.Common.Base;
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
+[Trait("Feature", "ShoppingSession")]
 public class AddCartItemCommandValidatorTests : Test
 {
     private readonly AddCartItemCommandValidator _sut = new();

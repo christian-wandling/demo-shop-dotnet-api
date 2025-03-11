@@ -11,6 +11,7 @@ using DemoShop.TestUtils.Common.Base;
 
 namespace DemoShop.Application.Tests.Features.User.Mappings;
 
+[Trait("Feature", "User")]
 public class UserMappingProfileTests : Test
 {
     private readonly IMapper _mapper;

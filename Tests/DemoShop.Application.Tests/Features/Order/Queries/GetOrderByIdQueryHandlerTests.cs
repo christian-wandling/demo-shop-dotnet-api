@@ -17,6 +17,7 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Features.Order.Queries;
 
+[Trait("Feature", "Order")]
 public class GetOrderByIdQueryHandlerTests : Test
 {
     private readonly ICacheService _cacheService;

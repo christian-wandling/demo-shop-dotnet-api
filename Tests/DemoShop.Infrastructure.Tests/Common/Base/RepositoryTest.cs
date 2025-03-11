@@ -9,8 +9,7 @@ using Xunit.Abstractions;
 
 namespace DemoShop.Infrastructure.Tests.Common.Base;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Infrastructure")]
+[Trait("Feature", "Common")]
 public abstract class RepositoryTest : Test
 {
     protected readonly ApplicationDbContext Context;

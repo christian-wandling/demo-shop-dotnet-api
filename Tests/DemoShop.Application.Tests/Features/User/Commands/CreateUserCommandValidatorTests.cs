@@ -8,6 +8,7 @@ using DemoShop.TestUtils.Features.User.Models;
 
 namespace DemoShop.Application.Tests.Features.User.Commands;
 
+[Trait("Feature", "User")]
 public class CreateUserCommandValidatorTests : Test
 {
     private readonly CreateUserCommandValidator _commandValidator = new();

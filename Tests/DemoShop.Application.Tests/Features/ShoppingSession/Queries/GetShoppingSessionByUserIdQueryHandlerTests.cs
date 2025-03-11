@@ -16,6 +16,7 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Queries;
 
+[Trait("Feature", "ShoppingSession")]
 public class GetShoppingSessionByUserIdQueryHandlerTests : Test
 {
     private readonly ICacheService _cacheService;

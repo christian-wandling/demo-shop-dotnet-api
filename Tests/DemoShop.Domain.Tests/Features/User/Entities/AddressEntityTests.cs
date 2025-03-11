@@ -9,8 +9,6 @@ using DemoShop.TestUtils.Common.Base;
 
 namespace DemoShop.Domain.Tests.Features.User.Entities;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Domain")]
 [Trait("Feature", "User")]
 public class AddressEntityTests : Test
 {

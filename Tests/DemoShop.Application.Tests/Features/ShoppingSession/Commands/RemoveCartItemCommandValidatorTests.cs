@@ -8,6 +8,7 @@ using FluentValidation.TestHelper;
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
+[Trait("Feature", "ShoppingSession")]
 public class RemoveCartItemCommandValidatorTests : Test
 {
     private readonly RemoveCartItemCommandValidator _validator = new();

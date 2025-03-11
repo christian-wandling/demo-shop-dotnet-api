@@ -8,6 +8,7 @@ using FluentValidation.TestHelper;
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
+[Trait("Feature", "ShoppingSession")]
 public class CreateShoppingSessionCommandValidatorTests : Test
 {
     private readonly CreateShoppingSessionCommandValidator _validator = new();

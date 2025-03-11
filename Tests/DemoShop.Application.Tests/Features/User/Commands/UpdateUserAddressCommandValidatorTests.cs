@@ -8,6 +8,7 @@ using FluentValidation.TestHelper;
 
 namespace DemoShop.Application.Tests.Features.User.Commands;
 
+[Trait("Feature", "User")]
 public class UpdateUserAddressCommandValidatorTests : Test
 {
     private readonly UpdateUserAddressCommandValidator _commandValidator = new();

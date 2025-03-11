@@ -12,8 +12,6 @@ using Serilog;
 
 namespace DemoShop.Infrastructure.Tests.Common.Services;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Infrastructure")]
 [Trait("Feature", "Common")]
 public class UnitOfWorkTests : Test
 {

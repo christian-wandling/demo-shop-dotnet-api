@@ -13,8 +13,6 @@ using Serilog;
 
 namespace DemoShop.Infrastructure.Tests.Features.ShoppingSessions.Services;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Infrastructure")]
 [Trait("Feature", "ShoppingSession")]
 public class CurrentShoppingSessionAccessorTests : Test
 {

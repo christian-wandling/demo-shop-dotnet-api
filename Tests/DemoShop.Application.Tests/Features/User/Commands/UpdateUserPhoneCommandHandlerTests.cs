@@ -18,6 +18,7 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Features.User.Commands;
 
+[Trait("Feature", "User")]
 public class UpdateUserPhoneCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;

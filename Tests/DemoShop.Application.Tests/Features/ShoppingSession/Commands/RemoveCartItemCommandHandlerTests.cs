@@ -18,6 +18,7 @@ using DbUpdateException = Microsoft.EntityFrameworkCore.DbUpdateException;
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
+[Trait("Feature", "ShoppingSession")]
 public class RemoveCartItemCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;

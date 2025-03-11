@@ -17,6 +17,7 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Features.Order.Commands;
 
+[Trait("Feature", "Order")]
 public class CreateOrderCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;

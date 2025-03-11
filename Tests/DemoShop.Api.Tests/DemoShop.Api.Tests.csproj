@@ -4,6 +4,10 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Include>[DemoShop.Api]*</Include>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\DemoShop.TestUtils\DemoShop.TestUtils.csproj"/>
     <ProjectReference Include="..\..\src\DemoShop.Api\DemoShop.Api.csproj"/>

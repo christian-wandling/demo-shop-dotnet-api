@@ -13,8 +13,6 @@ using Serilog;
 
 namespace DemoShop.Infrastructure.Tests.Features.Users.Services;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Infrastructure")]
 [Trait("Feature", "User")]
 public class CurrentUserAccessorTests : Test
 {

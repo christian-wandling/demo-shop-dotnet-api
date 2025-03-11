@@ -8,8 +8,6 @@ using DemoShop.TestUtils.Common.Base;
 
 namespace DemoShop.Domain.Tests.Features.User.Guards;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Domain")]
 [Trait("Feature", "User")]
 public class PhoneGuardTests : Test
 {

@@ -16,6 +16,7 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Features.User.Queries;
 
+[Trait("Feature", "User")]
 public class GetUserByKeycloakIdQueryHandlerTests : Test
 {
     private readonly ICacheService _cacheService;

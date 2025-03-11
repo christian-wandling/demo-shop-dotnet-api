@@ -11,8 +11,6 @@ using DemoShop.TestUtils.Features.User.Models;
 
 namespace DemoShop.Domain.Tests.Features.User.Entities;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Domain")]
 [Trait("Feature", "User")]
 public class UserEntityTests : Test
 {

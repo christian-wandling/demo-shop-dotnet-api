@@ -14,8 +14,6 @@ using Serilog;
 
 namespace DemoShop.Api.Tests.Features.Product;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Api")]
 [Trait("Feature", "Product")]
 public class GetProductByIdEndpointTests : Test
 {

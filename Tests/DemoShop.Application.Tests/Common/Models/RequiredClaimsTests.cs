@@ -9,6 +9,7 @@ using DemoShop.TestUtils.Common.Base;
 
 namespace DemoShop.Application.Tests.Common.Models;
 
+[Trait("Feature", "Common")]
 public class ClaimRequirementsTests : Test
 {
     [Fact]

@@ -11,6 +11,7 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Common.Models;
 
+[Trait("Feature", "Common")]
 public class UserIdentityTests : Test
 {
     private readonly ILogger _logger = Substitute.For<ILogger>();

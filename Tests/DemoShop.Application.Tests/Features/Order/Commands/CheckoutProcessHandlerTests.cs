@@ -21,11 +21,11 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Features.Order.Commands;
 
+[Trait("Feature", "Order")]
 public class CheckoutProcessHandlerTests : Test
 {
     private readonly ICurrentShoppingSessionAccessor _currentSession;
     private readonly IDomainEventDispatcher _eventDispatcher;
-    private readonly ILogger _logger;
     private readonly IMapper _mapper;
     private readonly IMediator _mediator;
     private readonly CheckoutProcessHandler _sut;
@@ -36,7 +36,7 @@ public class CheckoutProcessHandlerTests : Test
         _currentSession = Mock<ICurrentShoppingSessionAccessor>();
         _mapper = Substitute.For<IMapper>();
         _mediator = Mock<IMediator>();
-        _logger = Mock<ILogger>();
+        var logger = Mock<ILogger>();
         _eventDispatcher = Mock<IDomainEventDispatcher>();
         _unitOfWork = Mock<IUnitOfWork>();
 
@@ -44,7 +44,7 @@ public class CheckoutProcessHandlerTests : Test
             _currentSession,
             _mapper,
             _mediator,
-            _logger,
+            logger,
             _eventDispatcher,
             _unitOfWork
         );

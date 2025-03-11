@@ -7,8 +7,6 @@ using DemoShop.TestUtils.Common.Base;
 
 namespace DemoShop.Domain.Tests.Features.Product.Entities;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Domain")]
 [Trait("Feature", "Product")]
 public class CategoryEntityTests : Test
 {

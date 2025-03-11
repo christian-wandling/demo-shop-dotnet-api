@@ -22,6 +22,7 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
+[Trait("Feature", "ShoppingSession")]
 public class AddCartItemCommandHandlerTests : Test
 {
     private readonly IDomainEventDispatcher _eventDispatcher;

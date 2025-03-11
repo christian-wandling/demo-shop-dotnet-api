@@ -10,6 +10,7 @@ using DemoShop.TestUtils.Common.Base;
 
 namespace DemoShop.Application.Tests.Features.Order.Mappings;
 
+[Trait("Feature", "Order")]
 public class OrderMappingProfileTests : Test
 {
     private readonly IMapper _mapper;

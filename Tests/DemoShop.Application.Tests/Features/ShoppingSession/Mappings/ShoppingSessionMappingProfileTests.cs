@@ -12,6 +12,7 @@ using DemoShop.TestUtils.Common.Base;
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Mappings;
 
+[Trait("Feature", "ShoppingSession")]
 public class ShoppingSessionMappingProfileTests : Test
 {
     private readonly MapperConfiguration _configuration;

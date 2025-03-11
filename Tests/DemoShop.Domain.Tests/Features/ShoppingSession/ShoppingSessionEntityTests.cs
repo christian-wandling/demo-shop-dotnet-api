@@ -9,8 +9,6 @@ using DemoShop.TestUtils.Common.Base;
 
 namespace DemoShop.Domain.Tests.Features.ShoppingSession;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Domain")]
 [Trait("Feature", "ShoppingSession")]
 public class ShoppingSessionEntityTests : Test
 {

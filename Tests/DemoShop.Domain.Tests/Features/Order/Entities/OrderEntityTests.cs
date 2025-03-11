@@ -10,8 +10,6 @@ using DemoShop.TestUtils.Common.Base;
 
 namespace DemoShop.Domain.Tests.Features.Order.Entities;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Domain")]
 [Trait("Feature", "Order")]
 public class OrderEntityTests : Test
 {

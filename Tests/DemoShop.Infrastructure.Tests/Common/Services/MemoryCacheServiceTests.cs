@@ -13,6 +13,7 @@ using Xunit.Sdk;
 
 namespace DemoShop.Infrastructure.Tests.Common.Services;
 
+[Trait("Feature", "Common")]
 public class MemoryCacheServiceTests : Test
 {
     private readonly IMemoryCache _cache;

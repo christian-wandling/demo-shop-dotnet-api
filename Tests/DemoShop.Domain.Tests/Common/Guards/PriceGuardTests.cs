@@ -8,6 +8,7 @@ using DemoShop.TestUtils.Common.Base;
 
 namespace DemoShop.Domain.Tests.Common.Guards;
 
+[Trait("Feature", "Common")]
 public class PriceGuardTests : Test
 {
     [Theory]

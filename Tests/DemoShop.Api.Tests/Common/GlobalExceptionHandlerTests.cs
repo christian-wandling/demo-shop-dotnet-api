@@ -13,6 +13,7 @@ using Serilog;
 
 namespace DemoShop.Api.Tests.Common;
 
+[Trait("Feature", "Common")]
 public class GlobalExceptionHandlerTests : Test
 {
     private readonly HttpContext _httpContext;

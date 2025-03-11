@@ -13,6 +13,7 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Common.Models;
 
+[Trait("Feature", "Common")]
 public class ValidationServiceTests : Test
 {
     private readonly ILogger _logger;

@@ -9,6 +9,7 @@ using FluentValidation.TestHelper;
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Commands;
 
+[Trait("Feature", "ShoppingSession")]
 public class UpdateCartItemQuantityCommandValidatorTests : Test
 {
     private readonly UpdateCartItemQuantityCommandValidator _validator = new();

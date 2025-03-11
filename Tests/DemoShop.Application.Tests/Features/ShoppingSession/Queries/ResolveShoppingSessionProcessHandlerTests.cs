@@ -14,6 +14,7 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Features.ShoppingSession.Queries;
 
+[Trait("Feature", "ShoppingSession")]
 public class ResolveShoppingSessionProcessHandlerTests : Test
 {
     private readonly CancellationToken _cancellationToken;

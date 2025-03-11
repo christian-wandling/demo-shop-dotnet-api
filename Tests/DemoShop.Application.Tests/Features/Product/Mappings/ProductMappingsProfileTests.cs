@@ -11,6 +11,7 @@ using Xunit.Abstractions;
 
 namespace DemoShop.Application.Tests.Features.Product.Mappings;
 
+[Trait("Feature", "Product")]
 public class ProductMappingProfileTests : Test
 {
     private readonly IMapper _mapper;

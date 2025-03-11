@@ -15,6 +15,7 @@ using Serilog;
 
 namespace DemoShop.Application.Tests.Features.User.Queries;
 
+[Trait("Feature", "User")]
 public class ResolveUserProcessHandlerTests : Test
 {
     private readonly IUserIdentityAccessor _identity;

@@ -13,8 +13,6 @@ using Serilog;
 
 namespace DemoShop.Api.Tests.Features.User;
 
-[Trait("Category", "Unit")]
-[Trait("Layer", "Api")]
 [Trait("Feature", "User")]
 public class ResolveCurrentUserEndpointTests : Test
 {
