@@ -19,7 +19,6 @@ public class ShoppingSessionConvertedHandler(ILogger logger, ICacheService cache
     {
         Guard.Against.Null(notification, nameof(notification));
         Guard.Against.Null(notification.ShoppingSession, nameof(notification.ShoppingSession));
-        Guard.Against.NegativeOrZero(notification.OrderId, nameof(notification.OrderId));
 
         InvalidateCache(notification.ShoppingSession.UserId);
         LogShoppingSessionConverted(logger, notification.ShoppingSession.Id);
@@ -31,9 +30,9 @@ public class ShoppingSessionConvertedHandler(ILogger logger, ICacheService cache
     {
         List<string> cacheKeys =
         [
-            cacheService.GenerateCacheKey("user", new GetShoppingSessionByUserIdQuery(userId)),
+            cacheService.GenerateCacheKey("shoppingSession", new GetShoppingSessionByUserIdQuery(userId)),
             cacheService.GenerateCacheKey("orders-of-user", userId),
-            cacheService.GenerateCacheKey("current-session-accessor", userId)
+            cacheService.GenerateCacheKey("current-session-accessor", userId),
         ];
 
         cacheKeys.ForEach(cacheService.InvalidateCache);

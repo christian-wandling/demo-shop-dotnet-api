@@ -19,6 +19,15 @@ public class MemoryCacheService(IMemoryCache cache, ILogger logger) : ICacheServ
         return $"{prefix}--{request.GetType().Name}-{JsonSerializer.Serialize(request)}";
     }
 
+#pragma warning disable CA1822
+    public string GenerateCacheKey(string prefix, int id)
+#pragma warning restore CA1822
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(id, nameof(id));
+
+        return $"{prefix}--{id}";
+    }
+
     public T? GetFromCache<T>(string key) where T : class
     {
         if (cache.TryGetValue(key, out T? cachedItem))
@@ -50,14 +59,22 @@ public class MemoryCacheService(IMemoryCache cache, ILogger logger) : ICacheServ
     }
 
     private static void LogCacheWrite(ILogger logger, string key) =>
-        logger.Debug("Cache write for {Key}", LoggerEventId.CacheWrite, key);
+        logger
+            .ForContext("EventId", LoggerEventId.CacheWrite)
+            .Debug("Cache write for {Key}", key);
 
     private static void LogCacheHit(ILogger logger, string key) =>
-        logger.Debug("Cache hit for {Key}", LoggerEventId.CacheHit, key);
+        logger
+            .ForContext("EventId", LoggerEventId.CacheHit)
+            .Debug("Cache hit for {Key}", key);
 
     private static void LogCacheMiss(ILogger logger, string key) =>
-        logger.Debug("Cache miss for {Key}", LoggerEventId.CacheMiss, key);
+        logger
+            .ForContext("EventId", LoggerEventId.CacheMiss)
+            .Debug("Cache miss for {Key}", key);
 
     private static void LogCacheInvalidate(ILogger logger, string key) =>
-        logger.Debug("Cache invalidate for {Key}", LoggerEventId.CacheInvalidate, key);
+        logger
+            .ForContext("EventId", LoggerEventId.CacheInvalidate)
+            .Debug("Cache invalidate for {Key}", key);
 }

@@ -18,6 +18,7 @@ public class CartItemAddedHandler(ILogger logger, ICacheService cacheService)
     public Task Handle(CartItemAdded notification, CancellationToken cancellationToken)
     {
         Guard.Against.Null(notification, nameof(notification));
+        Guard.Against.NegativeOrZero(notification.UserId, nameof(notification.UserId));
 
         LogCartItemAdded(logger, notification.Id);
         InvalidateCache(notification.UserId);
@@ -28,7 +29,7 @@ public class CartItemAddedHandler(ILogger logger, ICacheService cacheService)
     {
         List<string> cacheKeys =
         [
-            cacheService.GenerateCacheKey("user", new GetShoppingSessionByUserIdQuery(userId)),
+            cacheService.GenerateCacheKey("shoppingSession", new GetShoppingSessionByUserIdQuery(userId)),
             cacheService.GenerateCacheKey("current-session-accessor", userId)
         ];
 

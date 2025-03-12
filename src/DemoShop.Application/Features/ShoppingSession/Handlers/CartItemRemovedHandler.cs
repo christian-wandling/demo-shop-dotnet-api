@@ -28,7 +28,7 @@ public class CartItemRemovedHandler(ILogger logger, ICacheService cacheService)
     {
         List<string> cacheKeys =
         [
-            cacheService.GenerateCacheKey("user", new GetShoppingSessionByUserIdQuery(userId)),
+            cacheService.GenerateCacheKey("shoppingSession", new GetShoppingSessionByUserIdQuery(userId)),
             cacheService.GenerateCacheKey("current-session-accessor", userId)
         ];
 

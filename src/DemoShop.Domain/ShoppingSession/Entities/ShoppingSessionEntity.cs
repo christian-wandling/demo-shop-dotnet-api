@@ -92,7 +92,15 @@ public sealed class ShoppingSessionEntity : IEntity, IAuditable, IAggregateRoot
         if (_cartItems.Count is 0) return Result.Error("No items in shopping session");
 
         var orderItems = _cartItems.ConvertAll(cartItem => cartItem.ConvertToOrderItem().Value);
+        if (orderItems.Count == 0)
+            return Result.Error("No items in shopping session");
 
-        return OrderEntity.Create(UserId, orderItems);
+        var orderResult = OrderEntity.Create(UserId, orderItems);
+        if (!orderResult.IsSuccess)
+            return orderResult.Map();
+
+        this.AddDomainEvent(new ShoppingSessionConverted(this, orderResult.Value.Id));
+
+        return orderResult;
     }
 }
