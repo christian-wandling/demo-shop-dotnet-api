@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace DemoShop.Infrastructure.Common.Persistence;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHostEnvironment env)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHostEnvironment? env = null)
     : DbContext(options), IApplicationDbContext
 {
     public IQueryable<TEntity> Query<TEntity>() where TEntity : class => Set<TEntity>();
@@ -20,14 +20,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         Guard.Against.Null(optionsBuilder, nameof(optionsBuilder));
-
-        if (optionsBuilder.IsConfigured) return;
         base.OnConfiguring(optionsBuilder);
 
         optionsBuilder
             .UseSnakeCaseNamingConvention();
 
-        if (env.IsDevelopment())
+        if (env?.IsDevelopment() == true)
         {
             optionsBuilder
                 .LogTo(Console.WriteLine)
