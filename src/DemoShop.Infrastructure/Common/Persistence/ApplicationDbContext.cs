@@ -4,28 +4,35 @@ using Ardalis.GuardClauses;
 using DemoShop.Application.Common.Interfaces;
 using DemoShop.Domain.Order.Enums;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 #endregion
 
 namespace DemoShop.Infrastructure.Common.Persistence;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHostEnvironment env)
     : DbContext(options), IApplicationDbContext
 {
-    public IQueryable<TEntity> Query<TEntity>() where TEntity : class
-        => Set<TEntity>();
+    public IQueryable<TEntity> Query<TEntity>() where TEntity : class => Set<TEntity>();
 
     public override int SaveChanges() => throw new InvalidOperationException("Use SaveChangesAsync instead");
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         Guard.Against.Null(optionsBuilder, nameof(optionsBuilder));
+
+        if (optionsBuilder.IsConfigured) return;
         base.OnConfiguring(optionsBuilder);
 
         optionsBuilder
-            .LogTo(Console.WriteLine)
-            .EnableSensitiveDataLogging()
             .UseSnakeCaseNamingConvention();
+
+        if (env.IsDevelopment())
+        {
+            optionsBuilder
+                .LogTo(Console.WriteLine)
+                .EnableSensitiveDataLogging();
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

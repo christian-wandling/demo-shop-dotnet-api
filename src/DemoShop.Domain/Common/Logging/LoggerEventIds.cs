@@ -53,6 +53,9 @@ public static class LoggerEventId
     public const int UpdateUserPhoneRequestFailed = 3422;
 
     // Application events 4000-4999
+    public const int ValidationStarted = 4010;
+    public const int ValidationSuccess = 4011;
+    public const int ValidationFailed = 4012;
     public const int GetAllOrdersOfUserQueryStarted = 4100;
     public const int GetAllOrdersOfUserQuerySuccess = 4101;
     public const int GetOrderByIdQueryStarted = 4110;
@@ -136,9 +139,6 @@ public static class LoggerEventId
     public const int UnhandledValidationException = 6002;
     public const int UnhandledAuthException = 6003;
     public const int UnhandledDbException = 6004;
-    public const int ValidationStarted = 6010;
-    public const int ValidationSuccess = 6011;
-    public const int ValidationFailed = 6012;
     public const int GetOrderByIdDomainException = 6100;
     public const int GetAllOrdersOfUserDomainException = 6101;
     public const int CreateOrderDomainException = 6102;

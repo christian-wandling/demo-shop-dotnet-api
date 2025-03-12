@@ -15,9 +15,22 @@ public static class LoggingConfiguration
     public static void ConfigureLogging(IHostApplicationBuilder builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Information()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+
+        var loggerConfiguration = new LoggerConfiguration();
+        if (builder.Environment.IsDevelopment())
+        {
+            loggerConfiguration
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information);
+        }
+        else
+        {
+            loggerConfiguration
+                .MinimumLevel.Information()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Error);
+        }
+
+        loggerConfiguration
             .Enrich.WithProperty("Application", "DemoShop")
             .Enrich.WithProperty("Environment", builder.Environment.EnvironmentName)
             .Enrich.FromLogContext()
@@ -28,9 +41,9 @@ public static class LoggingConfiguration
                 formatProvider: CultureInfo.InvariantCulture,
                 rollingInterval: RollingInterval.Day)
             .AddEventIdBasedLogging()
-            .ConfigureSentryLogging(builder)
-            .CreateLogger();
+            .ConfigureSentryLogging(builder);
 
+        Log.Logger = loggerConfiguration.CreateLogger();
         builder.Logging.ClearProviders();
         builder.Logging.AddSerilog(Log.Logger, dispose: true);
         builder.Services.AddSingleton(Log.Logger);

@@ -63,14 +63,17 @@ public sealed record UserIdentity : IUserIdentity
     }
 
     private static void LogAuthenticationStarted(ILogger logger) =>
-        logger.Debug("Authentication started",
-            LoggerEventId.AuthenticationStarted);
+        logger
+            .ForContext("EventId", LoggerEventId.AuthenticationStarted)
+            .Debug("Authentication started");
 
     private static void LogAuthenticationSuccess(ILogger logger, string keycloakUserId) =>
-        logger.Information("Authentication succeeded for user with KeycloakUserId {KeycloakUserId}",
-            LoggerEventId.AuthenticationSuccess, keycloakUserId);
+        logger
+            .ForContext("EventId", LoggerEventId.AuthenticationSuccess)
+            .Information("Authentication succeeded for user with KeycloakUserId {KeycloakUserId}", keycloakUserId);
 
     private static void LogAuthenticationFailed(ILogger logger, string error) =>
-        logger.Error("Authentication failed, Reason: {Error}",
-            LoggerEventId.AuthenticationFailed, error);
+        logger
+            .ForContext("EventId", LoggerEventId.AuthenticationFailed)
+            .Error("Authentication failed, Reason: {Error}", error);
 }

@@ -29,7 +29,7 @@ public class ShoppingSessionRepository(ApplicationDbContext context, ILogger log
         if (result is null)
             LogGetShoppingSessionByUserIdNotFound(logger, userId);
         else
-            LogGetShoppingSessionByUserIdSuccess(logger, result.Id);
+            LogGetShoppingSessionByUserIdSuccess(logger, result.Id, result.UserId);
 
         return result;
     }
@@ -87,17 +87,17 @@ public class ShoppingSessionRepository(ApplicationDbContext context, ILogger log
     private static void LogGetShoppingSessionByUserIdStarted(ILogger logger, int userId) =>
         logger
             .ForContext("EventId", LoggerEventId.GetShoppingSessionByUserIdStarted)
-            .Debug("Attempting to get shoppingSession with UserId {UserId}", userId);
+            .Debug("Attempting to get current shoppingSession for user {UserId}", userId);
 
-    private static void LogGetShoppingSessionByUserIdSuccess(ILogger logger, int userId) =>
+    private static void LogGetShoppingSessionByUserIdSuccess(ILogger logger, int id, int userId) =>
         logger
             .ForContext("EventId", LoggerEventId.GetShoppingSessionByUserIdSuccess)
-            .Debug("Attempting to get shoppingSession with UserId {UserId} completed successfully", userId);
+            .Debug("Attempting to get shoppingSession with Id {Id} for user {UserId} completed successfully", id, userId);
 
     private static void LogGetShoppingSessionByUserIdNotFound(ILogger logger, int userId) =>
         logger
             .ForContext("EventId", LoggerEventId.GetShoppingSessionByUserIdNotFound)
-            .Warning("ShoppingSession with UserId {UserId} not found in database", userId);
+            .Warning("ShoppingSession for user {UserId} not found in database", userId);
 
     private static void LogCreateShoppingSessionStarted(ILogger logger, int userId) =>
         logger

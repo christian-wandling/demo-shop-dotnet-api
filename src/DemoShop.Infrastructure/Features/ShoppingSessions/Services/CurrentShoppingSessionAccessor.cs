@@ -58,20 +58,17 @@ public sealed class CurrentShoppingSessionAccessor(
     }
 
     private static void LogStarted(ILogger logger, int userId) =>
-        logger.Information(
-            "Attempting to get current shopping session for user {UserId}",
-            LoggerEventId.CurrentShoppingSessionAccessorStarted,
-            userId);
+        logger
+            .ForContext("EventId", LoggerEventId.CurrentShoppingSessionAccessorStarted)
+            .Information("Attempting to get current shopping session for user {UserId}", userId);
 
     private static void LogSuccess(ILogger logger, ShoppingSessionEntity session) =>
-        logger.Information(
-            "Shopping session with id {Id} found for user {UserId}",
-            LoggerEventId.CurrentShoppingSessionAccessorSuccess,
-            session.Id, session.UserId);
+        logger
+            .ForContext("EventId", LoggerEventId.CurrentShoppingSessionAccessorSuccess)
+            .Information("Shopping session with id {Id} found for user {UserId}", session.Id, session.UserId);
 
     private static void LogNotFound(ILogger logger, int userId) =>
-        logger.Error(
-            "No shopping session found for user {UserId}",
-            LoggerEventId.CurrentShoppingSessionAccessorNotFound,
-            userId);
+        logger
+            .ForContext("EventId", LoggerEventId.CurrentShoppingSessionAccessorNotFound)
+            .Error("No shopping session found for user {UserId}", userId);
 }

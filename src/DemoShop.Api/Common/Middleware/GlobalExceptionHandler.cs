@@ -6,6 +6,7 @@ using DemoShop.Domain.Common.Logging;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using ILogger = Serilog.ILogger;
 
 #endregion
@@ -90,17 +91,27 @@ public class GlobalExceptionHandler(ILogger logger) : IExceptionHandler
     }
 
     private static void LogUnhandledDomainException(ILogger logger, string message) =>
-        logger.Error("{Message}", LoggerEventId.UnhandledDomainException, message);
+        logger
+            .ForContext("EventId", LoggerEventId.UnhandledDomainException)
+            .Error("{Message}", message);
 
     private static void LogUnhandledValidationException(ILogger logger, string message) =>
-        logger.Error("{Message}", LoggerEventId.UnhandledValidationException, message);
+        logger
+            .ForContext("EventId", LoggerEventId.UnhandledValidationException)
+            .Error("{Message}", message);
 
     private static void LogUnhandledAuthException(ILogger logger, string message) =>
-        logger.Error("{Message}", LoggerEventId.UnhandledAuthException, message);
+        logger
+            .ForContext("EventId", LoggerEventId.UnhandledAuthException)
+            .Error("{Message}", message);
 
     private static void LogUnhandledDbException(ILogger logger, string message) =>
-        logger.Error("{Message}", LoggerEventId.UnhandledDbException, message);
+        logger
+            .ForContext("EventId", LoggerEventId.UnhandledDbException)
+            .Error("{Message}", message);
 
     private static void LogUnhandledException(ILogger logger, string message) =>
-        logger.Error("{Message}", LoggerEventId.UnhandledException, message);
+        logger
+            .ForContext("EventId", LoggerEventId.UnhandledException)
+            .Error("{Message}", message);
 }
