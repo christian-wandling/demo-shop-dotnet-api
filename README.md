@@ -54,6 +54,8 @@ This project serves as a practical exploration of ASP.NET Core, demonstrating ho
 - **Coverlet**: Cross-platform code coverage library for .NET
 - **ReportGenerator**: Tool for creating code coverage reports from Coverlet data
 
+## Setup
+
 ### Prerequisites
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) or later
 - [Docker](https://www.docker.com/)
@@ -92,7 +94,7 @@ make up
 make db-update
 ```
 
-### Usage
+## Usage
 
 Browse the Swagger documentation
 ```
@@ -132,7 +134,7 @@ curl -X POST \
 -d 'username=your_username&password=your_password&grant_type=password&client_id=demo_shop_ui'
 ```
 
-### Testing
+## Testing
 
 Run unit tests
 ```
