@@ -8,8 +8,6 @@ The project is a refactoring of a NestJS API found in this repository:
 http://github.com/christian-wandling/demo-shop-public
 ```
 
-
-
 ## Overview
 
 This project serves as a practical exploration of ASP.NET Core, demonstrating how to build a robust e-commerce API using Domain-Driven Design (DDD) principles, Command Query Responsibility Segregation (CQRS), and the Repository Pattern.
@@ -70,9 +68,14 @@ This project serves as a practical exploration of ASP.NET Core, demonstrating ho
 git clone https://github.com/christian-wandling/demo-shop-dotnet-api.git
 ```
 
-2. Add an .env at the root of the repository
-> see [.env.example](.env.example) for required variables
+2. Set up environment variables
 
+```
+# Edit .env file with your configuration
+cp .env.example .env
+```
+
+You can choose to omit configuring sentry or see the section on setting up [sentry](#sentry-setup)
 
 3. Add the database connection string to user secrets (used by EF Core and integration tests)
 ```
@@ -89,12 +92,12 @@ docker network create shared
 make up
 ```
 
-5. Initialize database
+5. Initialize database  
 ```
 make db-update
 ```
 
-## Usage
+### Usage
 
 Browse the Swagger documentation
 ```
@@ -104,6 +107,16 @@ http://localhost:3000/api
 Or query the api from the command line 
 ```
 curl http://localhost:3000/api/v1/products
+```
+
+### Sentry Setup
+
+1. Go to [sentry.io](https://sentry.io/welcome/) to create an account and follow the steps to create a project
+
+2. Add configuration values to your .env file
+
+```
+npx @sentry/wizard@latest -i sourcemaps --saas
 ```
 
 ### Frontend Integration
@@ -119,22 +132,19 @@ To use the frontend with this API, ensure both applications are running and conn
 
 ### Create a user via Keycloak admin console
 
-1. Access the Keycloak admin console
+1. Access the Keycloak server to add a user
+
 ```
-http://localhost:8080/admin/
+http://localhost:8080/admin/master/console/#/demo_shop/users/add-user
 ```
 
-3. Log in with the credentials defined in your [.env](.env) file.
+2. To login use `KEYCLOAK_ADMIN` and `KEYCLOAK_ADMIN_PASSWORD` defined in your [.env](.env) file.
 
-4. Select the `demo_shop` realmcreate a user and add credentials
+3. Fill `Email`, `First Name` and `Last name`
 
-5. Navigate to `Users` and use the `Add user`button to create a user
+4. Navigate to the `Credentials` tab and use `Set Password` to create as password
 
-6. Fill `Email`, `First Name`and `Last name
-
-7. Navigate to `Credentials`and use the `Set Password` to create as password
-
-8. Fill `Password` and `Password Confirmation` and deselect `Temporary`
+5. Fill `Password` and `Password Confirmation` and deselect `Temporary`
 
 ### Get bearer token
 
