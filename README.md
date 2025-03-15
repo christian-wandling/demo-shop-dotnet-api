@@ -79,7 +79,7 @@ git clone https://github.com/christian-wandling/demo-shop-dotnet-api.git
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost; Port=5432; Database=your_postgres_db; Username=your_postgres_user; Password=your_postgres_password" --project src/DemoShop.Api
 ```
 
-4. Create shared docker network to use the api from another docker compose stack (or remove network from compose file)
+4. Create shared docker network (or remove network from compose file)
 ```
 docker network create shared
 ```
@@ -115,7 +115,9 @@ http://github.com/christian-wandling/demo-shop-public
 
 To use the frontend with this API, ensure both applications are running and connected via the shared Docker network.
 
-### Authentication
+## Authentication
+
+### Create a user via Keycloak admin console
 
 1. Access the Keycloak admin console
 ```
@@ -124,9 +126,19 @@ http://localhost:8080/admin/
 
 3. Log in with the credentials defined in your [.env](.env) file.
 
-4. Select the `demo_shop` realm, create a user and add credentials
+4. Select the `demo_shop` realmcreate a user and add credentials
 
-5. Request an auth token from the Keycloak API
+5. Navigate to `Users` and use the `Add user`button to create a user
+
+6. Fill `Email`, `First Name`and `Last name
+
+7. Navigate to `Credentials`and use the `Set Password` to create as password
+
+8. Fill `Password` and `Password Confirmation` and deselect `Temporary`
+
+### Get bearer token
+
+Request an auth token from the Keycloak API
 ```
 curl -X POST \
 'http://localhost:8080/realms/demo_shop/protocol/openid-connect/token' \
