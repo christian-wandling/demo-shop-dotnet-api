@@ -4,9 +4,7 @@ A learning project for ASP.NET Core that implements an e-commerce API using mode
 
 The project is a refactoring of a NestJS API found in this repository:
 
-```
-http://github.com/christian-wandling/demo-shop-public
-```
+>[github.com/christian-wandling/demo-shop-public](http://github.com/christian-wandling/demo-shop-public)
 
 ## Overview
 
@@ -110,6 +108,7 @@ curl http://localhost:3000/api/v1/products
 ```
 
 ### Sentry Setup
+To use the frontend with this API, ensure both applications are running and connected via the shared Docker network.
 
 1. Go to [sentry.io](https://sentry.io/welcome/) to create an account and follow the steps to create a project
 
@@ -122,11 +121,9 @@ npx @sentry/wizard@latest -i sourcemaps --saas
 ### Frontend Integration
 
 The API can be consumed by the frontend application available in the following repository:
-```
-http://github.com/christian-wandling/demo-shop-public
-```
 
-To use the frontend with this API, ensure both applications are running and connected via the shared Docker network.
+>[github.com/christian-wandling/demo-shop-public](http://github.com/christian-wandling/demo-shop-public)
+
 
 ## Authentication
 
