@@ -9,5 +9,5 @@ namespace DemoShop.Api.Features.Order.Models;
 
 public sealed record GetOrderByIdRequest : Request, IGetOrderByIdRequest
 {
-    public int Id { get; init; }
+    public required int Id { get; init; }
 }

@@ -9,5 +9,5 @@ namespace DemoShop.Api.Features.ShoppingSession.Models;
 
 public sealed record RemoveCartItemRequest : Request, IRemoveCartItemRequest
 {
-    public int Id { get; init; }
+    public required int Id { get; init; }
 }

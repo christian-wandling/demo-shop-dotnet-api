@@ -27,8 +27,8 @@ public class GetProductByIdEndpoint(IMediator mediator, ILogger logger)
     [ExpectedFailures(ResultStatus.NotFound)]
     [HttpGet("api/v{version:apiVersion}/products/{id:int}")]
     [SwaggerOperation(
-        Summary = "Get all products",
-        Description = "Get all products",
+        Summary = "Get product by id",
+        Description = "Get product by id",
         OperationId = "GetProductById",
         Tags = ["Product"])
     ]

@@ -29,7 +29,7 @@ public class CheckoutEndpoint(IMediator mediator, ILogger logger)
     [SwaggerOperation(
         Summary = "Checkout current shopping session",
         Description =
-            "Check out by creating an order from the current shopping session and deleting the shopping session afterwardds",
+            "Check out by creating an order from the current shopping session and deleting the shopping session afterwards",
         OperationId = "Checkout",
         Tags = ["ShoppingSession"])
     ]

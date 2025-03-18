@@ -9,5 +9,5 @@ namespace DemoShop.Api.Features.Product.Models;
 
 public sealed record GetProductByIdRequest : Request, IGetProductByIdRequest
 {
-    public int Id { get; init; }
+    public required int Id { get; init; }
 }

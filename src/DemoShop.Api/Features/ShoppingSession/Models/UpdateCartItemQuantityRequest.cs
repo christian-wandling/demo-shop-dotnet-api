@@ -9,5 +9,5 @@ namespace DemoShop.Api.Features.ShoppingSession.Models;
 
 public sealed record UpdateCartItemQuantityRequest : Request, IUpdateCartItemRequest
 {
-    public int Quantity { get; init; }
+    public required int Quantity { get; init; }
 }

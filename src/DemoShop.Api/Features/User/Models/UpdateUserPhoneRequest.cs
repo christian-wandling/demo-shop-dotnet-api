@@ -9,5 +9,5 @@ namespace DemoShop.Api.Features.User.Models;
 
 public sealed record UpdateUserPhoneRequest : Request, IUpdateUserPhoneRequest
 {
-    public string? Phone { get; init; }
+    public required string? Phone { get; init; }
 }
