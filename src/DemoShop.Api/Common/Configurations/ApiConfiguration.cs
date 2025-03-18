@@ -2,6 +2,7 @@
 
 using Ardalis.Result.AspNetCore;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 
 #endregion
 
@@ -15,7 +16,13 @@ public static class ApiConfiguration
         ArgumentNullException.ThrowIfNull(configuration);
 
         services.AddEndpointsApiExplorer();
-        services.AddControllers(mvcOptions => mvcOptions.AddDefaultResultConvention());
+        services.AddControllers(
+            mvcOptions =>
+            {
+                mvcOptions.Filters.Add(new ProducesAttribute("application/json"));
+                mvcOptions.Filters.Add(new ConsumesAttribute("application/json"));
+                mvcOptions.AddDefaultResultConvention();
+            });
         services.AddApiVersioning(
                 options =>
                 {

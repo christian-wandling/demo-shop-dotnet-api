@@ -1,6 +1,8 @@
+using System.Text.RegularExpressions;
+
 namespace DemoShop.Api.Common.Configurations;
 
-public static class MiddlewareConfiguration
+public static partial class MiddlewareConfiguration
 {
     public static void ConfigureMiddleware(this WebApplication app)
     {
@@ -18,11 +20,24 @@ public static class MiddlewareConfiguration
 
     private static void ConfigureSwagger(this WebApplication app)
     {
-        app.UseSwagger(c => c.RouteTemplate = "api/{documentname}/swagger.json");
+        app.UseSwagger(c => c.RouteTemplate = "api/docs/{documentName}/swagger.json");
         app.UseSwaggerUI(options =>
         {
-            options.SwaggerEndpoint("/api/v1/swagger.json", "v1");
-            options.RoutePrefix = "api";
+            options.SwaggerEndpoint("/api/docs/v1/swagger.json", "v1");
+            options.RoutePrefix = "api/docs";
+        });
+        app.Use(async (context, next) =>
+        {
+            if (MyRegex().IsMatch(context.Request.Path))
+            {
+                context.Response.Redirect("/api/docs");
+                return;
+            }
+
+            await next();
         });
     }
+
+    [GeneratedRegex(@"^\/(api\/?)?(index\.html)?$", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex MyRegex();
 }
