@@ -28,7 +28,7 @@ public static partial class MiddlewareConfiguration
         });
         app.Use(async (context, next) =>
         {
-            if (MyRegex().IsMatch(context.Request.Path))
+            if (PathRegex.IsMatch(context.Request.Path))
             {
                 context.Response.Redirect("/api/docs");
                 return;
@@ -38,6 +38,9 @@ public static partial class MiddlewareConfiguration
         });
     }
 
-    [GeneratedRegex(@"^\/(api\/?)?(index\.html)?$", RegexOptions.IgnoreCase, "en-US")]
-    private static partial Regex MyRegex();
+    private static readonly Regex PathRegex =
+#pragma warning disable SYSLIB1045
+        // GeneratetdRegex doesn't work properly in .NET 8
+        new("^/(api/?)?(index\\.html)?$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+#pragma warning restore SYSLIB1045
 }
