@@ -45,7 +45,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="..\..\Test\DemoShop.IntegratinTests" />
+    <InternalsVisibleTo Include="..\..\Test\DemoShop.IntegrationTests" />
   </ItemGroup>
 
   <ItemGroup>
