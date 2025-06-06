@@ -12,10 +12,6 @@ up:
 	@echo "$(GREEN)Starting containers...$(NC)"
 	docker compose up -d
 
-api-up:
-	@echo "$(GREEN)Starting api container...$(NC)"
-	docker compose up -d api
-
 down:
 	@echo "$(GREEN)Stopping containers...$(NC)"
 	docker compose down
