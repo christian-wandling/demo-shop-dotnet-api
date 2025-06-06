@@ -15,24 +15,24 @@ namespace DemoShop.Infrastructure.Features.Users;
 
 public class UserRepository(ApplicationDbContext context, ILogger logger) : IUserRepository
 {
-    public Task<UserEntity?> GetUserByKeycloakIdAsync(string value, CancellationToken cancellationToken) =>
-        GetUserByKeycloakIdAsync(value, false, cancellationToken);
+    public Task<UserEntity?> GetUserByKeycloakIdAsync(string keycloakUserIdValue, CancellationToken cancellationToken) =>
+        GetUserByKeycloakIdAsync(keycloakUserIdValue, false, cancellationToken);
 
     public async Task<UserEntity?> GetUserByKeycloakIdAsync(
-        string value,
+        string keycloakUserIdValue,
         bool trackChanges,
         CancellationToken cancellationToken
     )
     {
-        Guard.Against.NullOrWhiteSpace(value, nameof(value));
+        Guard.Against.NullOrWhiteSpace(keycloakUserIdValue, nameof(keycloakUserIdValue));
         Guard.Against.Null(cancellationToken, nameof(cancellationToken));
-        LogGetUserByKeycloakUserIdStarted(logger, value);
+        LogGetUserByKeycloakUserIdStarted(logger, keycloakUserIdValue);
 
-        var keycloakUserId = KeycloakUserId.Create(value);
+        var keycloakUserId = KeycloakUserId.Create(keycloakUserIdValue);
 
         var query = context.Query<UserEntity>();
 
-        if (trackChanges)
+        if (!trackChanges)
             query = query.AsNoTracking();
 
         var result = await query
@@ -40,9 +40,9 @@ public class UserRepository(ApplicationDbContext context, ILogger logger) : IUse
             .FirstOrDefaultAsync(u => u.KeycloakUserId.Equals(keycloakUserId), cancellationToken);
 
         if (result is null)
-            LogGetUserByKeycloakUserIdNotFound(logger, value);
+            LogGetUserByKeycloakUserIdNotFound(logger, keycloakUserIdValue);
         else
-            LogGetUserByKeycloakUserIdSuccess(logger, value);
+            LogGetUserByKeycloakUserIdSuccess(logger, keycloakUserIdValue);
 
         return result;
     }
@@ -57,7 +57,7 @@ public class UserRepository(ApplicationDbContext context, ILogger logger) : IUse
 
         await context.SaveChangesAsync(cancellationToken);
 
-        LogCreateUserSuccess(logger, user.Id, user.KeycloakUserId.Value);
+        LogCreateUserSuccess(logger, entry.Entity.Id, user.KeycloakUserId.Value);
         return entry.Entity;
     }
 

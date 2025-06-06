@@ -26,6 +26,8 @@ public class ShoppingSessionConfiguration : IEntityTypeConfiguration<ShoppingSes
             .HasForeignKey(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasQueryFilter(a => a.User != null && !a.User.SoftDelete.Deleted);
+
         builder.HasMany(s => s.CartItems)
             .WithOne(c => c.ShoppingSession)
             .HasForeignKey(c => c.ShoppingSessionId);

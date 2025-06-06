@@ -27,6 +27,8 @@ public class AddressConfiguration : IEntityTypeConfiguration<AddressEntity>
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasQueryFilter(a => !a.User.SoftDelete.Deleted);
+
         builder.HasIndex(a => a.UserId)
             .IsUnique();
 

@@ -32,6 +32,8 @@ public class CartItemConfiguration : IEntityTypeConfiguration<CartItemEntity>
             .HasForeignKey(c => c.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasQueryFilter(c => c.Product != null && !c.Product.SoftDelete.Deleted);
+
         builder.Property(c => c.Quantity)
             .IsRequired()
             .HasConversion(

@@ -24,8 +24,6 @@ public sealed class ResolveUserProcessHandler(
 {
     public async Task<Result<UserResponse>> Handle(ResolveUserProcess request, CancellationToken cancellationToken)
     {
-        Guard.Against.Null(cancellationToken, nameof(cancellationToken));
-
         var identityResult = identity.GetCurrentIdentity();
 
         if (!identityResult.IsSuccess)
