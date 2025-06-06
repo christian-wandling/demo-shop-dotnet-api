@@ -1,17 +1,18 @@
-.PHONY: up down build logs clean test
+.PHONY: up api-up down build logs clean db-update db-migrate test integration-test test-coverage integration-test-coverage
 
 ENV ?= Development
 
 COMPOSE_FILE = compose.yaml
 
 GREEN := \033[0;32m
+RED := \033[0;31m
 NC := \033[0m
 
 up:
 	@echo "$(GREEN)Starting containers...$(NC)"
 	docker compose up -d
 
-api:
+api-up:
 	@echo "$(GREEN)Starting api container...$(NC)"
 	docker compose up -d api
 
@@ -34,6 +35,15 @@ clean:
 db-update:
 	@echo "$(GREEN)Updating db...$(NC)"
 	dotnet ef database update --project src/DemoShop.Infrastructure
+
+db-migrate:
+	@if [ -z "${NAME}" ]; then \
+		echo "$(RED)Error: MIGRATION_NAME is required$(NC)"; \
+		echo "Usage: make db-migrate MIGRATION_NAME=YourMigrationName"; \
+		exit 1; \
+	fi
+	@echo "$(GREEN)Creating migration...$(NC)"
+	dotnet ef migrations add ${NAME} --project src/DemoShop.Infrastructure
 
 test:
 	@echo "$(GREEN)Running unit tests...$(NC)"

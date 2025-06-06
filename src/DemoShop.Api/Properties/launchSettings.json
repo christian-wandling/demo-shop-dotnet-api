@@ -25,7 +25,7 @@
         "DOTNET_USE_POLLING_FILE_WATCHER": "true",
         "SENTRY__DSN": "${SENTRY_DSN}",
         "KEYCLOAK__AUTHORITY": "http://keycloak:8080",
-        "KEYCLOAK__CLIENTID": "demo_shop_api",
+        "KEYCLOAK__CLIENTID": "demo_shop_api_core",
         "CONNECTIONSTRINGS__DEFAULTCONNECTION": "${DB_CONNECTION}"
       }
     }
