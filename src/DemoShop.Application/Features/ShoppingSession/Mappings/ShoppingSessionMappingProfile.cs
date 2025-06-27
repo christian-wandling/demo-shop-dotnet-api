@@ -26,13 +26,13 @@ public class ShoppingSessionMappingProfile : Profile
             .ForMember(dest => dest.ProductId, opt =>
                 opt.MapFrom(src => src.ProductId))
             .ForMember(dest => dest.ProductName, opt =>
-                opt.MapFrom(src => src.Product!.Name))
+                opt.MapFrom(src => src.Product.Name))
             .ForMember(dest => dest.ProductThumbnail, opt =>
-                opt.MapFrom(src => src.Product!.Thumbnail))
+                opt.MapFrom(src => src.Product.Thumbnail))
             .ForMember(dest => dest.Quantity, opt =>
                 opt.MapFrom(src => src.Quantity.Value))
             .ForMember(dest => dest.UnitPrice, opt =>
-                opt.MapFrom(src => src.Product!.Price.Value))
+                opt.MapFrom(src => src.Product.Price.Value))
             .ForMember(dest => dest.TotalPrice, opt =>
                 opt.MapFrom(src => src.TotalPrice));
 

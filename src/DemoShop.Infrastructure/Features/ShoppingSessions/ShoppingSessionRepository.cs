@@ -59,7 +59,6 @@ public class ShoppingSessionRepository(ApplicationDbContext context, ILogger log
 
         var entry = context.Set<ShoppingSessionEntity>().Update(session);
         await context.SaveChangesAsync(cancellationToken);
-        await entry.ReloadAsync(cancellationToken);
 
         LogUpdateShoppingSessionSuccess(logger, entry.Entity.Id);
         return entry.Entity;

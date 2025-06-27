@@ -60,7 +60,7 @@ public sealed class AddCartItemCommandHandler(
             }
 
             var savedResult = await SaveChanges(sessionResult, cancellationToken);
-            if (!savedResult.IsSuccess)
+            if (!savedResult.IsSuccess || savedResult.Value is null)
             {
                 LogCommandError(logger, sessionResult.Value.Id);
                 return savedResult.Map();
@@ -90,13 +90,14 @@ public sealed class AddCartItemCommandHandler(
         }
     }
 
-    private async Task<Result<ShoppingSessionEntity>> SaveChanges(ShoppingSessionEntity unsavedSession,
+    private async Task<Result<ShoppingSessionEntity?>> SaveChanges(ShoppingSessionEntity unsavedSession,
         CancellationToken cancellationToken)
     {
-        var savedSession = await repository.UpdateSessionAsync(unsavedSession, cancellationToken);
+        await repository.UpdateSessionAsync(unsavedSession, cancellationToken);
+        var updatedSession = await repository.GetSessionByUserIdAsync(unsavedSession.UserId, cancellationToken);
 
         await eventDispatcher.DispatchEventsAsync(unsavedSession, cancellationToken);
-        return Result.Success(savedSession);
+        return Result.Success(updatedSession);
     }
 
     private static void LogCommandStarted(ILogger logger, int sessionId) =>
