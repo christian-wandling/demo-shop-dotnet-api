@@ -121,11 +121,11 @@ npx @sentry/wizard@latest -i sourcemaps --saas
 
 ### Frontend Integration
 
-The API can be consumed by the frontend application available in the following repository:
+The API can be consumed by either frontend application:
 
-> [github.com/christian-wandling/demo-shop-angular-nestjs](https://github.com/christian-wandling/demo-shop-angular-nestjs)
+> [demo-shop-angular-nestjs](https://github.com/christian-wandling/demo-shop-angular-nestjs) (Angular) · [demo-shop-react-ui](https://github.com/christian-wandling/demo-shop-react-ui) (React)
 
-To use the frontend with this API, ensure both applications are running and connected via the shared Docker network.
+To use a frontend with this API, ensure both applications are running and connected via the shared Docker network.
 
 ## Authentication
 
