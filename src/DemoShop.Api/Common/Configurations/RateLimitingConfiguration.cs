@@ -42,7 +42,8 @@ public static class RateLimitingConfiguration
             {
                 var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger>();
                 var ipAddress = context.HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-                var endpoint = context.HttpContext.Request.Method + " " + context.HttpContext.Request.Path.ToString();
+                var rawEndpoint = context.HttpContext.Request.Method + " " + context.HttpContext.Request.Path.ToString();
+                var endpoint = rawEndpoint.Replace("\n", "").Replace("\r", "");
 
                 LogRateLimitExceeded(logger, ipAddress, endpoint);
 
