@@ -1,10 +1,12 @@
-# Demo-Shop-DotNet-API
+# Demo Shop - .NET API
 
-A learning project for ASP.NET Core that implements an e-commerce API using modern architecture patterns and best practices.
+An ASP.NET Core implementation of the Demo Shop e-commerce API, built with domain-driven design, CQRS, and a repository pattern. A .NET refactor of the platform's NestJS API, exploring the same domain and contract in a different backend stack.
 
-The project is a refactoring of a NestJS API found in this repository:
+## Platform
 
->[github.com/christian-wandling/demo-shop-public](http://github.com/christian-wandling/demo-shop-public)
+The Demo Shop platform is split across interchangeable implementations:
+
+[Angular + NestJS](https://github.com/christian-wandling/demo-shop-angular-nestjs) · **.NET API** · [React UI](https://github.com/christian-wandling/demo-shop-react-ui) · [E2E](https://github.com/christian-wandling/demo-shop-e2e)
 
 ## Overview
 
@@ -58,7 +60,7 @@ This project serves as a practical exploration of ASP.NET Core, demonstrating ho
 - [Git](https://git-scm.com/downloads)
 - [Dotnet-ef](https://www.nuget.org/packages/dotnet-ef)
 - [Dotnet-reportgenerator-globaltool](https://www.nuget.org/packages/dotnet-reportgenerator-globaltool) (optional - generate test coverage reports)
-- Make (optional - run convenience commands like `make up)
+- Make (optional - run convenience commands like `make up`)
 
 ### Installation
 1. Clone the repository
@@ -85,12 +87,12 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost; P
 docker network create shared
 ```
 
-4. Create the containers
+5. Create the containers
 ```
 make up
 ```
 
-5. Initialize database  
+6. Initialize database
 ```
 make db-update
 ```
@@ -102,13 +104,12 @@ Browse the Swagger documentation
 http://localhost:3000/api
 ```
 
-Or query the api from the command line 
+Or query the api from the command line
 ```
 curl http://localhost:3000/api/v1/products
 ```
 
 ### Sentry Setup
-To use the frontend with this API, ensure both applications are running and connected via the shared Docker network.
 
 1. Go to [sentry.io](https://sentry.io/welcome/) to create an account and follow the steps to create a project
 
@@ -122,8 +123,9 @@ npx @sentry/wizard@latest -i sourcemaps --saas
 
 The API can be consumed by the frontend application available in the following repository:
 
->[github.com/christian-wandling/demo-shop-public](http://github.com/christian-wandling/demo-shop-public)
+> [github.com/christian-wandling/demo-shop-angular-nestjs](https://github.com/christian-wandling/demo-shop-angular-nestjs)
 
+To use the frontend with this API, ensure both applications are running and connected via the shared Docker network.
 
 ## Authentication
 
@@ -135,7 +137,7 @@ The API can be consumed by the frontend application available in the following r
 http://localhost:8080/admin/master/console/#/demo_shop/users/add-user
 ```
 
-2. To login use `KEYCLOAK_ADMIN` and `KEYCLOAK_ADMIN_PASSWORD` defined in your [.env](.env) file.
+2. To login use `KEYCLOAK_ADMIN` and `KEYCLOAK_ADMIN_PASSWORD` defined in your [.env](.env.example) file.
 
 3. Fill `Email`, `First Name` and `Last name`
 
@@ -178,5 +180,3 @@ make integration-test-coverage
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-
