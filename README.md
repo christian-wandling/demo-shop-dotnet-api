@@ -10,7 +10,7 @@ The Demo Shop platform is split across interchangeable implementations:
 
 ## Overview
 
-This project serves as a practical exploration of ASP.NET Core, demonstrating how to build a robust e-commerce API using Domain-Driven Design (DDD) principles, Command Query Responsibility Segregation (CQRS), and the Repository Pattern.
+This project serves as a practical exploration of ASP.NET Core, demonstrating how to build an e-commerce API using Domain-Driven Design (DDD) principles, Command Query Responsibility Segregation (CQRS), and the Repository Pattern.
 
 ## Technologies & Patterns
 
